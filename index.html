@@ -40,6 +40,7 @@
 </head>
 <body class="h-full overflow-hidden flex flex-col text-slate-800">
 
+    <!-- アプリヘッダー -->
     <header class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between shrink-0 shadow-sm z-10">
         <div class="flex items-center gap-3">
             <div class="bg-emerald-600 text-white p-2.5 rounded-xl shadow-md shadow-emerald-100 flex items-center justify-center">
@@ -51,7 +52,7 @@
             </div>
         </div>
 
-        <!-- 表示モード & 曜日ナビゲーション（連動するスマートコントロール） -->
+        <!-- 表示モード & 曜日ナビゲーション -->
         <div class="flex items-center gap-4">
             <!-- 日表示 / 週表示 のタブトグル -->
             <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
@@ -89,6 +90,7 @@
         </div>
     </header>
 
+    <!-- メインコンテンツ領域（iPad横画面を想定した2カラム） -->
     <main class="flex-1 flex overflow-hidden bg-slate-50">
 
         <!-- 左カラム：Google ToDoリスト (未定タスク保管庫) -->
@@ -103,7 +105,7 @@
                     <span id="unplanned-count" class="bg-blue-50 text-blue-700 text-xs font-bold px-2 py-1 rounded-full border border-blue-100">0件</span>
                 </div>
                 <p class="text-xs text-slate-500 leading-relaxed mb-3">
-                    いつやるか決まっていないタスクです。右側の時間割（空きコマや放課後）にドラッグして予定を決めましょう。
+                    スケジュール未設定のタスクです。右側の時間割にドラッグするか「配置」して予定を組みましょう。
                 </p>
                 
                 <!-- 新規タスク追加フォーム -->
@@ -116,7 +118,7 @@
                 </form>
             </div>
 
-            <!-- リストセレクタ（Googleの複数リスト切り替えシミュレート） -->
+            <!-- リストセレクタ -->
             <div class="px-4 py-2 border-b border-slate-100 flex gap-1 overflow-x-auto shrink-0">
                 <button onclick="filterTasks('all')" id="list-tab-all" class="list-tab shrink-0 px-3 py-1 text-xs font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-100">すべて</button>
                 <button onclick="filterTasks('授業準備')" id="list-tab-授業準備" class="list-tab shrink-0 px-3 py-1 text-xs font-medium rounded-full text-slate-600 hover:bg-slate-100">授業準備</button>
@@ -136,7 +138,7 @@
             </div>
         </section>
 
-        <!-- 右カラム：今日の時間割 (空きコマ / 放課後) -->
+        <!-- 右カラム：時間割 (空きコマ / 放課後) -->
         <section class="flex-1 flex flex-col overflow-hidden">
             <!-- 本日のサマリーバー ＆ 45週切り替えスマートコントロール -->
             <div class="bg-white border-b border-slate-200 px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 shrink-0 shadow-sm">
@@ -200,7 +202,7 @@
                         <label class="block text-sm font-bold text-slate-700">
                             <i class="fa-solid fa-bullhorn text-emerald-600 mr-1.5"></i>生徒への連絡・伝達事項
                         </label>
-                        <span class="text-xs text-slate-400" id="modal-week-indicator">第1週</span>
+                        <span class="text-xs text-slate-400 font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full" id="modal-week-indicator">第1週</span>
                     </div>
                     
                     <!-- 連絡事項追加フォーム -->
@@ -211,7 +213,7 @@
                     </div>
 
                     <!-- 連絡事項一覧 -->
-                    <ul class="space-y-2 max-h-40 overflow-y-auto pr-1" id="modal-announcement-list">
+                    <ul class="space-y-2 max-h-48 overflow-y-auto pr-1" id="modal-announcement-list">
                         <!-- 動的生成 -->
                     </ul>
                 </div>
@@ -265,14 +267,6 @@
                             APIキー認証成功 (利用制限: 無料枠 50,000回/日)
                         </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 mb-1">取得リスト</label>
-                        <select class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none">
-                            <option>デフォルトリスト</option>
-                            <option>授業準備タスク</option>
-                            <option>校務タスク</option>
-                        </select>
-                    </div>
                 </div>
             </div>
             <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-2">
@@ -295,7 +289,7 @@
         let currentDay = 'Fri'; // 初期選択曜日
         let currentWeek = 1;   // 初期選択週（1〜45）
         let selectedFilter = 'all'; // タスクフィルタ
-        let activeModalPeriodId = null; // 現在モーダルで開いている授業枠のオリジナルID（週情報抜き）
+        let activeModalPeriodId = null; // 現在モーダルで開いている授業枠のオリジナルID
         let viewMode = 'daily'; // 表示モード ('daily' または 'weekly')
 
         // 曜日のマッピング
@@ -308,7 +302,7 @@
         };
 
         // デフォルトのタスク
-        // assignedPeriodId は w{weekNum}-{periodId} で管理するように拡張
+        // assignedPeriodId は w{weekNum}-{periodId} で週別の紐付けを管理するように拡張
         let tasks = [
             { id: 't1', title: '1年A組 数学小テストの印刷', list: '授業準備', completed: false, assignedPeriodId: null },
             { id: 't2', title: '中間試験の作成（〜2/15）', list: '授業準備', completed: false, assignedPeriodId: null },
@@ -318,3 +312,980 @@
             { id: 't6', title: '保護者面談の日程調整メール', list: 'その他', completed: false, assignedPeriodId: null },
             { id: 't7', title: '来週の授業計画の作成', list: '授業準備', completed: false, assignedPeriodId: 'w1-Mon-period-3' }, // 第1週の月曜の空きコマに事前割当
         ];
+
+        // 45週間分の独立したデータ（生徒への連絡事項、メモ等）
+        // キー：w{weekNum}-{periodId} (例: "w1-Mon-period-1")
+        let weeklyDetails = {
+            'w1-Mon-period-1': { announcements: ['宿題のノートを提出させること'] },
+            'w1-Mon-period-2': { announcements: ['教科書P.45の公式を再説明'] },
+            'w1-Mon-period-5': { announcements: ['進路ガイダンス冊子を持参させる'] },
+            'w1-Mon-period-6': { announcements: ['連絡帳の記入、美化委員への指示'] },
+            'w1-Fri-period-1': { announcements: ['小テストの予告をすること'] },
+            'w1-Fri-period-3': { announcements: ['宿題提出日を週明けと告げる'] },
+            'w1-Fri-period-after': { announcements: ['グラウンドの週末美化'] }
+        };
+
+        // 基本となる1日の時間割の枠組み構造（不変テンプレート）
+        let timetableData = {
+            'Mon': [
+                { id: 'Mon-period-1', num: '1', time: '08:45 - 09:35', type: 'class', subject: '数学I', class: '1年A組', room: '1A教室' },
+                { id: 'Mon-period-2', num: '2', time: '09:45 - 10:35', type: 'class', subject: '数学II', class: '2年B組', room: '2B教室' },
+                { id: 'Mon-period-3', num: '3', time: '10:45 - 11:35', type: 'empty', subject: '空きコマ', class: '', room: '' },
+                { id: 'Mon-period-4', num: '4', time: '11:45 - 12:35', type: 'class', subject: '数学I', class: '1年B組', room: '1B教室' },
+                { id: 'Mon-period-lunch', num: '昼', time: '12:35 - 13:20', type: 'empty', subject: '昼休み', class: '', room: '' },
+                { id: 'Mon-period-5', num: '5', time: '13:20 - 14:10', type: 'class', subject: '総合学習', class: '1年A組', room: '体育館' },
+                { id: 'Mon-period-6', num: '6', time: '14:20 - 15:10', type: 'class', subject: '学活', class: '1年A組', room: '1A教室' },
+                { id: 'Mon-period-after', num: '放', time: '15:20 - 17:00', type: 'afterschool', subject: '部活動・校務', class: '野球部', room: 'グラウンド' }
+            ],
+            'Tue': [
+                { id: 'Tue-period-1', num: '1', time: '08:45 - 09:35', type: 'empty', subject: '空きコマ', class: '', room: '' },
+                { id: 'Tue-period-2', num: '2', time: '09:45 - 10:35', type: 'class', subject: '数学I', class: '1年A組', room: '1A教室' },
+                { id: 'Tue-period-3', num: '3', time: '10:45 - 11:35', type: 'class', subject: '数学II', class: '2年B組', room: '2B教室' },
+                { id: 'Tue-period-4', num: '4', time: '11:45 - 12:35', type: 'class', subject: '数学I', class: '1年B組', room: '1B教室' },
+                { id: 'Tue-period-lunch', num: '昼', time: '12:35 - 13:20', type: 'empty', subject: '昼休み', class: '', room: '' },
+                { id: 'Tue-period-5', num: '5', time: '13:20 - 14:10', type: 'empty', subject: '空きコマ', class: '', room: '' },
+                { id: 'Tue-period-6', num: '6', time: '14:20 - 15:10', type: 'class', subject: '数学演習', class: '3年C組', room: '3C教室' },
+                { id: 'Tue-period-after', num: '放', time: '15:20 - 17:00', type: 'afterschool', subject: '学年会議', class: '職員室', room: '' }
+            ],
+            'Wed': [
+                { id: 'Wed-period-1', num: '1', time: '08:45 - 09:35', type: 'class', subject: '数学I', class: '1年B組', room: '1B教室' },
+                { id: 'Wed-period-2', num: '2', time: '09:45 - 10:35', type: 'class', subject: '数学I', class: '1年A組', room: '1A教室' },
+                { id: 'Wed-period-3', num: '3', time: '10:45 - 11:35', type: 'empty', subject: '空きコマ', class: '', room: '' },
+                { id: 'Wed-period-4', num: '4', time: '11:45 - 12:35', type: 'class', subject: '数学II', class: '2年B組', room: '2B教室' },
+                { id: 'Wed-period-lunch', num: '昼', time: '12:35 - 13:20', type: 'empty', subject: '昼休み', class: '', room: '' },
+                { id: 'Wed-period-5', num: '5', time: '13:20 - 14:10', type: 'class', subject: '数学演習', class: '3年C組', room: '3C教室' },
+                { id: 'Wed-period-6', num: '6', time: '14:20 - 15:10', type: 'empty', subject: '空きコマ', class: '', room: '' },
+                { id: 'Wed-period-after', num: '放', time: '15:20 - 17:00', type: 'afterschool', subject: '出張（研究会）', class: '外部', room: '' }
+            ],
+            'Thu': [
+                { id: 'Thu-period-1', num: '1', time: '08:45 - 09:35', type: 'class', subject: '数学II', class: '2年B組', room: '2B教室' },
+                { id: 'Thu-period-2', num: '2', time: '09:45 - 10:35', type: 'class', subject: '数学I', class: '1年B組', room: '1B教室' },
+                { id: 'Thu-period-3', num: '3', time: '10:45 - 11:35', type: 'class', subject: '数学I', class: '1年A組', room: '1A教室' },
+                { id: 'Thu-period-4', num: '4', time: '11:45 - 12:35', type: 'empty', subject: '空きコマ', class: '', room: '' },
+                { id: 'Thu-period-lunch', num: '昼', time: '12:35 - 13:20', type: 'empty', subject: '昼休み', class: '', room: '' },
+                { id: 'Thu-period-5', num: '5', time: '13:20 - 14:10', type: 'class', subject: '数学演習', class: '3年C組', room: '3C教室' },
+                { id: 'Thu-period-6', num: '6', time: '14:20 - 15:10', type: 'empty', subject: '空きコマ', class: '', room: '' },
+                { id: 'Thu-period-after', num: '放', time: '15:20 - 17:00', type: 'afterschool', subject: '部活動指導', class: '野球部', room: 'グラウンド' }
+            ],
+            'Fri': [
+                { id: 'Fri-period-1', num: '1', time: '08:45 - 09:35', type: 'class', subject: '数学I', class: '1年A組', room: '1A教室' },
+                { id: 'Fri-period-2', num: '2', time: '09:45 - 10:35', type: 'empty', subject: '空きコマ', class: '', room: '' },
+                { id: 'Fri-period-3', num: '3', time: '10:45 - 11:35', type: 'class', subject: '数学II', class: '2年B組', room: '2B教室' },
+                { id: 'Fri-period-4', num: '4', time: '11:45 - 12:35', type: 'class', subject: '数学I', class: '1年B組', room: '1B教室' },
+                { id: 'Fri-period-lunch', num: '昼', time: '12:35 - 13:20', type: 'empty', subject: '昼休み', class: '', room: '' },
+                { id: 'Fri-period-5', num: '5', time: '13:20 - 14:10', type: 'empty', subject: '空きコマ', class: '', room: '' },
+                { id: 'Fri-period-6', num: '6', time: '14:20 - 15:10', type: 'class', subject: '数学演習', class: '3年C組', room: '3C教室' },
+                { id: 'Fri-period-after', num: '放', time: '15:20 - 17:00', type: 'afterschool', subject: '部活動・校務', class: '野球部', room: 'グラウンド' }
+            ]
+        };
+
+        // --- STREAMING_CHUNK: Initializing System on Load... ---
+        // 初期ロード
+        window.onload = function() {
+            generateWeekSelectorOptions();
+            renderDashboard();
+        };
+
+        // 1〜45週のプルダウン選択肢を動的に生成する
+        function generateWeekSelectorOptions() {
+            const selector = document.getElementById('week-selector');
+            selector.innerHTML = '';
+            for (let w = 1; w <= 45; w++) {
+                const opt = document.createElement('option');
+                opt.value = w;
+                opt.text = `第 ${w} 週`;
+                if (w === currentWeek) opt.selected = true;
+                selector.appendChild(opt);
+            }
+        }
+
+        // メイン描画コントロール
+        function renderDashboard() {
+            renderUnplannedTasks();
+            renderTimetable();
+            updateCountBadges();
+        }
+
+        // 表示モード（日表示 / 週表示）の切り替え
+        function setViewMode(mode) {
+            viewMode = mode;
+            const btnDaily = document.getElementById('btn-view-daily');
+            const btnWeekly = document.getElementById('btn-view-weekly');
+            const dayNav = document.getElementById('day-nav-container');
+
+            if (mode === 'daily') {
+                btnDaily.className = "px-4 py-2 text-xs font-bold rounded-lg transition-all duration-200 bg-white text-slate-800 shadow-sm";
+                btnWeekly.className = "px-4 py-2 text-xs font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900";
+                dayNav.classList.remove('hidden');
+                
+                // サマリー表示の切り替え
+                document.getElementById('current-day-label').innerText = dayNames[currentDay];
+                const dates = { 'Mon': '7月6日(月)', 'Tue': '7月7日(火)', 'Wed': '7月8日(水)', 'Thu': '7月9日(木)', 'Fri': '7月3日(金)' };
+                document.getElementById('day-date-label').innerText = dates[currentDay];
+                document.getElementById('day-date-label').classList.remove('hidden');
+            } else {
+                btnDaily.className = "px-4 py-2 text-xs font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900";
+                btnWeekly.className = "px-4 py-2 text-xs font-bold rounded-lg transition-all duration-200 bg-white text-slate-800 shadow-sm";
+                dayNav.classList.add('hidden');
+
+                // 週間スケジュール表示用のサマリーテキスト
+                document.getElementById('current-day-label').innerText = "週間スケジュール";
+                document.getElementById('day-date-label').innerText = `第 ${currentWeek} 週`;
+            }
+            renderDashboard();
+        }
+
+        // バッジカウンタの更新
+        function updateCountBadges() {
+            const unassigned = tasks.filter(t => !t.assignedPeriodId && !t.completed).length;
+            document.getElementById('unplanned-count').innerText = `${unassigned}件`;
+        }
+
+        // 曜日切り替え（日表示モード用）
+        function changeDay(dayCode) {
+            currentDay = dayCode;
+            
+            // ボタンのスタイル更新
+            document.querySelectorAll('.day-btn').forEach(btn => {
+                btn.className = "day-btn px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900";
+            });
+            const activeBtn = document.getElementById(`btn-${dayCode}`);
+            activeBtn.className = "day-btn px-4 py-2 text-sm font-bold rounded-lg transition-all duration-200 bg-white text-emerald-700 shadow-sm";
+
+            // ラベルの更新
+            document.getElementById('current-day-label').innerText = dayNames[dayCode];
+            
+            // 日付表記をシミュレート
+            const dates = { 'Mon': '7月6日(月)', 'Tue': '7月7日(火)', 'Wed': '7月8日(水)', 'Thu': '7月9日(木)', 'Fri': '7月3日(金)' };
+            document.getElementById('day-date-label').innerText = dates[dayCode];
+
+            renderDashboard();
+        }
+
+        // 週セレクターコントロール
+        function selectWeek(weekNum) {
+            currentWeek = parseInt(weekNum, 10);
+            if (viewMode === 'weekly') {
+                document.getElementById('day-date-label').innerText = `第 ${currentWeek} 週`;
+            }
+            renderDashboard();
+            showToast(`第 ${currentWeek} 週 に切り替えました。`);
+        }
+
+        // 週を前後に進める
+        function navigateWeek(direction) {
+            let targetWeek = currentWeek + direction;
+            if (targetWeek >= 1 && targetWeek <= 45) {
+                currentWeek = targetWeek;
+                document.getElementById('week-selector').value = targetWeek;
+                selectWeek(targetWeek);
+            }
+        }
+
+        // 未定タスクプールカテゴリ選択
+        function filterTasks(listCategory) {
+            selectedFilter = listCategory;
+            document.querySelectorAll('.list-tab').forEach(tab => {
+                tab.className = "list-tab shrink-0 px-3 py-1 text-xs font-medium rounded-full text-slate-600 hover:bg-slate-100";
+            });
+            const activeTab = document.getElementById(`list-tab-${listCategory}`);
+            activeTab.className = "list-tab shrink-0 px-3 py-1 text-xs font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-100";
+            renderUnplannedTasks();
+        }
+
+        // --- STREAMING_CHUNK: Rendering Task Pool and Lists... ---
+        // 未定タスク（Google ToDo側）の描画
+        function renderUnplannedTasks() {
+            const listContainer = document.getElementById('unplanned-task-list');
+            listContainer.innerHTML = '';
+
+            const filtered = tasks.filter(t => {
+                const matchesFilter = selectedFilter === 'all' || t.list === selectedFilter;
+                const isUnassigned = !t.assignedPeriodId;
+                const isNotCompleted = !t.completed;
+                return matchesFilter && isUnassigned && isNotCompleted;
+            });
+
+            if (filtered.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="flex flex-col items-center justify-center py-10 text-slate-400 text-center">
+                        <i class="fa-solid fa-circle-check text-slate-200 text-5xl mb-3"></i>
+                        <p class="text-sm font-bold">すばらしい！未定タスクはありません</p>
+                        <p class="text-xs">新しいタスクを入力するか、すでに割り当てたタスクに取り組みましょう。</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(task => {
+                let listColorClass = 'bg-slate-100 text-slate-600';
+                if (task.list === '授業準備') listColorClass = 'bg-emerald-50 text-emerald-700 border-emerald-100';
+                if (task.list === '校務分掌') listColorClass = 'bg-purple-50 text-purple-700 border-purple-100';
+                if (task.list === 'その他') listColorClass = 'bg-amber-50 text-amber-700 border-amber-100';
+
+                const card = document.createElement('div');
+                card.className = "bg-white border border-slate-200 p-3.5 rounded-xl shadow-sm hover:shadow-md hover:border-blue-400 transition-all cursor-grab active:cursor-grabbing flex flex-col gap-2 relative group";
+                card.draggable = true;
+                
+                card.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', task.id);
+                    card.classList.add('opacity-40');
+                });
+                card.addEventListener('dragend', () => {
+                    card.classList.remove('opacity-40');
+                });
+
+                card.innerHTML = `
+                    <div class="flex items-start gap-2.5">
+                        <input type="checkbox" onchange="toggleTaskComplete('${task.id}')" class="mt-1 w-4 h-4 text-blue-600 rounded focus:ring-blue-500 border-slate-300">
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-slate-800 break-words leading-snug">${escapeHTML(task.title)}</p>
+                            <div class="flex items-center gap-1.5 mt-1.5">
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${listColorClass}">${task.list}</span>
+                                <span class="text-[10px] text-slate-400"><i class="fa-solid fa-cloud-arrow-up"></i> Google同期</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- タッチ環境向けの配置ショートカット -->
+                    <div class="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+                        <button onclick="quickAssign('${task.id}')" title="空きコマにクイック配置" class="px-2 py-0.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-md text-[10px] font-bold transition-all">
+                            配置 <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                `;
+                listContainer.appendChild(card);
+            });
+        }
+
+        // --- STREAMING_CHUNK: Rendering Timetables (Daily/Weekly View)... ---
+        // 時間割（デイリー・タイムライン ＆ ウィークリーグリッド）の描画
+        function renderTimetable() {
+            const container = document.getElementById('timetable-container');
+            container.innerHTML = '';
+
+            if (viewMode === 'daily') {
+                container.className = "flex-1 overflow-y-auto p-6 space-y-4";
+                const dayPeriods = timetableData[currentDay] || [];
+                renderPeriodsList(dayPeriods, container, false);
+            } else {
+                container.className = "flex-1 overflow-x-auto overflow-y-hidden p-4 flex gap-4 min-w-full h-full items-stretch";
+                
+                const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+                days.forEach(dayCode => {
+                    const dayCol = document.createElement('div');
+                    dayCol.className = "w-64 md:w-72 flex flex-col h-full bg-slate-100/40 border border-slate-200/50 rounded-2xl p-3 shrink-0";
+                    
+                    const header = document.createElement('div');
+                    const isToday = (dayCode === 'Fri'); // デモ上の今日設定
+                    header.className = "flex items-center justify-between mb-3 pb-2 border-b border-slate-200 shrink-0";
+                    header.innerHTML = `
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-slate-800 text-sm md:text-base">${dayNames[dayCode]}</span>
+                            ${isToday ? `<span class="bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm">今日</span>` : ''}
+                        </div>
+                    `;
+                    dayCol.appendChild(header);
+
+                    const periodsListWrapper = document.createElement('div');
+                    periodsListWrapper.className = "flex-1 overflow-y-auto space-y-3 pr-1 pb-10";
+                    
+                    const dayPeriods = timetableData[dayCode] || [];
+                    renderPeriodsList(dayPeriods, periodsListWrapper, true);
+
+                    dayCol.appendChild(periodsListWrapper);
+                    container.appendChild(dayCol);
+                });
+            }
+        }
+
+        // コマ一覧のレンダリングヘルパー（共通設計）
+        function renderPeriodsList(dayPeriods, targetContainer, isCompact = false) {
+            dayPeriods.forEach(period => {
+                const isClass = period.type === 'class';
+                const isEmpty = period.type === 'empty';
+                const isAfter = period.type === 'afterschool';
+
+                let bgClass = "bg-white border-slate-200 hover:border-slate-300";
+                let badgeClass = "bg-slate-100 text-slate-600";
+                let mainAccent = "border-l-4 border-l-slate-400";
+
+                if (isClass) {
+                    bgClass = "bg-emerald-50/20 border-emerald-100 hover:bg-emerald-50/40 hover:border-emerald-200";
+                    badgeClass = "bg-emerald-600 text-white shadow-sm shadow-emerald-100";
+                    mainAccent = "border-l-4 border-l-emerald-500";
+                } else if (isEmpty) {
+                    bgClass = "bg-amber-50/10 border-dashed border-amber-200 hover:bg-amber-50/20 hover:border-amber-300";
+                    badgeClass = "bg-amber-100 text-amber-800 border border-amber-200";
+                    mainAccent = "border-l-4 border-l-amber-400";
+                } else if (isAfter) {
+                    bgClass = "bg-indigo-50/10 border-indigo-100 hover:bg-indigo-50/20 hover:border-indigo-200";
+                    badgeClass = "bg-indigo-600 text-white shadow-sm shadow-indigo-100";
+                    mainAccent = "border-l-4 border-l-indigo-500";
+                }
+
+                // 割り当てられたタスクの特定（週・コマと完全連動）
+                const currentPeriodKey = `w${currentWeek}-${period.id}`;
+                const assignedTasks = tasks.filter(t => t.assignedPeriodId === currentPeriodKey && !t.completed);
+
+                // 週ごとの詳細詳細データ（連絡事項メモ等）の取得
+                const details = weeklyDetails[currentPeriodKey] || { announcements: [] };
+
+                const item = document.createElement('div');
+                if (isCompact) {
+                    item.className = `${bgClass} border ${mainAccent} rounded-xl p-3 flex flex-col gap-2 transition-all duration-200 relative group shadow-sm text-left`;
+                } else {
+                    item.className = `${bgClass} border ${mainAccent} rounded-2xl p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all duration-200 relative group shadow-sm`;
+                }
+                item.id = period.id;
+
+                // ドラッグ＆ドロップ受け入れハンドラ
+                item.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    item.classList.add('drag-over');
+                });
+                item.addEventListener('dragleave', () => {
+                    item.classList.remove('drag-over');
+                });
+                item.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    item.classList.remove('drag-over');
+                    const taskId = e.dataTransfer.getData('text/plain');
+                    if (taskId) {
+                        assignTaskToPeriod(taskId, currentPeriodKey);
+                    }
+                });
+
+                // 生徒への連絡事項UI生成
+                let announcementsHTML = '';
+                if (details.announcements && details.announcements.length > 0) {
+                    if (isCompact) {
+                        announcementsHTML = `
+                            <div class="flex flex-wrap gap-1 mt-1">
+                                ${details.announcements.map(ann => `
+                                    <span class="inline-flex items-center gap-0.5 text-[10px] bg-white border border-emerald-100 text-emerald-800 font-medium px-1.5 py-0.5 rounded shadow-sm max-w-full" title="${escapeHTML(ann)}">
+                                        <i class="fa-solid fa-bullhorn text-[8px] text-emerald-500 shrink-0"></i> 
+                                        <span class="truncate max-w-[120px]">${escapeHTML(ann)}</span>
+                                    </span>
+                                `).join('')}
+                            </div>
+                        `;
+                    } else {
+                        announcementsHTML = `
+                            <div class="mt-2.5 flex flex-wrap gap-1.5">
+                                ${details.announcements.map(ann => `
+                                    <span class="inline-flex items-center gap-1 text-[11px] bg-white border border-emerald-100 text-emerald-800 font-medium px-2.5 py-1 rounded-lg">
+                                        <i class="fa-solid fa-bullhorn text-[9px] text-emerald-500"></i> ${escapeHTML(ann)}
+                                    </span>
+                                `).join('')}
+                            </div>
+                        `;
+                    }
+                } else if (isClass && !isCompact) {
+                    announcementsHTML = `
+                        <p class="text-xs text-slate-400 italic mt-2.5">
+                            <i class="fa-solid fa-pen"></i> タップして生徒への連絡事項を追加
+                        </p>
+                    `;
+                }
+                // 割り当てられたタスク（ToDo）の表示HTML
+                let tasksHTML = '';
+                if (assignedTasks.length > 0) {
+                    if (isCompact) {
+                        // 週表示用のコンパクトタスクカード
+                        tasksHTML = `
+                            <div class="mt-2 space-y-1 pt-2 border-t border-slate-100">
+                                ${assignedTasks.map(task => `
+                                    <div class="flex items-center justify-between bg-white border border-slate-100 rounded-lg px-2 py-1 text-[10px] shadow-sm">
+                                        <div class="flex items-center gap-1.5 min-w-0">
+                                            <input type="checkbox" onchange="toggleTaskComplete('${task.id}')" class="w-3 h-3 text-blue-600 rounded border-slate-300 shrink-0">
+                                            <span class="font-medium text-slate-700 truncate max-w-[120px]" title="${escapeHTML(task.title)}">${escapeHTML(task.title)}</span>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                    } else {
+                        tasksHTML = `
+                            <div class="mt-3 space-y-2 pt-3 border-t border-slate-100">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider"><i class="fa-solid fa-circle-check text-blue-500"></i> この時間中に実行：</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    ${assignedTasks.map(task => `
+                                        <div class="flex items-center justify-between bg-white border border-slate-100 rounded-xl px-3 py-2 text-xs shadow-sm hover:border-slate-300 transition-all">
+                                            <div class="flex items-center gap-2 min-w-0">
+                                                <input type="checkbox" onchange="toggleTaskComplete('${task.id}')" class="w-3.5 h-3.5 text-blue-600 rounded border-slate-300">
+                                                <span class="font-medium text-slate-700 truncate">${escapeHTML(task.title)}</span>
+                                            </div>
+                                            <div class="flex items-center gap-1 shrink-0">
+                                                <!-- タスクの他週移動ボタン -->
+                                                <button onclick="openMoveTaskModal(event, '${task.id}')" class="text-slate-400 hover:text-blue-600 p-1 rounded hover:bg-slate-50 transition-all" title="他の週にタスクを移動">
+                                                    <i class="fa-solid fa-angles-right text-[11px]"></i>
+                                                </button>
+                                                <button onclick="unassignTask(event, '${task.id}')" class="text-slate-400 hover:text-red-500 p-1 rounded hover:bg-slate-50 transition-all" title="予定を未定に戻す">
+                                                    <i class="fa-solid fa-arrow-rotate-left"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }
+                } else if (isEmpty && !isCompact) {
+                    tasksHTML = `
+                        <div class="mt-2 text-center py-3 bg-amber-50/20 border border-dashed border-amber-200/50 rounded-xl">
+                            <p class="text-xs text-amber-800 font-medium">空きコマです。やるべきタスクをここに配置しましょう！</p>
+                        </div>
+                    `;
+                }
+
+                if (isCompact) {
+                    item.innerHTML = `
+                        <div class="flex-1 min-w-0 cursor-pointer animate-in fade-in duration-150" onclick="openClassDetail('${period.id}')">
+                            <div class="flex items-start gap-2">
+                                <span class="text-[10px] font-black w-6 h-6 flex items-center justify-center shrink-0 rounded ${badgeClass}">${period.num}</span>
+                                <div class="min-w-0 flex-1">
+                                    <div class="flex flex-wrap items-center gap-1">
+                                        <h4 class="font-bold text-slate-800 text-xs truncate max-w-[150px]">${escapeHTML(period.subject)}</h4>
+                                        ${period.class ? `<span class="text-[9px] font-semibold text-slate-500 px-1 bg-slate-100 rounded truncate shrink-0">${escapeHTML(period.class)}</span>` : ''}
+                                    </div>
+                                    <p class="text-[9px] text-slate-400 font-medium mt-0.5"><i class="fa-solid fa-clock"></i> ${period.time}</p>
+                                </div>
+                            </div>
+                            ${announcementsHTML}
+                            ${tasksHTML}
+                        </div>
+                        <div class="absolute right-1 top-1 opacity-0 group-hover:opacity-100 transition-opacity flex gap-0.5 z-10">
+                            ${isEmpty || isAfter ? `
+                                <button onclick="openAssignPicker('${currentPeriodKey}')" class="p-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-[9px]" title="タスクを割当">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    `;
+                } else {
+                    item.innerHTML = `
+                        <div class="flex-1 min-w-0 cursor-pointer" onclick="openClassDetail('${period.id}')">
+                            <div class="flex items-center gap-3">
+                                <span class="text-sm font-black w-10 text-center py-1 rounded-lg ${badgeClass}">${period.num}</span>
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <h3 class="font-bold text-slate-800 text-base">${escapeHTML(period.subject)}</h3>
+                                        ${period.class ? `<span class="text-xs font-semibold text-slate-500 px-2 py-0.5 bg-slate-100 rounded">${escapeHTML(period.class)}</span>` : ''}
+                                        ${period.room ? `<span class="text-xs text-slate-400"><i class="fa-solid fa-location-dot"></i> ${escapeHTML(period.room)}</span>` : ''}
+                                    </div>
+                                    <p class="text-xs text-slate-400 font-medium mt-0.5"><i class="fa-solid fa-clock"></i> ${period.time}</p>
+                                </div>
+                            </div>
+                            ${announcementsHTML}
+                            ${tasksHTML}
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0 justify-end md:border-l md:border-slate-100 md:pl-4">
+                            ${isClass ? `
+                                <button onclick="openClassDetail('${period.id}')" class="text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-2 rounded-xl border border-emerald-100 transition-all flex items-center gap-1.5">
+                                    <i class="fa-solid fa-bullhorn"></i> 連絡編集
+                                </button>
+                            ` : ''}
+                            ${isEmpty || isAfter ? `
+                                <button onclick="openAssignPicker('${currentPeriodKey}')" class="text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-xl border border-blue-100 transition-all flex items-center gap-1.5">
+                                    <i class="fa-solid fa-plus"></i> タスクを割当
+                                </button>
+                            ` : ''}
+                        </div>
+                    `;
+                }
+                targetContainer.appendChild(item);
+            });
+        }
+
+        // --- STREAMING_CHUNK: Processing Task Assignment & Re-scheduling... ---
+        // タスクを特定のコマ（週＋コマ番号）にスケジュール
+        function assignTaskToPeriod(taskId, fullPeriodKey) {
+            const task = tasks.find(t => t.id === taskId);
+            if (task) {
+                task.assignedPeriodId = fullPeriodKey;
+                const readableTime = getPeriodDisplayName(fullPeriodKey);
+                showToast(`「${task.title}」を ${readableTime} にスケジュールしました。`);
+                renderDashboard();
+            }
+        }
+
+        // タスクのスケジュールを解除して未定リストに戻す
+        function unassignTask(event, taskId) {
+            if (event) event.stopPropagation();
+            const task = tasks.find(t => t.id === taskId);
+            if (task) {
+                task.assignedPeriodId = null;
+                showToast(`「${task.title}」のスケジュールを解除して未定に戻しました。`);
+                renderDashboard();
+            }
+        }
+
+        // クイック配置（ワンクリック/ワンタップでカチッとハメ込み）
+        function quickAssign(taskId) {
+            const dayPeriods = timetableData[currentDay];
+            const emptyPeriod = dayPeriods.find(p => p.type === 'empty' || p.type === 'afterschool');
+            if (emptyPeriod) {
+                const fullPeriodKey = `w${currentWeek}-${emptyPeriod.id}`;
+                assignTaskToPeriod(taskId, fullPeriodKey);
+            } else {
+                showToast("配置可能な空きコマが今日はありません。ドラッグして別の曜日へ直接配置してください。");
+            }
+        }
+
+        // アサインピッカー（iPadタップ配置用）
+        function openAssignPicker(fullPeriodKey) {
+            const unassigned = tasks.filter(t => !t.assignedPeriodId && !t.completed);
+            if (unassigned.length === 0) {
+                showToast("割り当て可能な未定のGoogle ToDoタスクがありません。");
+                return;
+            }
+
+            const selectHTML = unassigned.map(t => `<option value="${t.id}">[${t.list}] ${t.title}</option>`).join('');
+
+            const pickerDiv = document.createElement('div');
+            pickerDiv.id = 'assign-picker-modal';
+            pickerDiv.className = 'fixed inset-0 bg-slate-950/40 backdrop-blur-sm flex items-center justify-center z-50 p-4';
+            pickerDiv.innerHTML = `
+                <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl border border-slate-200 animate-in zoom-in duration-200">
+                    <h3 class="font-bold text-slate-900 mb-2"><i class="fa-solid fa-link text-blue-600 mr-2"></i>ToDoタスクを割り当て</h3>
+                    <p class="text-xs text-slate-500 mb-4">この時間枠で実行するGoogle Tasksを選択してください。</p>
+                    <select id="picker-select-task" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm mb-4">
+                        ${selectHTML}
+                    </select>
+                    <div class="flex justify-end gap-2">
+                        <button onclick="document.getElementById('assign-picker-modal').remove()" class="text-xs font-semibold px-4 py-2 hover:bg-slate-100 rounded-xl">キャンセル</button>
+                        <button id="btn-picker-confirm" class="bg-blue-600 text-white font-semibold text-xs px-4 py-2 rounded-xl">割り当てる</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(pickerDiv);
+
+            document.getElementById('btn-picker-confirm').onclick = function() {
+                const selectedTaskId = document.getElementById('picker-select-task').value;
+                if (selectedTaskId) {
+                    assignTaskToPeriod(selectedTaskId, fullPeriodKey);
+                    document.getElementById('assign-picker-modal').remove();
+                }
+            };
+        }
+
+        // --- STREAMING_CHUNK: Moving Task and Coping Announcements Between Weeks... ---
+        // タスクを「他の週」へ移動させるモーダル
+        function openMoveTaskModal(event, taskId) {
+            if (event) event.stopPropagation();
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) return;
+
+            // 週のセレクトオプションを生成
+            let weekOptionsHTML = '';
+            for (let w = 1; w <= 45; w++) {
+                weekOptionsHTML += `<option value="${w}" ${w === currentWeek ? 'selected' : ''}>第 ${w} 週</option>`;
+            }
+
+            // 曜日と時間の選択
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+            let dayOptionsHTML = days.map(d => `<option value="${d}" ${d === currentDay ? 'selected' : ''}>${dayNames[d]}</option>`).join('');
+
+            const periods = [
+                { val: 'period-1', text: '1時間目' },
+                { val: 'period-2', text: '2時間目' },
+                { val: 'period-3', text: '3時間目' },
+                { val: 'period-4', text: '4時間目' },
+                { val: 'period-lunch', text: '昼休み' },
+                { val: 'period-5', text: '5時間目' },
+                { val: 'period-6', text: '6時間目' },
+                { val: 'period-after', text: '放課後' },
+            ];
+            let periodOptionsHTML = periods.map(p => `<option value="${p.val}">${p.text}</option>`).join('');
+
+            const modal = document.createElement('div');
+            modal.id = 'move-task-modal';
+            modal.className = 'fixed inset-0 bg-slate-950/40 backdrop-blur-sm flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl border border-slate-200 animate-in zoom-in duration-200">
+                    <h3 class="font-bold text-slate-900 mb-1 flex items-center gap-2"><i class="fa-solid fa-angles-right text-blue-600"></i>タスクを他の週へ移動</h3>
+                    <p class="text-xs text-slate-400 break-all mb-4">対象: 「${escapeHTML(task.title)}」</p>
+                    
+                    <div class="space-y-3 mb-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1">移動先の週</label>
+                            <select id="move-target-week" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm">${weekOptionsHTML}</select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1">移動先の曜日</label>
+                            <select id="move-target-day" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm">${dayOptionsHTML}</select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1">時間（コマ）</label>
+                            <select id="move-target-period" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm">${periodOptionsHTML}</select>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end gap-2">
+                        <button onclick="document.getElementById('move-task-modal').remove()" class="text-xs font-semibold px-4 py-2 hover:bg-slate-100 rounded-xl">キャンセル</button>
+                        <button id="btn-move-task-confirm" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-2 rounded-xl transition-all shadow-md shadow-blue-100">移動する</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            document.getElementById('btn-move-task-confirm').onclick = function() {
+                const targetWeek = document.getElementById('move-target-week').value;
+                const targetDay = document.getElementById('move-target-day').value;
+                const targetPeriod = document.getElementById('move-target-period').value;
+
+                // 新しい割り当てID（週情報を含む）を構築
+                const newPeriodKey = `w${targetWeek}-${targetDay}-${targetPeriod}`;
+                task.assignedPeriodId = newPeriodKey;
+
+                document.getElementById('move-task-modal').remove();
+                showToast(`🎉 「${task.title}」を 第 ${targetWeek} 週の${dayNames[targetDay]}に移動しました！`);
+                renderDashboard();
+            };
+        }
+
+        // 連絡事項を他の週へ「移動」または「コピー（複製）」するモーダル
+        function openTransferAnnouncementModal(index, annText) {
+            let weekOptionsHTML = '';
+            for (let w = 1; w <= 45; w++) {
+                weekOptionsHTML += `<option value="${w}" ${w === currentWeek ? 'selected' : ''}>第 ${w} 週</option>`;
+            }
+
+            const modal = document.createElement('div');
+            modal.id = 'transfer-ann-modal';
+            modal.className = 'fixed inset-0 bg-slate-950/40 backdrop-blur-sm flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl border border-slate-200 animate-in zoom-in duration-200">
+                    <h3 class="font-bold text-slate-900 mb-1 flex items-center gap-2"><i class="fa-solid fa-copy text-emerald-600"></i>連絡事項の転送・コピー</h3>
+                    <p class="text-xs text-slate-400 break-words mb-4 bg-slate-50 p-2.5 rounded-lg border">「${escapeHTML(annText)}」</p>
+                    
+                    <div class="space-y-4 mb-5">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1.5">操作方法</label>
+                            <div class="flex gap-2">
+                                <label class="flex-1 flex items-center justify-between p-2.5 border border-slate-200 rounded-xl cursor-pointer bg-slate-50/50 hover:bg-slate-50">
+                                    <span class="text-xs font-semibold text-slate-700">コピー（複製）</span>
+                                    <input type="radio" name="transfer-mode" value="copy" checked class="text-emerald-600">
+                                </label>
+                                <label class="flex-1 flex items-center justify-between p-2.5 border border-slate-200 rounded-xl cursor-pointer bg-slate-50/50 hover:bg-slate-50">
+                                    <span class="text-xs font-semibold text-slate-700">移動（移設）</span>
+                                    <input type="radio" name="transfer-mode" value="move" class="text-emerald-600">
+                                </label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1">コピー・移動先の週</label>
+                            <select id="transfer-target-week" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm">${weekOptionsHTML}</select>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end gap-2">
+                        <button onclick="document.getElementById('transfer-ann-modal').remove()" class="text-xs font-semibold px-4 py-2 hover:bg-slate-100 rounded-xl">キャンセル</button>
+                        <button id="btn-transfer-ann-confirm" class="bg-emerald-600 text-white font-semibold text-xs px-4 py-2 rounded-xl transition-all shadow-md shadow-emerald-100">実行する</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            document.getElementById('btn-transfer-ann-confirm').onclick = function() {
+                const mode = document.querySelector('input[name="transfer-mode"]:checked').value;
+                const targetWeek = document.getElementById('transfer-target-week').value;
+
+                const dayCode = activeModalPeriodId.split('-')[0];
+                const originalKey = `w${currentWeek}-${activeModalPeriodId}`;
+                const targetKey = `w${targetWeek}-${activeModalPeriodId}`;
+
+                if (!weeklyDetails[targetKey]) {
+                    weeklyDetails[targetKey] = { announcements: [] };
+                }
+
+                if (mode === 'copy') {
+                    weeklyDetails[targetKey].announcements.push(annText);
+                    showToast(`📋 連絡事項を 第 ${targetWeek} 週の同一授業にコピーしました！`);
+                } else if (mode === 'move') {
+                    weeklyDetails[targetKey].announcements.push(annText);
+                    weeklyDetails[originalKey].announcements.splice(index, 1);
+                    showToast(`🚚 連絡事項を 第 ${targetWeek} 週の同一授業に移動しました。`);
+                }
+
+                document.getElementById('transfer-ann-modal').remove();
+                
+                // モーダルの最新データを再描画
+                const periodData = timetableData[dayCode].find(p => p.id === activeModalPeriodId);
+                const activeDetails = weeklyDetails[originalKey] || { announcements: [] };
+                renderModalAnnouncements(activeDetails);
+                renderDashboard();
+            };
+        }
+
+        // 表示用コマ名取得ヘルパー
+        function getPeriodDisplayName(fullPeriodKey) {
+            const parts = fullPeriodKey.split('-');
+            // w1-Mon-period-1 から情報を分解
+            const weekNum = parts[0].replace('w', '');
+            const day = parts[1];
+            const periodNum = parts[parts.length - 1];
+
+            let label = `第${weekNum}週 ${dayNames[day] || ''} `;
+            if (periodNum === 'lunch') label += '昼休み';
+            else if (periodNum === 'after') label += '放課後';
+            else label += `${periodNum}時間目`;
+            return label;
+        }
+
+        // --- STREAMING_CHUNK: Processing Task Cruds and Interactions... ---
+        // タスクの新規手動追加（Google ToDo同期風）
+        function handleAddTask(e) {
+            e.preventDefault();
+            const input = document.getElementById('new-task-title');
+            const title = input.value.trim();
+            if (!title) return;
+
+            const lists = ['授業準備', '校務分掌', 'その他'];
+            const randomList = lists[Math.floor(Math.random() * lists.length)];
+
+            const newTask = {
+                id: 't_' + Date.now(),
+                title: title,
+                list: randomList,
+                completed: false,
+                assignedPeriodId: null
+            };
+
+            tasks.unshift(newTask);
+            input.value = '';
+            
+            showToast(`Google ToDoリストへ同期しました: 「${title}」`);
+            renderDashboard();
+        }
+
+        // タスクの完了同期処理
+        function toggleTaskComplete(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            if (task) {
+                task.completed = true;
+                showToast(`🎉 完了! 「${task.title}」を完了済みに更新同期しました。`);
+                renderDashboard();
+            }
+        }
+
+        // --- STREAMING_CHUNK: Managing Modal Window and Detail Editing... ---
+        // 授業個別モーダルを開く
+        function openClassDetail(periodId) {
+            activeModalPeriodId = periodId;
+            const dayCode = periodId.split('-')[0];
+            const periodData = timetableData[dayCode].find(p => p.id === periodId);
+            if (!periodData) return;
+
+            // 週ごとの詳細情報の検索・初期化
+            const currentPeriodKey = `w${currentWeek}-${periodId}`;
+            if (!weeklyDetails[currentPeriodKey]) {
+                weeklyDetails[currentPeriodKey] = { announcements: [] };
+            }
+            const activeDetails = weeklyDetails[currentPeriodKey];
+
+            // ヘッダー情報セット
+            document.getElementById('modal-period').innerText = periodData.num === 'lunch' ? '昼休み' : (periodData.num === 'after' ? '放課後' : `${periodData.num}時間目`);
+            document.getElementById('modal-title').innerText = periodData.subject + (periodData.class ? ` (${periodData.class})` : '');
+            document.getElementById('modal-week-indicator').innerText = `第 ${currentWeek} 週`;
+            
+            // 連絡事項一覧の描画
+            renderModalAnnouncements(activeDetails);
+            
+            // この週のコマにアサインされたタスクの描画
+            renderModalAssignedTasks(currentPeriodKey);
+
+            document.getElementById('class-detail-modal').classList.remove('hidden');
+        }
+
+        // モーダルを閉じる
+        function closeModal() {
+            document.getElementById('class-detail-modal').classList.add('hidden');
+            activeModalPeriodId = null;
+        // モーダル内の連絡事項の描画
+        function renderModalAnnouncements(periodData) {
+            const listEl = document.getElementById('modal-announcement-list');
+            listEl.innerHTML = '';
+
+            // 引数 periodData が weeklyDetails のオブジェクト（announcements配列を持つ）であるかチェック
+            const announcements = periodData.announcements || [];
+
+            if (announcements.length === 0) {
+                listEl.innerHTML = `
+                    <li class="text-xs text-slate-400 py-3 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                        登録された連絡事項はありません。上のフォームから追加してください。
+                    </li>
+                `;
+                return;
+            }
+
+            announcements.forEach((ann, idx) => {
+                const li = document.createElement('li');
+                li.className = "flex items-center justify-between bg-emerald-50/50 border border-emerald-100/70 p-2.5 rounded-xl text-xs";
+                li.innerHTML = `
+                    <span class="font-medium text-emerald-900 flex-1 pr-2 leading-relaxed"><i class="fa-solid fa-bullhorn text-emerald-500 mr-1.5"></i>${escapeHTML(ann)}</span>
+                    <div class="flex items-center gap-1 shrink-0">
+                        <!-- コピー＆移動ボタン -->
+                        <button onclick="openTransferAnnouncementModal(${idx}, '${escapeHTML(ann)}')" class="text-slate-400 hover:text-emerald-600 p-1 rounded hover:bg-white transition-all" title="他の週へコピーまたは移動">
+                            <i class="fa-solid fa-copy"></i>
+                        </button>
+                        <button onclick="deleteAnnouncement(${idx})" class="text-slate-400 hover:text-red-500 p-1 rounded hover:bg-white transition-all" title="削除">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                `;
+                listEl.appendChild(li);
+            });
+        }
+
+        // 連絡事項追加
+        function addAnnouncement() {
+            const input = document.getElementById('new-announcement-input');
+            const value = input.value.trim();
+            if (!value || !activeModalPeriodId) return;
+
+            const currentPeriodKey = `w${currentWeek}-${activeModalPeriodId}`;
+            if (weeklyDetails[currentPeriodKey]) {
+                weeklyDetails[currentPeriodKey].announcements.push(value);
+                input.value = '';
+                renderModalAnnouncements(weeklyDetails[currentPeriodKey]);
+                showToast("生徒への連絡事項を追加しました。");
+            }
+        }
+
+        // 連絡事項削除
+        function deleteAnnouncement(index) {
+            if (!activeModalPeriodId) return;
+            const currentPeriodKey = `w${currentWeek}-${activeModalPeriodId}`;
+            if (weeklyDetails[currentPeriodKey] && weeklyDetails[currentPeriodKey].announcements) {
+                weeklyDetails[currentPeriodKey].announcements.splice(index, 1);
+                renderModalAnnouncements(weeklyDetails[currentPeriodKey]);
+                showToast("連絡事項を削除しました。");
+            }
+        }
+
+        // モーダル内：アサインされたタスクの描画
+        function renderModalAssignedTasks(currentPeriodKey) {
+            const container = document.getElementById('modal-assigned-tasks');
+            container.innerHTML = '';
+
+            const assigned = tasks.filter(t => t.assignedPeriodId === currentPeriodKey && !t.completed);
+
+            if (assigned.length === 0) {
+                container.innerHTML = `
+                    <div class="text-xs text-slate-400 py-3 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                        この時間割枠には、やることがまだありません。
+                    </div>
+                `;
+                return;
+            }
+
+            assigned.forEach(task => {
+                const div = document.createElement('div');
+                div.className = "flex items-center justify-between bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-xs animate-in fade-in duration-100";
+                div.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" onchange="toggleTaskCompleteInModal('${task.id}')" class="w-3.5 h-3.5 text-blue-600 rounded border-slate-300">
+                        <span class="font-semibold text-slate-800">${escapeHTML(task.title)}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <!-- コマ詳細内での移動ショートカット -->
+                        <button onclick="openMoveTaskModal(event, '${task.id}')" class="text-[10px] text-blue-600 hover:underline">
+                            移動
+                        </button>
+                        <button onclick="unassignTaskInModal('${task.id}')" class="text-[10px] text-slate-400 hover:text-red-500 hover:underline">
+                            解除
+                        </button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // モーダル内でのタスク完了処理
+        function toggleTaskCompleteInModal(taskId) {
+            toggleTaskComplete(taskId);
+            if (activeModalPeriodId) {
+                const currentPeriodKey = `w${currentWeek}-${activeModalPeriodId}`;
+                renderModalAssignedTasks(currentPeriodKey);
+            }
+        }
+
+        // モーダル内でのタスク配置解除処理
+        function unassignTaskInModal(taskId) {
+            unassignTask(null, taskId);
+            if (activeModalPeriodId) {
+                const currentPeriodKey = `w${currentWeek}-${activeModalPeriodId}`;
+                renderModalAssignedTasks(currentPeriodKey);
+            }
+        }
+
+        // --- STREAMING_CHUNK: Google API Settings Simulation... ---
+        // API同期設定ダイアログ
+        function openSyncSettings() {
+            document.getElementById('settings-modal').classList.remove('hidden');
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settings-modal').classList.add('hidden');
+        }
+
+        function saveSettings() {
+            const email = document.getElementById('settings-email').value;
+            document.getElementById('google-account-text').innerText = email;
+            closeSettingsModal();
+            showToast("Google Tasks API 設定情報を更新しました！");
+        }
+
+        // 手動更新シミュレーション
+        function simulateSync() {
+            showToast("🔄 Google Tasks からタスク情報を同期中...");
+            setTimeout(() => {
+                const demoTitles = [
+                    '修学旅行アンケートの集計',
+                    '2B数学の補助プリント作成',
+                    '部活動保護者会への連絡送信',
+                    '実力テストの成績データ分析入力'
+                ];
+                const randomTitle = demoTitles[Math.floor(Math.random() * demoTitles.length)];
+                
+                if (!tasks.some(t => t.title === randomTitle)) {
+                    tasks.unshift({
+                        id: 't_sync_' + Date.now(),
+                        title: randomTitle,
+                        list: '校務分掌',
+                        completed: false,
+                        assignedPeriodId: null
+                    });
+                }
+                
+                renderDashboard();
+                showToast("✅ Google ToDoリストから最新タスクを同期しました！");
+            }, 1000);
+        }
+
+        // --- 共通ユーティリティ ---
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;'
+                }[tag] || tag)
+            );
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = message;
+            toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+            }, 3500);
+        }
+    </script>
+</body>
+</html>
