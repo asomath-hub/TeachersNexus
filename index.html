@@ -7,7 +7,7 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
     <!-- Google Fonts Inter & Noto Sans JP -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
     
@@ -88,7 +88,7 @@
                 <i class="fa-solid fa-gears"></i> 基本時間割
             </button>
 
-            <button onclick="resetToDefault()" class="bg-rose-50 hover:bg-rose-105 text-rose-700 border border-rose-200 px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center gap-1.5 transition-all" title="デモデータを初期化">
+            <button onclick="resetToDefault()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center gap-1.5 transition-all" title="デモデータを初期化">
                 <i class="fa-solid fa-trash-arrow-up"></i> リセット
             </button>
 
@@ -185,7 +185,7 @@
 
                     <span class="text-slate-300 hidden sm:inline">|</span>
 
-                    <!-- 🚀 文字サイズを大幅に極大UP（日付・曜日の最大級アピール） -->
+                    <!-- 文字サイズを大幅に極大UP（日付・曜日の最大級アピール） -->
                     <div class="flex flex-col">
                         <span class="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight" id="current-day-label">月曜日</span>
                         <span class="text-sm md:text-xl font-extrabold text-slate-500 mt-1" id="day-date-label">4月6日(月)</span>
@@ -241,7 +241,7 @@
             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between shrink-0" id="modal-header-container">
                 <div>
                     <span class="text-xs md:text-sm font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-3 py-1.5 rounded-full" id="modal-period">2時間目</span>
-                    <!-- 🚀 モーダルのタイトル（クラス・科目名）を大きくサイズアップ -->
+                    <!-- モーダルのタイトル（クラス・科目名）を大きくサイズアップ -->
                     <h3 class="font-black text-slate-900 text-2xl md:text-3xl mt-3.5" id="modal-title">1年A組 数学I</h3>
                 </div>
                 <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg hover:bg-slate-100 transition-all">
@@ -361,8 +361,8 @@
                 </div>
             </div>
             <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-2">
-                <button onclick="closeSettingsModal()" class="text-slate-600 hover:bg-slate-100 px-4 py-2 rounded-lg text-xs font-semibold">キャンセル</button>
-                <button onclick="saveSettings()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-xs font-semibold">保存する</button>
+                <button onclick="closeSettingsModal()" class="text-slate-600 hover:bg-slate-100 px-4 py-2 rounded-lg text-xs md:text-sm font-semibold">キャンセル</button>
+                <button onclick="saveSettings()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-xs md:text-sm font-semibold">保存する</button>
             </div>
         </div>
     </div>
@@ -524,7 +524,7 @@
 
         const defaultWeeklyDetails = {
             'w1-Mon-period-1': { announcements: ['宿題のノートを忘れず提出させること'] },
-            'w1-Mon-period-2': { announcements: ['教科書P.45の公式を再説明'] },
+            'w1-Mon-period-2': { announcements: ['教科書P.45 of 公式を再説明'] },
             'w1-Mon-period-5': { announcements: ['進路ガイダンス冊子を各自持参させる'] },
             'w1-Mon-period-6': { announcements: ['連絡帳の記入、美化委員への指示'] },
             'w1-Fri-period-1': { announcements: ['月曜日の数学小テスト予告をすること'] },
@@ -891,7 +891,7 @@
                 const header = document.createElement('div');
                 header.className = "flex items-center justify-between mb-5 pb-3 border-b border-slate-100";
                 
-                // 🚀 日表示での「曜日」と「日付」表示を最大級サイズに強化
+                // 日表示での「曜日」と「日付」表示を最大級サイズに強化
                 header.innerHTML = '<span class="font-black text-slate-900 text-3xl">' + dayNames[currentDay] + ' の時間割</span><span class="text-lg md:text-xl text-slate-600 font-extrabold">' + getFormattedDate(currentWeek, currentDay) + '</span>';
                 dayCol.appendChild(header);
 
@@ -922,7 +922,7 @@
                     const header = document.createElement('div');
                     header.className = "sticky top-0 bg-white pb-3 mb-2 border-b border-slate-100 z-10 flex items-center justify-between";
                     
-                    // 🚀 複数曜日表示見出し（月〜金）と「日付」を大きくサイズアップ
+                    // 複数曜日表示見出し（月〜金）と「日付」を大きくサイズアップ
                     header.innerHTML = [
                         '<div class="flex items-center gap-2">',
                         '    <span class="font-bold text-slate-900 text-xl md:text-2xl">' + dayNames[dayCode].replace('曜日', '') + '</span>',
@@ -978,7 +978,7 @@
 
                 const item = document.createElement('div');
 
-                // 🚀 文字サイズが大きくなったため、カードが詰まらないよう縦幅を余裕を持たせて拡張 (170px -> 190px)
+                // 文字サイズが大きくなったため、カードが詰まらないよう縦幅を余裕を持たせて拡張 (170px -> 190px)
                 if (isCompact) {
                     let compactHeight = "h-[190px]";
                     if (period.num === '昼') compactHeight = "h-[75px]";
@@ -1038,8 +1038,8 @@
                 }
 
                 if (isCompact) {
-                    // 🚀 週表示・3日表示時の「授業科目名」を font-black text-lg md:text-xl へサイズアップ
-                    // 🚀 「学級（クラス名）」を font-extrabold text-sm md:text-base px-2.5 py-1 の超視認バッジへ拡張
+                    // 週表示・3日表示時の「授業科目名」を font-black text-lg md:text-xl へサイズアップ
+                    // 「学級（クラス名）」を font-extrabold text-sm md:text-base px-2.5 py-1 の超視認バッジへ拡張
                     item.innerHTML = [
                         '<div class="flex-1 flex flex-col min-w-0 h-full cursor-pointer overflow-hidden" onclick="openClassDetail(\'' + period.id + '\')">',
                         '    <div class="flex items-start gap-2.5 shrink-0">',
@@ -1063,8 +1063,8 @@
                         '</div>'
                     ].join('\n');
                 } else {
-                    // 🚀 日表示（通常表示）時の「授業科目名」を text-2xl md:text-3xl font-black へ極大化
-                    // 🚀 「学級（クラス名）」を bg-emerald-100 px-4 py-1.5 text-lg md:text-xl font-black の際立つバッジへサイズアップ
+                    // 日表示（通常表示）時の「授業科目名」を text-2xl md:text-3xl font-black へ極大化
+                    // 「学級（クラス名）」を bg-emerald-100 px-4 py-1.5 text-lg md:text-xl font-black の際立つバッジへサイズアップ
                     item.innerHTML = [
                         '<div class="flex-1 min-w-0 cursor-pointer" onclick="openClassDetail(\'' + period.id + '\')">',
                         '    <div class="flex items-center gap-4">',
@@ -1191,6 +1191,7 @@
             renderDashboard();
         }
 
+        // 臨時変更リセット
         function resetPeriodChange() {
             if (!activeModalPeriodId) return;
             const currentPeriodKey = 'w' + currentWeek + '-' + activeModalPeriodId;
@@ -1204,6 +1205,7 @@
             renderDashboard();
         }
 
+        // 基本時間割（マスター）設定
         function renderBasicTimetableSettings() {
             const container = document.getElementById('basic-timetable-editor-container');
             container.innerHTML = '';
@@ -1238,6 +1240,7 @@
             });
         }
 
+        // 基本時間割保存
         function saveBasicTimetable() {
             const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
             days.forEach(day => {
