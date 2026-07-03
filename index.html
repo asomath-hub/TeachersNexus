@@ -181,9 +181,10 @@
 
                     <span class="text-slate-300 hidden sm:inline">|</span>
 
+                    <!-- 🚀 日付表示サイズを大幅にUP -->
                     <div class="flex flex-col">
-                        <span class="text-2xl font-black text-slate-900 tracking-tight" id="current-day-label">月曜日</span>
-                        <span class="text-xs md:text-sm font-bold text-slate-500" id="day-date-label">4月6日(月)</span>
+                        <span class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight" id="current-day-label">月曜日</span>
+                        <span class="text-sm md:text-lg font-extrabold text-slate-650 mt-1" id="day-date-label">4月6日(月)</span>
                     </div>
                 </div>
                 
@@ -236,7 +237,8 @@
             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between shrink-0" id="modal-header-container">
                 <div>
                     <span class="text-xs md:text-sm font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-3 py-1.5 rounded-full" id="modal-period">2時間目</span>
-                    <h3 class="font-bold text-slate-900 text-xl mt-2" id="modal-title">1年A組 数学I</h3>
+                    <!-- 🚀 モーダルのタイトル（クラス・科目名）を大きくサイズアップ -->
+                    <h3 class="font-black text-slate-900 text-2xl md:text-3xl mt-3.5" id="modal-title">1年A組 数学I</h3>
                 </div>
                 <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg hover:bg-slate-100 transition-all">
                     <i class="fa-solid fa-xmark text-xl"></i>
@@ -259,11 +261,11 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div>
                             <label class="block text-[11px] md:text-xs font-bold text-slate-500 mb-1">科目名</label>
-                            <input type="text" id="edit-subject" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm">
+                            <input type="text" id="edit-subject" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm font-extrabold">
                         </div>
                         <div>
                             <label class="block text-[11px] md:text-xs font-bold text-slate-500 mb-1">対象クラス</label>
-                            <input type="text" id="edit-class" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm">
+                            <input type="text" id="edit-class" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm font-extrabold">
                         </div>
                     </div>
                     <div>
@@ -854,7 +856,8 @@
                 
                 const header = document.createElement('div');
                 header.className = "flex items-center justify-between mb-5 pb-3 border-b border-slate-100";
-                header.innerHTML = '<span class="font-extrabold text-slate-800 text-xl">' + dayNames[currentDay] + ' の時間割</span><span class="text-sm text-slate-500 font-bold">' + getFormattedDate(currentWeek, currentDay) + '</span>';
+                // 🚀 日表示での「日付」表示を大きく＆太字に強化
+                header.innerHTML = '<span class="font-black text-slate-900 text-2xl">' + dayNames[currentDay] + ' の時間割</span><span class="text-base md:text-lg text-slate-600 font-extrabold">' + getFormattedDate(currentWeek, currentDay) + '</span>';
                 dayCol.appendChild(header);
 
                 const listWrapper = document.createElement('div');
@@ -883,12 +886,13 @@
                     
                     const header = document.createElement('div');
                     header.className = "sticky top-0 bg-white pb-3 mb-2 border-b border-slate-100 z-10 flex items-center justify-between";
+                    // 🚀 複数日表示（3日/週）での曜日見出しと「日付」を大きくサイズアップ
                     header.innerHTML = [
                         '<div class="flex items-center gap-2">',
-                        '    <span class="font-bold text-slate-900 text-base md:text-lg">' + dayNames[dayCode].replace('曜日', '') + '</span>',
+                        '    <span class="font-bold text-slate-900 text-lg md:text-xl">' + dayNames[dayCode].replace('曜日', '') + '</span>',
                         isToday ? '    <span class="bg-emerald-600 text-white text-xs font-bold px-2 py-0.5 rounded shadow-sm">今日</span>' : '',
                         '</div>',
-                        '<span class="text-xs text-slate-400 font-bold">' + getFormattedDate(currentWeek, dayCode).split('(')[0] + '</span>'
+                        '<span class="text-sm md:text-base text-slate-550 font-extrabold">' + getFormattedDate(currentWeek, dayCode).split('(')[0] + '</span>'
                     ].join('\n');
                     dayCol.appendChild(header);
 
@@ -939,10 +943,11 @@
                 const item = document.createElement('div');
 
                 if (isCompact) {
-                    let compactHeight = "h-[170px]";
-                    if (period.num === '昼') compactHeight = "h-[65px]";
-                    if (period.num === '放') compactHeight = "h-[125px]";
-                    item.className = bgClass + " border " + mainAccent + " rounded-xl p-3 flex flex-col justify-between " + compactHeight + " transition-all duration-200 relative group shadow-sm text-left overflow-hidden";
+                    // 🚀 文字サイズが大きくなったため、カードが詰まらないように全体の縦幅を拡張 (170px -> 190px)
+                    let compactHeight = "h-[190px]";
+                    if (period.num === '昼') compactHeight = "h-[75px]";
+                    if (period.num === '放') compactHeight = "h-[145px]";
+                    item.className = bgClass + " border " + mainAccent + " rounded-xl p-3.5 flex flex-col justify-between " + compactHeight + " transition-all duration-200 relative group shadow-sm text-left overflow-hidden";
                 } else {
                     item.className = bgClass + " border " + mainAccent + " rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-5 transition-all duration-200 relative group shadow-sm";
                 }
@@ -970,7 +975,7 @@
                     for (let i = 0; i < details.announcements.length; i++) {
                         const ann = details.announcements[i];
                         if (isCompact) {
-                            items += '<span class="inline-flex items-center gap-1 text-xs bg-white border border-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded shadow-sm max-w-full" title="' + escapeHTML(ann) + '"><i class="fa-solid fa-bullhorn text-[10px] text-emerald-500 shrink-0"></i><span class="truncate max-w-[120px]">' + escapeHTML(ann) + '</span></span>';
+                            items += '<span class="inline-flex items-center gap-1 text-xs bg-white border border-emerald-100 text-emerald-850 font-bold px-2 py-0.5 rounded shadow-sm max-w-full" title="' + escapeHTML(ann) + '"><i class="fa-solid fa-bullhorn text-[10px] text-emerald-500 shrink-0"></i><span class="truncate max-w-[120px]">' + escapeHTML(ann) + '</span></span>';
                         } else {
                             items += '<span class="inline-flex items-center gap-1.5 text-sm bg-white border border-emerald-100 text-emerald-850 font-bold px-3 py-1 rounded-lg"><i class="fa-solid fa-bullhorn text-xs text-emerald-500"></i>' + escapeHTML(ann) + '</span>';
                         }
@@ -997,16 +1002,18 @@
                 }
 
                 if (isCompact) {
+                    // 🚀 週表示・3日表示時の「授業科目名」を font-black text-base md:text-lg へサイズアップ
+                    // 🚀 「学級（クラス名）」を bg-emerald-100/80 px-2 py-0.5 text-xs md:text-sm の際立つバッジへサイズアップ
                     item.innerHTML = [
                         '<div class="flex-1 flex flex-col min-w-0 h-full cursor-pointer overflow-hidden" onclick="openClassDetail(\'' + period.id + '\')">',
-                        '    <div class="flex items-start gap-2 shrink-0">',
-                        '        <span class="text-xs font-black w-6 h-6 flex items-center justify-center shrink-0 rounded ' + badgeClass + '">' + displayedPeriod.num + '</span>',
+                        '    <div class="flex items-start gap-2.5 shrink-0">',
+                        '        <span class="text-sm font-black w-7 h-7 flex items-center justify-center shrink-0 rounded shadow-sm ' + badgeClass + '">' + displayedPeriod.num + '</span>',
                         '        <div class="min-w-0 flex-1">',
-                        '            <div class="flex flex-wrap items-center gap-1">',
-                        '                <h4 class="font-extrabold text-slate-800 text-sm truncate max-w-[130px]">' + escapeHTML(displayedPeriod.subject) + '</h4>',
-                                         displayedPeriod.class ? '            <span class="text-[10px] font-bold text-slate-500 px-1.5 bg-slate-100 rounded truncate shrink-0">' + escapeHTML(displayedPeriod.class) + '</span>' : '',
+                        '            <div class="flex flex-col gap-1">',
+                        '                <h4 class="font-black text-slate-900 text-base md:text-lg leading-snug truncate max-w-[150px]" title="' + escapeHTML(displayedPeriod.subject) + '">' + escapeHTML(displayedPeriod.subject) + '</h4>',
+                                         displayedPeriod.class ? '            <span class="text-xs md:text-sm font-extrabold text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded-md truncate shrink-0 w-max">' + escapeHTML(displayedPeriod.class) + '</span>' : '',
                         '            </div>',
-                        '            <p class="text-[10px] md:text-xs text-slate-400 font-semibold mt-0.5"><i class="fa-solid fa-clock"></i> ' + displayedPeriod.time + '</p>',
+                        '            <p class="text-[10px] md:text-xs text-slate-405 font-semibold mt-1"><i class="fa-solid fa-clock"></i> ' + displayedPeriod.time + '</p>',
                         '        </div>',
                         '    </div>',
                         isChanged ? '    <div class="mt-1 inline-flex items-center gap-1 bg-amber-50 text-amber-800 border border-amber-200 rounded px-1.5 py-0.5 text-[10px] font-black shrink-0 w-max animate-pulse"><i class="fa-solid fa-triangle-exclamation"></i> 授業変更</div>' : '',
@@ -1020,19 +1027,21 @@
                         '</div>'
                     ].join('\n');
                 } else {
+                    // 🚀 日表示（通常表示）時の「授業科目名」を text-xl md:text-2xl font-black へサイズアップ
+                    // 🚀 「学級（クラス名）」を bg-emerald-100/80 px-3 py-1 text-base md:text-lg font-extrabold へサイズアップ
                     item.innerHTML = [
                         '<div class="flex-1 min-w-0 cursor-pointer" onclick="openClassDetail(\'' + period.id + '\')">',
-                        '    <div class="flex items-center gap-3">',
-                        '        <span class="text-base font-black w-12 text-center py-1.5 rounded-lg ' + badgeClass + '">' + displayedPeriod.num + '</span>',
+                        '    <div class="flex items-center gap-4">',
+                        '        <span class="text-lg font-black w-14 text-center py-2.5 rounded-xl shadow-md ' + badgeClass + '">' + displayedPeriod.num + '</span>',
                         '        <div>',
-                        '            <div class="flex items-center gap-2.5">',
-                        '                <h3 class="font-bold text-slate-850 text-lg flex items-center gap-2">',
+                        '            <div class="flex flex-col md:flex-row md:items-center gap-1.5 md:gap-3">',
+                        '                <h3 class="font-black text-slate-900 text-xl md:text-2xl flex items-center gap-2">',
                                              escapeHTML(displayedPeriod.subject),
                                              isChanged ? '            <span class="bg-amber-100 text-amber-800 border border-amber-200 text-xs font-black px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm"><i class="fa-solid fa-triangle-exclamation animate-bounce"></i> 授業変更</span>' : '',
                         '                </h3>',
-                                         displayedPeriod.class ? '            <span class="text-sm font-bold text-slate-500 px-2.5 py-0.5 bg-slate-100 rounded">' + escapeHTML(displayedPeriod.class) + '</span>' : '',
+                                         displayedPeriod.class ? '            <span class="text-base md:text-lg font-extrabold text-emerald-800 bg-emerald-100/80 px-3 py-1 rounded-md shrink-0 w-max">' + escapeHTML(displayedPeriod.class) + '</span>' : '',
                         '            </div>',
-                        '            <p class="text-xs md:text-sm text-slate-400 font-bold mt-1"><i class="fa-solid fa-clock"></i> ' + displayedPeriod.time + '</p>',
+                        '            <p class="text-xs md:text-sm text-slate-400 font-bold mt-1.5"><i class="fa-solid fa-clock"></i> ' + displayedPeriod.time + '</p>',
                         '        </div>',
                         '    </div>',
                              announcementsHTML,
@@ -1183,8 +1192,9 @@
                         '    </select>',
                         '</div>',
                         '<div class="grid grid-cols-2 gap-2">',
-                        '    <input type="text" id="basic-' + period.id + '-subject" value="' + escapeHTML(period.subject) + '" placeholder="科目" class="text-xs md:text-sm border border-slate-200 rounded px-2 py-1.5 w-full font-bold text-slate-800">',
-                        '    <input type="text" id="basic-' + period.id + '-class" value="' + escapeHTML(period.class) + '" placeholder="クラス" class="text-xs md:text-sm border border-slate-200 rounded px-2 py-1.5 w-full font-semibold">',
+                        // 🚀 基本時間割の編集入力欄（科目・学級）もサイズを大きく最適化
+                        '    <input type="text" id="basic-' + period.id + '-subject" value="' + escapeHTML(period.subject) + '" placeholder="科目" class="text-sm md:text-base border border-slate-300 rounded px-2.5 py-2 w-full font-bold text-slate-900 focus:outline-none focus:ring-1 focus:ring-emerald-550">',
+                        '    <input type="text" id="basic-' + period.id + '-class" value="' + escapeHTML(period.class) + '" placeholder="クラス" class="text-sm md:text-base border border-slate-300 rounded px-2.5 py-2 w-full font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-550">',
                         '</div>'
                     ].join('\n');
                     dayCol.appendChild(row);
@@ -1543,6 +1553,7 @@
             }
         }
 
+        // Google API設定ポップアップ
         function openSyncSettings() {
             document.getElementById('settings-modal').classList.remove('hidden');
         }
