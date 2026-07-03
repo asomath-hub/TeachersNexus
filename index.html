@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts Inter & Noto Sans JP -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
     <style>
         body {
             font-family: 'Inter', 'Noto Sans JP', sans-serif;
@@ -87,6 +88,10 @@
                 <i class="fa-solid fa-gears"></i> 基本時間割
             </button>
 
+            <button onclick="resetToDefault()" class="bg-rose-50 hover:bg-rose-105 text-rose-700 border border-rose-200 px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center gap-1.5 transition-all" title="デモデータを初期化">
+                <i class="fa-solid fa-trash-arrow-up"></i> リセット
+            </button>
+
             <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl">
                 <div class="relative flex h-3 w-3">
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -103,12 +108,11 @@
         </div>
     </header>
 
-    <!-- メインコンテンツ領域（iPad横画面を想定した2カラム） -->
+    <!-- メインコンテンツ領域 -->
     <main class="flex-1 flex overflow-hidden bg-slate-50" id="dashboard-view">
 
-        <!-- 左カラム：Google ToDoリスト (未定タスク保管庫) - w-72 -->
+        <!-- 左カラム：Google ToDoリスト (未定タスク保管庫) -->
         <section class="w-72 border-r border-slate-200 bg-white flex flex-col shrink-0">
-            <!-- セクションヘッダー -->
             <div class="p-4 border-b border-slate-100 bg-slate-50/50">
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center gap-2">
@@ -118,21 +122,21 @@
                     <span id="unplanned-count" class="bg-blue-50 text-blue-700 text-sm font-bold px-3 py-1 rounded-full border border-blue-100">0件</span>
                 </div>
                 
-                <!-- 💡 デモ体験ガイド -->
-                <div class="mb-3 p-3.5 bg-gradient-to-r from-emerald-50 to-blue-50 border border-emerald-100 rounded-xl text-xs md:text-sm leading-relaxed">
+                <!-- デモ体験ガイド -->
+                <div class="mb-3 p-3.5 bg-gradient-to-r from-emerald-50 to-blue-50 border border-emerald-100 rounded-xl text-xs leading-relaxed">
                     <p class="font-bold text-slate-900 mb-1">
                         <i class="fa-solid fa-wand-magic-sparkles text-emerald-600 mr-1"></i>デモ操作ガイド
                     </p>
                     <ul class="space-y-1 text-xs text-slate-600 list-disc list-inside">
                         <li>上部の<strong class="text-emerald-700">「CSV出力」</strong>から、時間割やToDo一式を書き出せます。</li>
-                        <li>各週ごとの連絡事項やToDo状況がスプレッドシート対応形式で保存されます。</li>
+                        <li>各コマをタップすると、<strong class="text-emerald-700">「生徒への連絡」</strong>の編集や、他週へのコピー移動が行えます。</li>
                     </ul>
                 </div>
 
                 <!-- 新規タスク追加フォーム -->
                 <form id="new-task-form" onsubmit="handleAddTask(event)" class="flex gap-2">
                     <input type="text" id="new-task-title" required placeholder="新しいタスクを入力..." 
-                           class="flex-1 bg-white border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                           class="flex-1 bg-white border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
                     <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl font-bold text-base transition-all flex items-center justify-center shadow-md shadow-blue-100">
                         <i class="fa-solid fa-plus"></i>
                     </button>
@@ -141,10 +145,10 @@
 
             <!-- リストセレクタ -->
             <div class="px-4 py-3 border-b border-slate-100 flex gap-1 overflow-x-auto shrink-0">
-                <button onclick="filterTasks('all')" id="list-tab-all" class="list-tab shrink-0 px-4 py-1.5 text-xs md:text-sm font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-100">すべて</button>
-                <button onclick="filterTasks('授業準備')" id="list-tab-授業準備" class="list-tab shrink-0 px-4 py-1.5 text-xs md:text-sm font-semibold rounded-full text-slate-600 hover:bg-slate-100">授業準備</button>
-                <button onclick="filterTasks('校務分掌')" id="list-tab-校務分掌" class="list-tab shrink-0 px-4 py-1.5 text-xs md:text-sm font-semibold rounded-full text-slate-600 hover:bg-slate-100">校務分掌</button>
-                <button onclick="filterTasks('その他')" id="list-tab-その他" class="list-tab shrink-0 px-4 py-1.5 text-xs md:text-sm font-semibold rounded-full text-slate-600 hover:bg-slate-100">その他</button>
+                <button onclick="filterTasks('all')" id="list-tab-all" class="list-tab shrink-0 px-4 py-1.5 text-xs font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-100">すべて</button>
+                <button onclick="filterTasks('授業準備')" id="list-tab-授業準備" class="list-tab shrink-0 px-4 py-1.5 text-xs font-semibold rounded-full text-slate-600 hover:bg-slate-100">授業準備</button>
+                <button onclick="filterTasks('校務分掌')" id="list-tab-校務分掌" class="list-tab shrink-0 px-4 py-1.5 text-xs font-semibold rounded-full text-slate-600 hover:bg-slate-100">校務分掌</button>
+                <button onclick="filterTasks('その他')" id="list-tab-その他" class="list-tab shrink-0 px-4 py-1.5 text-xs font-semibold rounded-full text-slate-600 hover:bg-slate-100">その他</button>
             </div>
 
             <!-- タスク一覧 -->
@@ -181,10 +185,10 @@
 
                     <span class="text-slate-300 hidden sm:inline">|</span>
 
-                    <!-- 🚀 日付表示サイズを大幅にUP -->
+                    <!-- 🚀 文字サイズを大幅に極大UP（日付・曜日の最大級アピール） -->
                     <div class="flex flex-col">
-                        <span class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight" id="current-day-label">月曜日</span>
-                        <span class="text-sm md:text-lg font-extrabold text-slate-650 mt-1" id="day-date-label">4月6日(月)</span>
+                        <span class="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight" id="current-day-label">月曜日</span>
+                        <span class="text-sm md:text-xl font-extrabold text-slate-500 mt-1" id="day-date-label">4月6日(月)</span>
                     </div>
                 </div>
                 
@@ -198,7 +202,7 @@
             <!-- 统一時間割：全体縦スクロール領域 -->
             <div class="flex-1 overflow-y-auto overflow-x-auto p-6" id="timetable-scroll-wrapper">
                 <div id="timetable-container" class="w-full">
-                    <!-- JavaScriptで曜日カラムを動的生成（3日・週・日ごとにCSSグリッド調整） -->
+                    <!-- JavaScriptで曜日カラムを動的生成 -->
                 </div>
             </div>
         </section>
@@ -248,7 +252,7 @@
             <!-- モーダルボディ -->
             <div class="p-6 overflow-y-auto space-y-6 flex-1">
                 
-                <!-- 💡 このコマだけの授業変更（臨時変更）エリア -->
+                <!-- このコマだけの授業変更（臨時変更）エリア -->
                 <div class="bg-amber-50/40 border border-amber-100 p-4 rounded-xl space-y-3.5">
                     <div class="flex items-center justify-between">
                         <label class="block text-xs md:text-sm font-extrabold text-amber-800 uppercase tracking-wider flex items-center gap-1.5">
@@ -297,8 +301,8 @@
                     <!-- 連絡事項追加フォーム -->
                     <div class="flex gap-2 mb-3">
                         <input type="text" id="new-announcement-input" placeholder="例: 宿題のワーク回収、小テスト告知..." 
-                               class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all">
-                        <button onclick="addAnnouncement()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm md:text-base transition-all shadow-md shadow-emerald-100">追加</button>
+                               class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all">
+                        <button onclick="addAnnouncement()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-md shadow-emerald-100">追加</button>
                     </div>
 
                     <!-- 連絡事項一覧 -->
@@ -322,7 +326,7 @@
 
             <!-- モーダルフッター -->
             <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end shrink-0">
-                <button onclick="closeModal()" class="bg-slate-900 hover:bg-slate-800 text-white px-6 py-3 rounded-xl font-bold text-sm md:text-base transition-all shadow-md shadow-slate-200">
+                <button onclick="closeModal()" class="bg-slate-900 hover:bg-slate-800 text-white px-6 py-3 rounded-xl font-bold text-sm transition-all shadow-md shadow-slate-200">
                     閉じる
                 </button>
             </div>
@@ -340,16 +344,16 @@
             </div>
             <div class="p-6 space-y-4">
                 <p class="text-xs md:text-sm text-slate-500 leading-relaxed">
-                    個人用のGoogleアカウントを安全に接続するための設定デモ画面です。実際にノーコードツール(Glide等)で構築する際、以下のAPI情報を使用してGoogle ToDoリストとリアルタイム連携させます。
+                    個人用のGoogleアカウントを安全に接続するための設定デモ画面です。実際構築する際、API情報を使用してGoogle ToDoリストとリアルタイム連携させます。
                 </p>
                 <div class="space-y-3">
                     <div>
                         <label class="block text-xs font-bold text-slate-500 mb-1">Google ログインアカウント</label>
-                        <input type="email" id="settings-email" value="teacher.personal@gmail.com" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm md:text-base focus:outline-none">
+                        <input type="email" id="settings-email" value="teacher.personal@gmail.com" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 mb-1">API 同期ステータス</label>
-                        <div class="flex items-center gap-2 p-2.5 bg-emerald-50 rounded-lg border border-emerald-100 text-xs md:text-sm text-emerald-800 font-bold">
+                        <div class="flex items-center gap-2 p-2.5 bg-emerald-50 rounded-lg border border-emerald-100 text-xs text-emerald-800 font-bold">
                             <i class="fa-solid fa-circle-check"></i>
                             APIキー認証成功 (利用制限: 無料枠 50,000回/日)
                         </div>
@@ -357,8 +361,27 @@
                 </div>
             </div>
             <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-2">
-                <button onclick="closeSettingsModal()" class="text-slate-600 hover:bg-slate-100 px-4 py-2 rounded-lg text-xs md:text-sm font-semibold">キャンセル</button>
-                <button onclick="saveSettings()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-xs md:text-sm font-semibold">保存する</button>
+                <button onclick="closeSettingsModal()" class="text-slate-600 hover:bg-slate-100 px-4 py-2 rounded-lg text-xs font-semibold">キャンセル</button>
+                <button onclick="saveSettings()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-xs font-semibold">保存する</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- モーダル：リセット確認 (confirm()の代替・セキュリティ対策) -->
+    <div id="reset-confirm-modal" class="hidden fixed inset-0 bg-slate-950/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl border border-slate-200 animate-in zoom-in duration-200">
+            <div class="text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 text-red-600 mb-4">
+                    <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">デモデータの初期化</h3>
+                <p class="text-xs text-slate-500 mb-6 leading-relaxed">
+                    カレンダー内の時間割の変更、生徒への連絡、タスクの割り当て状況など、すべての変更データをリセットし初期状態に戻します。よろしいですか？
+                </p>
+            </div>
+            <div class="flex justify-end gap-2">
+                <button onclick="closeResetModal()" class="text-xs font-semibold px-4 py-2 hover:bg-slate-100 rounded-xl">キャンセル</button>
+                <button onclick="executeReset()" class="bg-red-600 hover:bg-red-700 text-white font-semibold text-xs px-4 py-2 rounded-xl transition-all shadow-md shadow-red-100">初期化を実行</button>
             </div>
         </div>
     </div>
@@ -420,7 +443,7 @@
         // デフォルトのタスクデータ
         let tasks = [];
 
-        // 45週間分の独立数据（連絡事項など）
+        // 45週間分の独立データ（連絡事項など）
         let weeklyDetails = {};
 
         // 45週間分の授業臨時上書き
@@ -480,7 +503,7 @@
             ]
         };
 
-        // --- デモ用の初期データ定義 ---
+        // デモ用の初期データ定義
         const defaultTasks = [
             { id: 't1', title: '1年A組 数学小テストの印刷', list: '授業準備', completed: false, assignedPeriodId: null },
             { id: 't2', title: '中間試験の作成（〜2/15）', list: '授業準備', completed: false, assignedPeriodId: null },
@@ -524,7 +547,7 @@
             }
         };
 
-        // --- LocalStorageによる自動永続化システム ---
+        // --- LocalStorageによる自動永続化システム (サンドボックスセキュリティ対策付き) ---
         function loadAllData() {
             try {
                 const storedTasks = localStorage.getItem('tn_tasks');
@@ -540,7 +563,7 @@
                     timetableData = JSON.parse(storedTimetableData);
                 }
             } catch (e) {
-                console.error("データの読み込みに失敗しました。初期データを使用します。", e);
+                console.warn("ローカルストレージのアクセスがブロックされました。初期モックデータのみを使用します。", e);
                 tasks = [...defaultTasks];
                 weeklyDetails = { ...defaultWeeklyDetails };
                 temporaryChanges = { ...defaultTemporaryChanges };
@@ -554,18 +577,29 @@
                 localStorage.setItem('tn_temporaryChanges', JSON.stringify(temporaryChanges));
                 localStorage.setItem('tn_timetableData', JSON.stringify(timetableData));
             } catch (e) {
-                console.error("データの自動保存に失敗しました。", e);
+                console.warn("データの保存に失敗しました（ローカルストレージが利用不可能な環境です）。", e);
             }
         }
 
-        // データを初期デモデータにリセットする関数
+        // データを初期デモデータにリセットする関数 (警告画面表示)
         function resetToDefault() {
-            if (confirm("データを最初の初期デモ状態にリセットしますか？ (自分で追加したものは消去されます)")) {
+            document.getElementById('reset-confirm-modal').classList.remove('hidden');
+        }
+
+        function closeResetModal() {
+            document.getElementById('reset-confirm-modal').classList.add('hidden');
+        }
+
+        function executeReset() {
+            try {
                 localStorage.clear();
-                loadAllData();
-                renderDashboard();
-                showToast("データを初期デモ状態にリセットしました。");
+            } catch (e) {
+                console.warn(e);
             }
+            loadAllData();
+            renderDashboard();
+            closeResetModal();
+            showToast("データを初期デモ状態にリセットしました。");
         }
 
         // --- CSV（スプレッドシート用）エクスポートシステム ---
@@ -768,7 +802,7 @@
         function filterTasks(listCategory) {
             selectedFilter = listCategory;
             document.querySelectorAll('.list-tab').forEach(tab => {
-                tab.className = "list-tab shrink-0 px-4 py-1.5 text-xs md:text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-full";
+                tab.className = "list-tab shrink-0 px-4 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-full";
             });
             const activeTab = document.getElementById('list-tab-' + listCategory);
             if (activeTab) {
@@ -792,7 +826,7 @@
                 listContainer.innerHTML = [
                     '<div class="flex flex-col items-center justify-center py-10 text-slate-400 text-center">',
                     '    <i class="fa-solid fa-circle-check text-slate-200 text-5xl mb-3"></i>',
-                    '    <p class="text-sm md:text-base font-bold">すばらしい！未定タスクはありません</p>',
+                    '    <p class="text-sm font-bold">未定タスクはありません</p>',
                     '    <p class="text-xs">新しいタスクを入力するか、すでに割り当てたタスクに取り組みましょう。</p>',
                     '</div>'
                 ].join('\n');
@@ -856,8 +890,9 @@
                 
                 const header = document.createElement('div');
                 header.className = "flex items-center justify-between mb-5 pb-3 border-b border-slate-100";
-                // 🚀 日表示での「日付」表示を大きく＆太字に強化
-                header.innerHTML = '<span class="font-black text-slate-900 text-2xl">' + dayNames[currentDay] + ' の時間割</span><span class="text-base md:text-lg text-slate-600 font-extrabold">' + getFormattedDate(currentWeek, currentDay) + '</span>';
+                
+                // 🚀 日表示での「曜日」と「日付」表示を最大級サイズに強化
+                header.innerHTML = '<span class="font-black text-slate-900 text-3xl">' + dayNames[currentDay] + ' の時間割</span><span class="text-lg md:text-xl text-slate-600 font-extrabold">' + getFormattedDate(currentWeek, currentDay) + '</span>';
                 dayCol.appendChild(header);
 
                 const listWrapper = document.createElement('div');
@@ -886,13 +921,14 @@
                     
                     const header = document.createElement('div');
                     header.className = "sticky top-0 bg-white pb-3 mb-2 border-b border-slate-100 z-10 flex items-center justify-between";
-                    // 🚀 複数日表示（3日/週）での曜日見出しと「日付」を大きくサイズアップ
+                    
+                    // 🚀 複数曜日表示見出し（月〜金）と「日付」を大きくサイズアップ
                     header.innerHTML = [
                         '<div class="flex items-center gap-2">',
-                        '    <span class="font-bold text-slate-900 text-lg md:text-xl">' + dayNames[dayCode].replace('曜日', '') + '</span>',
+                        '    <span class="font-bold text-slate-900 text-xl md:text-2xl">' + dayNames[dayCode].replace('曜日', '') + '</span>',
                         isToday ? '    <span class="bg-emerald-600 text-white text-xs font-bold px-2 py-0.5 rounded shadow-sm">今日</span>' : '',
                         '</div>',
-                        '<span class="text-sm md:text-base text-slate-550 font-extrabold">' + getFormattedDate(currentWeek, dayCode).split('(')[0] + '</span>'
+                        '<span class="text-sm md:text-base text-slate-500 font-extrabold">' + getFormattedDate(currentWeek, dayCode).split('(')[0] + '</span>'
                     ].join('\n');
                     dayCol.appendChild(header);
 
@@ -925,15 +961,15 @@
 
                 if (isClass) {
                     bgClass = "bg-emerald-50/20 border-emerald-100 hover:bg-emerald-50/40 hover:border-emerald-200";
-                    badgeClass = "bg-emerald-600 text-white shadow-sm shadow-emerald-100";
+                    badgeClass = "bg-emerald-600 text-white shadow-sm";
                     mainAccent = "border-l-4 border-l-emerald-500";
                 } else if (isEmpty) {
                     bgClass = "bg-amber-50/10 border-dashed border-amber-200 hover:bg-amber-50/20 hover:border-amber-300";
-                    badgeClass = "bg-amber-100 text-amber-800 border border-amber-200";
+                    badgeClass = "bg-amber-100 text-amber-850 border border-amber-200";
                     mainAccent = "border-l-4 border-l-amber-400";
                 } else if (isAfter) {
                     bgClass = "bg-indigo-50/10 border-indigo-100 hover:bg-indigo-50/20 hover:border-indigo-200";
-                    badgeClass = "bg-indigo-600 text-white shadow-sm shadow-indigo-100";
+                    badgeClass = "bg-indigo-600 text-white shadow-sm";
                     mainAccent = "border-l-4 border-l-indigo-500";
                 }
 
@@ -942,8 +978,8 @@
 
                 const item = document.createElement('div');
 
+                // 🚀 文字サイズが大きくなったため、カードが詰まらないよう縦幅を余裕を持たせて拡張 (170px -> 190px)
                 if (isCompact) {
-                    // 🚀 文字サイズが大きくなったため、カードが詰まらないように全体の縦幅を拡張 (170px -> 190px)
                     let compactHeight = "h-[190px]";
                     if (period.num === '昼') compactHeight = "h-[75px]";
                     if (period.num === '放') compactHeight = "h-[145px]";
@@ -975,9 +1011,9 @@
                     for (let i = 0; i < details.announcements.length; i++) {
                         const ann = details.announcements[i];
                         if (isCompact) {
-                            items += '<span class="inline-flex items-center gap-1 text-xs bg-white border border-emerald-100 text-emerald-850 font-bold px-2 py-0.5 rounded shadow-sm max-w-full" title="' + escapeHTML(ann) + '"><i class="fa-solid fa-bullhorn text-[10px] text-emerald-500 shrink-0"></i><span class="truncate max-w-[120px]">' + escapeHTML(ann) + '</span></span>';
+                            items += '<span class="inline-flex items-center gap-1 text-xs bg-white border border-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded shadow-sm max-w-full" title="' + escapeHTML(ann) + '"><i class="fa-solid fa-bullhorn text-[10px] text-emerald-500 shrink-0"></i><span class="truncate max-w-[120px]">' + escapeHTML(ann) + '</span></span>';
                         } else {
-                            items += '<span class="inline-flex items-center gap-1.5 text-sm bg-white border border-emerald-100 text-emerald-850 font-bold px-3 py-1 rounded-lg"><i class="fa-solid fa-bullhorn text-xs text-emerald-500"></i>' + escapeHTML(ann) + '</span>';
+                            items += '<span class="inline-flex items-center gap-1.5 text-sm bg-white border border-emerald-100 text-emerald-800 font-bold px-3 py-1 rounded-lg"><i class="fa-solid fa-bullhorn text-xs text-emerald-500"></i>' + escapeHTML(ann) + '</span>';
                         }
                     }
                     announcementsHTML = isCompact ? '<div class="flex flex-wrap gap-1">' + items + '</div>' : '<div class="mt-3 flex flex-wrap gap-1.5">' + items + '</div>';
@@ -1002,18 +1038,18 @@
                 }
 
                 if (isCompact) {
-                    // 🚀 週表示・3日表示時の「授業科目名」を font-black text-base md:text-lg へサイズアップ
-                    // 🚀 「学級（クラス名）」を bg-emerald-100/80 px-2 py-0.5 text-xs md:text-sm の際立つバッジへサイズアップ
+                    // 🚀 週表示・3日表示時の「授業科目名」を font-black text-lg md:text-xl へサイズアップ
+                    // 🚀 「学級（クラス名）」を font-extrabold text-sm md:text-base px-2.5 py-1 の超視認バッジへ拡張
                     item.innerHTML = [
                         '<div class="flex-1 flex flex-col min-w-0 h-full cursor-pointer overflow-hidden" onclick="openClassDetail(\'' + period.id + '\')">',
                         '    <div class="flex items-start gap-2.5 shrink-0">',
                         '        <span class="text-sm font-black w-7 h-7 flex items-center justify-center shrink-0 rounded shadow-sm ' + badgeClass + '">' + displayedPeriod.num + '</span>',
                         '        <div class="min-w-0 flex-1">',
-                        '            <div class="flex flex-col gap-1">',
-                        '                <h4 class="font-black text-slate-900 text-base md:text-lg leading-snug truncate max-w-[150px]" title="' + escapeHTML(displayedPeriod.subject) + '">' + escapeHTML(displayedPeriod.subject) + '</h4>',
-                                         displayedPeriod.class ? '            <span class="text-xs md:text-sm font-extrabold text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded-md truncate shrink-0 w-max">' + escapeHTML(displayedPeriod.class) + '</span>' : '',
+                        '            <div class="flex flex-col gap-1.5">',
+                        '                <h4 class="font-black text-slate-900 text-lg md:text-xl leading-snug truncate max-w-[150px]" title="' + escapeHTML(displayedPeriod.subject) + '">' + escapeHTML(displayedPeriod.subject) + '</h4>',
+                                         displayedPeriod.class ? '            <span class="text-xs md:text-sm font-black text-emerald-900 bg-emerald-100 px-2.5 py-1 rounded-md truncate shrink-0 w-max">' + escapeHTML(displayedPeriod.class) + '</span>' : '',
                         '            </div>',
-                        '            <p class="text-[10px] md:text-xs text-slate-405 font-semibold mt-1"><i class="fa-solid fa-clock"></i> ' + displayedPeriod.time + '</p>',
+                        '            <p class="text-[10px] md:text-xs text-slate-400 font-semibold mt-1"><i class="fa-solid fa-clock"></i> ' + displayedPeriod.time + '</p>',
                         '        </div>',
                         '    </div>',
                         isChanged ? '    <div class="mt-1 inline-flex items-center gap-1 bg-amber-50 text-amber-800 border border-amber-200 rounded px-1.5 py-0.5 text-[10px] font-black shrink-0 w-max animate-pulse"><i class="fa-solid fa-triangle-exclamation"></i> 授業変更</div>' : '',
@@ -1027,19 +1063,19 @@
                         '</div>'
                     ].join('\n');
                 } else {
-                    // 🚀 日表示（通常表示）時の「授業科目名」を text-xl md:text-2xl font-black へサイズアップ
-                    // 🚀 「学級（クラス名）」を bg-emerald-100/80 px-3 py-1 text-base md:text-lg font-extrabold へサイズアップ
+                    // 🚀 日表示（通常表示）時の「授業科目名」を text-2xl md:text-3xl font-black へ極大化
+                    // 🚀 「学級（クラス名）」を bg-emerald-100 px-4 py-1.5 text-lg md:text-xl font-black の際立つバッジへサイズアップ
                     item.innerHTML = [
                         '<div class="flex-1 min-w-0 cursor-pointer" onclick="openClassDetail(\'' + period.id + '\')">',
                         '    <div class="flex items-center gap-4">',
                         '        <span class="text-lg font-black w-14 text-center py-2.5 rounded-xl shadow-md ' + badgeClass + '">' + displayedPeriod.num + '</span>',
                         '        <div>',
-                        '            <div class="flex flex-col md:flex-row md:items-center gap-1.5 md:gap-3">',
-                        '                <h3 class="font-black text-slate-900 text-xl md:text-2xl flex items-center gap-2">',
+                        '            <div class="flex flex-col md:flex-row md:items-center gap-2.5 md:gap-4">',
+                        '                <h3 class="font-black text-slate-900 text-2xl md:text-3xl flex items-center gap-2">',
                                              escapeHTML(displayedPeriod.subject),
-                                             isChanged ? '            <span class="bg-amber-100 text-amber-800 border border-amber-200 text-xs font-black px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm"><i class="fa-solid fa-triangle-exclamation animate-bounce"></i> 授業変更</span>' : '',
+                                             isChanged ? '            <span class="bg-amber-100 text-amber-850 border border-amber-200 text-xs font-black px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm"><i class="fa-solid fa-triangle-exclamation animate-bounce"></i> 授業変更</span>' : '',
                         '                </h3>',
-                                         displayedPeriod.class ? '            <span class="text-base md:text-lg font-extrabold text-emerald-800 bg-emerald-100/80 px-3 py-1 rounded-md shrink-0 w-max">' + escapeHTML(displayedPeriod.class) + '</span>' : '',
+                                         displayedPeriod.class ? '            <span class="text-lg md:text-xl font-black text-emerald-900 bg-emerald-100 px-4 py-1.5 rounded-lg shrink-0 w-max">' + escapeHTML(displayedPeriod.class) + '</span>' : '',
                         '            </div>',
                         '            <p class="text-xs md:text-sm text-slate-400 font-bold mt-1.5"><i class="fa-solid fa-clock"></i> ' + displayedPeriod.time + '</p>',
                         '        </div>',
@@ -1192,9 +1228,8 @@
                         '    </select>',
                         '</div>',
                         '<div class="grid grid-cols-2 gap-2">',
-                        // 🚀 基本時間割の編集入力欄（科目・学級）もサイズを大きく最適化
-                        '    <input type="text" id="basic-' + period.id + '-subject" value="' + escapeHTML(period.subject) + '" placeholder="科目" class="text-sm md:text-base border border-slate-300 rounded px-2.5 py-2 w-full font-bold text-slate-900 focus:outline-none focus:ring-1 focus:ring-emerald-550">',
-                        '    <input type="text" id="basic-' + period.id + '-class" value="' + escapeHTML(period.class) + '" placeholder="クラス" class="text-sm md:text-base border border-slate-300 rounded px-2.5 py-2 w-full font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-550">',
+                        '    <input type="text" id="basic-' + period.id + '-subject" value="' + escapeHTML(period.subject) + '" placeholder="科目" class="text-sm border border-slate-300 rounded px-2.5 py-2 w-full font-bold text-slate-900 focus:outline-none focus:ring-1 focus:ring-emerald-500">',
+                        '    <input type="text" id="basic-' + period.id + '-class" value="' + escapeHTML(period.class) + '" placeholder="クラス" class="text-sm border border-slate-300 rounded px-2.5 py-2 w-full font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-500">',
                         '</div>'
                     ].join('\n');
                     dayCol.appendChild(row);
