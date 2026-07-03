@@ -325,7 +325,7 @@
             { id: 't6', title: '保護者面談の日程調整メール', list: 'その他', completed: false, assignedPeriodId: null },
             
             // --- 第1週 にあらかじめ割り当てられているタスク ---
-            { id: 't_w1_1', title: '来週の授業計画の作成', list: '授業準備', completed: false, assignedPeriodId: 'w1-Mon-period-3' }, 
+            { id: 't_w1_1', title: '来週 of 授業計画の作成', list: '授業準備', completed: false, assignedPeriodId: 'w1-Mon-period-3' }, 
             { id: 't_w1_2', title: '週末提出分の宿題ワーク回収・検印', list: '授業準備', completed: false, assignedPeriodId: 'w1-Fri-period-3' },
             { id: 't_w1_3', title: '学年費購入申請書の提出（事務室）', list: '校務分掌', completed: false, assignedPeriodId: 'w1-Wed-period-3' },
             { id: 't_w1_4', title: '部活動の週末遠征承諾書の集計', list: 'その他', completed: false, assignedPeriodId: 'w1-Fri-period-after' },
@@ -352,19 +352,19 @@
             'w1-Fri-period-3': { announcements: ['宿題提出日は来週月曜日と告げる'] },
             'w1-Fri-period-after': { announcements: ['グラウンドの週末部活前美化活動'] },
 
-            // === 第2週 のリアルな連絡事項メモ（1週目から進んだ授業内容） ===
+            // === 第2週 のリアルな連絡事項メモ ===
             'w2-Mon-period-1': { announcements: ['先週回収したノートを返却すること', '小テストの再試対象者に追試日程を伝える'] },
             'w2-Tue-period-2': { announcements: ['ワークP.24までを木曜日までに解いておくよう指示'] },
             'w2-Wed-period-2': { announcements: ['プロジェクター使用のため、授業場所を視聴覚室に変更すると伝える'] },
             'w2-Fri-period-6': { announcements: ['席替えの実施（終礼時）'] },
 
-            // === 第3週 のリアルな連絡事項メモ（さらに進んだ授業内容や行事のメモ） ===
+            // === 第3週 のリアルな連絡事項メモ ===
             'w3-Mon-period-2': { announcements: ['中間テストの範囲を正式発表・範囲用紙を配布'] },
             'w3-Wed-period-1': { announcements: ['コンパスと定規を持参するように前日連絡'] },
             'w3-Thu-period-3': { announcements: ['提出物（ワーク・ノート）の最終締め切り（明日厳守）'] }
         };
 
-        // 基本となる1日の時間割の枠組み構造（不変テンプレート）
+        // 基本となる1日の時間割の枠組み構造
         let timetableData = {
             'Mon': [
                 { id: 'Mon-period-1', num: '1', time: '08:45 - 09:35', type: 'class', subject: '数学I', class: '1年A組', room: '1A教室' },
@@ -666,7 +666,7 @@
                 const currentPeriodKey = `w${currentWeek}-${period.id}`;
                 const assignedTasks = tasks.filter(t => t.assignedPeriodId === currentPeriodKey && !t.completed);
 
-                // 週ごとの詳細詳細データ（連絡事項メモ等）の取得
+                // 週ごとの詳細データの取得
                 const details = weeklyDetails[currentPeriodKey] || { announcements: [] };
 
                 const item = document.createElement('div');
@@ -837,7 +837,7 @@
         }
 
         // --- STREAMING_CHUNK: Processing Task Assignment & Re-scheduling... ---
-        // タスクを特定のコマ（週＋コマ番号）にスケジュール
+        // タスクを特定のコマにスケジュール
         function assignTaskToPeriod(taskId, fullPeriodKey) {
             const task = tasks.find(t => t.id === taskId);
             if (task) {
@@ -859,7 +859,7 @@
             }
         }
 
-        // クイック配置（ワンクリック/ワンタップでカチッとハメ込み）
+        // クイック配置
         function quickAssign(taskId) {
             const dayPeriods = timetableData[currentDay];
             const emptyPeriod = dayPeriods.find(p => p.type === 'empty' || p.type === 'afterschool');
@@ -983,7 +983,7 @@
             };
         }
 
-        // 連絡事項を他の週へ「移動」または「コピー（複製）」するモーダル
+        // 連絡事項を他の週へ「移動」または「コピー」するモーダル
         function openTransferAnnouncementModal(index, annText) {
             let weekOptionsHTML = '';
             for (let w = 1; w <= 45; w++) {
@@ -1060,7 +1060,6 @@
         // 表示用コマ名取得ヘルパー
         function getPeriodDisplayName(fullPeriodKey) {
             const parts = fullPeriodKey.split('-');
-            // w1-Mon-period-1 から情報を分解
             const weekNum = parts[0].replace('w', '');
             const day = parts[1];
             const periodNum = parts[parts.length - 1];
@@ -1141,12 +1140,13 @@
         function closeModal() {
             document.getElementById('class-detail-modal').classList.add('hidden');
             activeModalPeriodId = null;
+        }
+
         // モーダル内の連絡事項の描画
         function renderModalAnnouncements(periodData) {
             const listEl = document.getElementById('modal-announcement-list');
             listEl.innerHTML = '';
 
-            // 引数 periodData が weeklyDetails のオブジェクト（announcements配列を持つ）であるかチェック
             const announcements = periodData.announcements || [];
 
             if (announcements.length === 0) {
@@ -1228,7 +1228,6 @@
                         <span class="font-semibold text-slate-800">${escapeHTML(task.title)}</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <!-- コマ詳細内での移動ショートカット -->
                         <button onclick="openMoveTaskModal(event, '${task.id}')" class="text-[10px] text-blue-600 hover:underline">
                             移動
                         </button>
