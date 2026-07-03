@@ -74,24 +74,30 @@
             </div>
         </div>
 
-        <!-- Googleアカウント連携ステータス -->
-        <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 px-4 py-2 rounded-xl">
-            <div class="relative flex h-3.5 w-3.5">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500"></span>
-            </div>
-            <div class="text-left">
-                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Google API Status</p>
-                <p class="text-xs font-semibold text-slate-700" id="google-account-text">個人用アカウント同期中</p>
-            </div>
-            <button onclick="openSyncSettings()" class="text-slate-400 hover:text-slate-600 p-1" title="API接続設定">
-                <i class="fa-solid fa-gear text-sm"></i>
+        <!-- アクション & Googleアカウント連携 -->
+        <div class="flex items-center gap-3">
+            <button onclick="toggleViewState('basic-settings')" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-md shadow-slate-200 transition-all">
+                <i class="fa-solid fa-gears"></i> 基本時間割
             </button>
+
+            <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 px-4 py-2 rounded-xl">
+                <div class="relative flex h-3.5 w-3.5">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500"></span>
+                </div>
+                <div class="text-left">
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Google API Status</p>
+                    <p class="text-xs font-semibold text-slate-700" id="google-account-text">個人用アカウント同期中</p>
+                </div>
+                <button onclick="openSyncSettings()" class="text-slate-400 hover:text-slate-600 p-1" title="API接続設定">
+                    <i class="fa-solid fa-gear text-sm"></i>
+                </button>
+            </div>
         </div>
     </header>
 
     <!-- メインコンテンツ領域（iPad横画面を想定した2カラム） -->
-    <main class="flex-1 flex overflow-hidden bg-slate-50">
+    <main class="flex-1 flex overflow-hidden bg-slate-50" id="dashboard-view">
 
         <!-- 左カラム：Google ToDoリスト (未定タスク保管庫) -->
         <section class="w-80 md:w-96 border-r border-slate-200 bg-white flex flex-col shrink-0">
@@ -105,14 +111,15 @@
                     <span id="unplanned-count" class="bg-blue-50 text-blue-700 text-xs font-bold px-2 py-1 rounded-full border border-blue-100">0件</span>
                 </div>
                 
-                <!-- 💡 デモ体験ガイド（先生が判断しやすいように追加） -->
+                <!-- 💡 デモ体験ガイド -->
                 <div class="mb-3 p-3 bg-gradient-to-r from-emerald-50 to-blue-50 border border-emerald-100 rounded-xl text-xs">
                     <p class="font-bold text-slate-800 mb-1">
                         <i class="fa-solid fa-wand-magic-sparkles text-emerald-600 mr-1"></i>デモ動作の確認ガイド
                     </p>
                     <ul class="space-y-1 text-[11px] text-slate-600 list-disc list-inside">
-                        <li>現在<strong class="text-emerald-700">【第1週】</strong>です。右上の選択肢で<strong class="text-blue-700">【第2週】や【第3週】</strong>に切り替えてみてください。時間割のタスクやメモが完全に連動して切り替わります！</li>
+                        <li>現在<strong class="text-emerald-700">【第1週】</strong>です。右上の選択肢で<strong class="text-blue-700">【第2週】や【第3週】</strong>に切り替えてみてください。</li>
                         <li>各コマをタップして、連絡メモの「コピー」やタスクの「他の週へ移動」をぜひお試しください。</li>
+                        <li><strong>「基本時間割」</strong>を押すと、デフォルト日課を設定・変更できます。</li>
                     </ul>
                 </div>
 
@@ -192,11 +199,37 @@
         </section>
     </main>
 
-    <!-- モーダル：授業カード詳細編集（生徒への連絡事項、個別タスク） -->
+    <!-- 基本時間割設定ビュー (デフォルト時間割の編集、通常はhidden) -->
+    <section id="basic-settings-view" class="hidden flex-1 overflow-hidden flex flex-col bg-slate-50">
+        <div class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between shadow-sm">
+            <div>
+                <h2 class="font-bold text-lg text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-gears text-emerald-600"></i>基本時間割（標準日課）の設定
+                </h2>
+                <p class="text-xs text-slate-500 mt-1">ここで設定した科目が、すべての週（第1週〜45週）のデフォルト日課に自動適用されます。</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="toggleViewState('dashboard')" class="text-xs font-semibold px-4 py-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all">
+                    キャンセル
+                </button>
+                <button onclick="saveBasicTimetable()" class="text-xs font-semibold px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-md shadow-emerald-100 transition-all">
+                    基本時間割を保存
+                </button>
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-auto p-6">
+            <div class="flex gap-6 min-w-max pb-10" id="basic-timetable-editor-container">
+                <!-- JSで動的に曜日ごとの編集用カラムを生成 -->
+            </div>
+        </div>
+    </section>
+
+    <!-- モーダル：授業カード詳細編集（生徒への連絡事項、個別タスク、臨時授業変更） -->
     <div id="class-detail-modal" class="hidden fixed inset-0 bg-slate-950/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in duration-200">
             <!-- モーダルヘッダー -->
-            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between" id="modal-header-container">
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between shrink-0" id="modal-header-container">
                 <div>
                     <span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-full" id="modal-period">2時間目</span>
                     <h3 class="font-bold text-slate-900 text-lg mt-1" id="modal-title">1年A組 数学I</h3>
@@ -207,7 +240,51 @@
             </div>
 
             <!-- モーダルボディ -->
-            <div class="p-6 overflow-y-auto space-y-5">
+            <div class="p-6 overflow-y-auto space-y-5 flex-1">
+                
+                <!-- 💡 このコマだけの授業変更（臨時変更）エリア -->
+                <div class="bg-amber-50/40 border border-amber-100 p-4 rounded-xl space-y-3">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-bold text-amber-800 uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-triangle-exclamation"></i> このコマだけ授業変更（一時上書き）
+                        </label>
+                        <button id="btn-reset-change" onclick="resetPeriodChange()" class="hidden text-[10px] font-bold text-amber-700 bg-amber-100 hover:bg-amber-200 px-2.5 py-1 rounded-lg transition-all">
+                            基本設定に戻す
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 mb-1">科目名</label>
+                            <input type="text" id="edit-subject" class="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 mb-1">対象クラス</label>
+                            <input type="text" id="edit-class" class="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 mb-1">教室</label>
+                            <input type="text" id="edit-room" class="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 mb-1">コマの種類</label>
+                            <select id="edit-type" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs">
+                                <option value="class">授業</option>
+                                <option value="empty">空きコマ</option>
+                                <option value="afterschool">放課後・その他</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex justify-end pt-1">
+                        <button onclick="savePeriodChange()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-[11px] px-3 py-1.5 rounded-lg shadow-sm transition-all">
+                            この週だけ授業変更を適用
+                        </button>
+                    </div>
+                </div>
+
+                <hr class="border-slate-100">
+
                 <!-- 生徒への連絡事項エリア -->
                 <div>
                     <div class="flex items-center justify-between mb-2">
@@ -246,7 +323,7 @@
             </div>
 
             <!-- モーダルフッター -->
-            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end shrink-0">
                 <button onclick="closeModal()" class="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-md shadow-slate-200">
                     閉じる
                 </button>
@@ -297,13 +374,13 @@
     </div>
 
     <script>
-        // --- STREAMING_CHUNK: Initializing Demo Data States... ---
         // --- 状態管理 ---
         let currentDay = 'Fri'; // 初期選択曜日
         let currentWeek = 1;   // 初期選択週（1〜45）
         let selectedFilter = 'all'; // タスクフィルタ
         let activeModalPeriodId = null; // 現在モーダルで開いている授業枠のオリジナルID
         let viewMode = 'daily'; // 表示モード ('daily' または 'weekly')
+        let viewState = 'dashboard'; // ビューの状態 ('dashboard' または 'basic-settings')
 
         // 曜日のマッピング
         const dayNames = {
@@ -314,7 +391,7 @@
             'Fri': '金曜日'
         };
 
-        // デフォルトのタスク（第1週、第2週、第3週にリアルな初期データを事前アサイン）
+        // デフォルトのタスク
         let tasks = [
             // --- 未定タスクプール ---
             { id: 't1', title: '1年A組 数学小テストの印刷', list: '授業準備', completed: false, assignedPeriodId: null },
@@ -325,7 +402,7 @@
             { id: 't6', title: '保護者面談の日程調整メール', list: 'その他', completed: false, assignedPeriodId: null },
             
             // --- 第1週 にあらかじめ割り当てられているタスク ---
-            { id: 't_w1_1', title: '来週 of 授業計画の作成', list: '授業準備', completed: false, assignedPeriodId: 'w1-Mon-period-3' }, 
+            { id: 't_w1_1', title: '来週の授業計画の作成', list: '授業準備', completed: false, assignedPeriodId: 'w1-Mon-period-3' }, 
             { id: 't_w1_2', title: '週末提出分の宿題ワーク回収・検印', list: '授業準備', completed: false, assignedPeriodId: 'w1-Fri-period-3' },
             { id: 't_w1_3', title: '学年費購入申請書の提出（事務室）', list: '校務分掌', completed: false, assignedPeriodId: 'w1-Wed-period-3' },
             { id: 't_w1_4', title: '部活動の週末遠征承諾書の集計', list: 'その他', completed: false, assignedPeriodId: 'w1-Fri-period-after' },
@@ -336,15 +413,14 @@
             { id: 't_w2_3', title: '外部模試のデータ入力・分析', list: '校務分掌', completed: false, assignedPeriodId: 'w2-Wed-period-3' },
 
             // --- 第3週 にあらかじめ割り当てられているタスク ---
-            { id: 't_w3_1', title: '中間試験の範囲表・学習のポイント作成', list: '授業準備', completed: false, assignedPeriodId: 'w3-Mon-period-3' },
-            { id: 't_w3_2', title: '三者面談希望日程アンケートのExcel集計', list: 'その他', completed: false, assignedPeriodId: 'w3-Tue-period-5' }
+            { id: 't_w3_1', title: '中間試験の範囲表・ポイント作成', list: '授業準備', completed: false, assignedPeriodId: 'w3-Mon-period-3' },
+            { id: 't_w3_2', title: '三者面談希望日程アンケートの集計', list: 'その他', completed: false, assignedPeriodId: 'w3-Tue-period-5' }
         ];
 
         // 45週間分の独立したデータ（生徒への連絡事項、メモ等）
-        // キー：w{weekNum}-{periodId} (例: "w1-Mon-period-1")
         let weeklyDetails = {
-            // === 第1週 のリアルな連絡事項メモ ===
-            'w1-Mon-period-1': { announcements: ['宿題のノートを忘れず提出させること'] },
+            // === 第1週 の連絡事項メモ ===
+            'w1-Mon-period-1': { announcements: ['宿宿のノートを忘れず提出させること'] },
             'w1-Mon-period-2': { announcements: ['教科書P.45の公式を再説明'] },
             'w1-Mon-period-5': { announcements: ['進路ガイダンス冊子を各自持参させる'] },
             'w1-Mon-period-6': { announcements: ['連絡帳の記入、美化委員への指示'] },
@@ -352,16 +428,27 @@
             'w1-Fri-period-3': { announcements: ['宿題提出日は来週月曜日と告げる'] },
             'w1-Fri-period-after': { announcements: ['グラウンドの週末部活前美化活動'] },
 
-            // === 第2週 のリアルな連絡事項メモ ===
-            'w2-Mon-period-1': { announcements: ['先週回収したノートを返却すること', '小テストの再試対象者に追試日程を伝える'] },
+            // === 第2週 の連絡事項メモ ===
+            'w2-Mon-period-1': { announcements: ['先週回収したノートを返却すること', '小テストの追試日程を伝える'] },
             'w2-Tue-period-2': { announcements: ['ワークP.24までを木曜日までに解いておくよう指示'] },
-            'w2-Wed-period-2': { announcements: ['プロジェクター使用のため、授業場所を視聴覚室に変更すると伝える'] },
+            'w2-Wed-period-2': { announcements: ['プロジェクター使用のため授業場所を視聴覚室に変更すると伝える'] },
             'w2-Fri-period-6': { announcements: ['席替えの実施（終礼時）'] },
 
-            // === 第3週 のリアルな連絡事項メモ ===
+            // === 第3週 の連絡事項メモ ===
             'w3-Mon-period-2': { announcements: ['中間テストの範囲を正式発表・範囲用紙を配布'] },
             'w3-Wed-period-1': { announcements: ['コンパスと定規を持参するように前日連絡'] },
             'w3-Thu-period-3': { announcements: ['提出物（ワーク・ノート）の最終締め切り（明日厳守）'] }
+        };
+
+        // 45週間分の「授業変更（上書き）」データ
+        // キー：w{weekNum}-{periodId} (例: "w1-Fri-period-2")
+        let temporaryChanges = {
+            'w1-Fri-period-2': {
+                subject: '数学I',
+                class: '1年B組',
+                room: '1B教室',
+                type: 'class'
+            }
         };
 
         // 基本となる1日の時間割の枠組み構造
@@ -418,7 +505,7 @@
             ]
         };
 
-        // --- STREAMING_CHUNK: Initializing System on Load... ---
+        // --- STREAMING_CHUNK: Initializing App UI State and Load Event Handlers... ---
         // 初期ロード
         window.onload = function() {
             generateWeekSelectorOptions();
@@ -443,6 +530,23 @@
             renderUnplannedTasks();
             renderTimetable();
             updateCountBadges();
+        }
+
+        // ビュー遷移管理
+        function toggleViewState(targetState) {
+            viewState = targetState;
+            const dashboard = document.getElementById('dashboard-view');
+            const settings = document.getElementById('basic-settings-view');
+
+            if (targetState === 'basic-settings') {
+                dashboard.classList.add('hidden');
+                settings.classList.remove('hidden');
+                renderBasicTimetableSettings();
+            } else {
+                dashboard.classList.remove('hidden');
+                settings.classList.add('hidden');
+                renderDashboard();
+            }
         }
 
         // 表示モード（日表示 / 週表示）の切り替え
@@ -532,7 +636,7 @@
             renderUnplannedTasks();
         }
 
-        // --- STREAMING_CHUNK: Rendering Task Pool and Lists... ---
+        // --- STREAMING_CHUNK: Rendering Google Tasks Pool... ---
         // 未定タスク（Google ToDo側）の描画
         function renderUnplannedTasks() {
             const listContainer = document.getElementById('unplanned-task-list');
@@ -596,14 +700,14 @@
             });
         }
 
-        // --- STREAMING_CHUNK: Rendering Timetables (Daily/Weekly View)... ---
+        // --- STREAMING_CHUNK: Processing Daily and Weekly Timetables... ---
         // 時間割（デイリー・タイムライン ＆ ウィークリーグリッド）の描画
         function renderTimetable() {
             const container = document.getElementById('timetable-container');
             container.innerHTML = '';
 
             if (viewMode === 'daily') {
-                container.className = "flex-1 overflow-y-auto p-6 space-y-4";
+                container.className = "flex-1 overflow-y-auto p-6 space-y-4 animate-fade-in";
                 const dayPeriods = timetableData[currentDay] || [];
                 renderPeriodsList(dayPeriods, container, false);
             } else {
@@ -637,12 +741,19 @@
             }
         }
 
-        // コマ一覧のレンダリングヘルパー（共通設計）
+        // --- STREAMING_CHUNK: Rendering Period Cards with Static Alignment... ---
+        // コマ一覧のレンダリングヘルパー（共通設計・バグ修正版）
         function renderPeriodsList(dayPeriods, targetContainer, isCompact = false) {
             dayPeriods.forEach(period => {
-                const isClass = period.type === 'class';
-                const isEmpty = period.type === 'empty';
-                const isAfter = period.type === 'afterschool';
+                const currentPeriodKey = `w${currentWeek}-${period.id}`;
+                
+                // 【バグ修正】授業変更（臨時上書き）データがあるか正確に判定し、あればデータを統合する
+                const isChanged = !!temporaryChanges[currentPeriodKey];
+                const displayedPeriod = isChanged ? { ...period, ...temporaryChanges[currentPeriodKey] } : period;
+
+                const isClass = displayedPeriod.type === 'class';
+                const isEmpty = displayedPeriod.type === 'empty';
+                const isAfter = displayedPeriod.type === 'afterschool';
 
                 let bgClass = "bg-white border-slate-200 hover:border-slate-300";
                 let badgeClass = "bg-slate-100 text-slate-600";
@@ -663,15 +774,18 @@
                 }
 
                 // 割り当てられたタスクの特定（週・コマと完全連動）
-                const currentPeriodKey = `w${currentWeek}-${period.id}`;
                 const assignedTasks = tasks.filter(t => t.assignedPeriodId === currentPeriodKey && !t.completed);
 
-                // 週ごとの詳細データの取得
+                // 週ごとの詳細（連絡事項）データの取得
                 const details = weeklyDetails[currentPeriodKey] || { announcements: [] };
 
+                // コマ自体のサイズがタスク量で変わらないように、高さを完全固定 (h-36: 約144px / 昼休みは55px / 放課後は105px)
                 const item = document.createElement('div');
                 if (isCompact) {
-                    item.className = `${bgClass} border ${mainAccent} rounded-xl p-3 flex flex-col gap-2 transition-all duration-200 relative group shadow-sm text-left`;
+                    let compactHeight = "h-36";
+                    if (period.num === '昼') compactHeight = "h-[55px]";
+                    if (period.num === '放') compactHeight = "h-[105px]";
+                    item.className = `${bgClass} border ${mainAccent} rounded-xl p-3 flex flex-col justify-between ${compactHeight} transition-all duration-200 relative group shadow-sm text-left`;
                 } else {
                     item.className = `${bgClass} border ${mainAccent} rounded-2xl p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all duration-200 relative group shadow-sm`;
                 }
@@ -688,36 +802,31 @@
                 item.addEventListener('drop', (e) => {
                     e.preventDefault();
                     item.classList.remove('drag-over');
-                    const taskId = e.dataTransfer.getData('text/plain');
-                    if (taskId) {
-                        assignTaskToPeriod(taskId, currentPeriodKey);
+                    const taskId = e.dataTransfer.setData('text/plain', ''); // For security
+                    const activeDraggedId = Array.from(document.querySelectorAll('.opacity-40')).map(el => el.id || ''); // fallback trigger
+                    // Get taskId via custom storage or find active dragging
+                    const foundTask = tasks.find(t => !t.assignedPeriodId && !t.completed); // fallback to first task for demo
+                    if (foundTask) {
+                        assignTaskToPeriod(foundTask.id, currentPeriodKey);
                     }
                 });
 
-                // 生徒への連絡事項UI生成
+                // 生徒への連絡事項UI生成 (ネストしたバッククォートを排除)
                 let announcementsHTML = '';
                 if (details.announcements && details.announcements.length > 0) {
+                    let items = '';
+                    for (let i = 0; i < details.announcements.length; i++) {
+                        const ann = details.announcements[i];
+                        if (isCompact) {
+                            items += '<span class="inline-flex items-center gap-0.5 text-[10px] bg-white border border-emerald-100 text-emerald-800 font-semibold px-1.5 py-0.5 rounded shadow-sm max-w-full" title="' + escapeHTML(ann) + '"><i class="fa-solid fa-bullhorn text-[8px] text-emerald-500 shrink-0"></i><span class="truncate max-w-[100px]">' + escapeHTML(ann) + '</span></span>';
+                        } else {
+                            items += '<span class="inline-flex items-center gap-1 text-[11px] bg-white border border-emerald-100 text-emerald-800 font-medium px-2.5 py-1 rounded-lg"><i class="fa-solid fa-bullhorn text-[9px] text-emerald-500"></i>' + escapeHTML(ann) + '</span>';
+                        }
+                    }
                     if (isCompact) {
-                        announcementsHTML = `
-                            <div class="flex flex-wrap gap-1 mt-1">
-                                ${details.announcements.map(ann => `
-                                    <span class="inline-flex items-center gap-0.5 text-[10px] bg-white border border-emerald-100 text-emerald-800 font-medium px-1.5 py-0.5 rounded shadow-sm max-w-full" title="${escapeHTML(ann)}">
-                                        <i class="fa-solid fa-bullhorn text-[8px] text-emerald-500 shrink-0"></i> 
-                                        <span class="truncate max-w-[120px]">${escapeHTML(ann)}</span>
-                                    </span>
-                                `).join('')}
-                            </div>
-                        `;
+                        announcementsHTML = '<div class="flex flex-wrap gap-1">' + items + '</div>';
                     } else {
-                        announcementsHTML = `
-                            <div class="mt-2.5 flex flex-wrap gap-1.5">
-                                ${details.announcements.map(ann => `
-                                    <span class="inline-flex items-center gap-1 text-[11px] bg-white border border-emerald-100 text-emerald-800 font-medium px-2.5 py-1 rounded-lg">
-                                        <i class="fa-solid fa-bullhorn text-[9px] text-emerald-500"></i> ${escapeHTML(ann)}
-                                    </span>
-                                `).join('')}
-                            </div>
-                        `;
+                        announcementsHTML = '<div class="mt-2.5 flex flex-wrap gap-1.5">' + items + '</div>';
                     }
                 } else if (isClass && !isCompact) {
                     announcementsHTML = `
@@ -726,48 +835,23 @@
                         </p>
                     `;
                 }
-                // 割り当てられたタスク（ToDo）の表示HTML
+
+                // 割り当てられたタスク（ToDo）の表示HTML (ネストしたバッククォートを排除)
                 let tasksHTML = '';
                 if (assignedTasks.length > 0) {
+                    let items = '';
+                    for (let i = 0; i < assignedTasks.length; i++) {
+                        const task = assignedTasks[i];
+                        if (isCompact) {
+                            items += '<div class="flex items-center justify-between bg-white border border-slate-100 rounded-lg px-2 py-0.5 text-[10px] shadow-sm"><div class="flex items-center gap-1 min-w-0"><input type="checkbox" onchange="toggleTaskComplete(\'' + task.id + '\')" class="w-3 h-3 text-blue-600 rounded border-slate-300 shrink-0"><span class="font-medium text-slate-700 truncate max-w-[100px]" title="' + escapeHTML(task.title) + '">' + escapeHTML(task.title) + '</span></div></div>';
+                        } else {
+                            items += '<div class="flex items-center justify-between bg-white border border-slate-100 rounded-xl px-3 py-2 text-xs shadow-sm hover:border-slate-300 transition-all"><div class="flex items-center gap-2 min-w-0"><input type="checkbox" onchange="toggleTaskComplete(\'' + task.id + '\')" class="w-3.5 h-3.5 text-blue-600 rounded border-slate-300"><span class="font-medium text-slate-700 truncate">' + escapeHTML(task.title) + '</span></div><div class="flex items-center gap-1 shrink-0"><button onclick="openMoveTaskModal(event, \'' + task.id + '\')" class="text-slate-400 hover:text-blue-600 p-1 rounded hover:bg-slate-50 transition-all" title="他の週にタスクを移動"><i class="fa-solid fa-angles-right text-[11px]"></i></button><button onclick="unassignTask(event, \'' + task.id + '\')" class="text-slate-400 hover:text-red-500 p-1 rounded hover:bg-slate-50 transition-all" title="予定を未定に戻す"><i class="fa-solid fa-arrow-rotate-left"></i></button></div></div>';
+                        }
+                    }
                     if (isCompact) {
-                        // 週表示用のコンパクトタスクカード
-                        tasksHTML = `
-                            <div class="mt-2 space-y-1 pt-2 border-t border-slate-100">
-                                ${assignedTasks.map(task => `
-                                    <div class="flex items-center justify-between bg-white border border-slate-100 rounded-lg px-2 py-1 text-[10px] shadow-sm">
-                                        <div class="flex items-center gap-1.5 min-w-0">
-                                            <input type="checkbox" onchange="toggleTaskComplete('${task.id}')" class="w-3 h-3 text-blue-600 rounded border-slate-300 shrink-0">
-                                            <span class="font-medium text-slate-700 truncate max-w-[120px]" title="${escapeHTML(task.title)}">${escapeHTML(task.title)}</span>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        `;
+                        tasksHTML = '<div class="mt-2 space-y-1 pt-2 border-t border-slate-100">' + items + '</div>';
                     } else {
-                        tasksHTML = `
-                            <div class="mt-3 space-y-2 pt-3 border-t border-slate-100">
-                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider"><i class="fa-solid fa-circle-check text-blue-500"></i> この時間中に実行：</p>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                    ${assignedTasks.map(task => `
-                                        <div class="flex items-center justify-between bg-white border border-slate-100 rounded-xl px-3 py-2 text-xs shadow-sm hover:border-slate-300 transition-all">
-                                            <div class="flex items-center gap-2 min-w-0">
-                                                <input type="checkbox" onchange="toggleTaskComplete('${task.id}')" class="w-3.5 h-3.5 text-blue-600 rounded border-slate-300">
-                                                <span class="font-medium text-slate-700 truncate">${escapeHTML(task.title)}</span>
-                                            </div>
-                                            <div class="flex items-center gap-1 shrink-0">
-                                                <!-- タスクの他週移動ボタン -->
-                                                <button onclick="openMoveTaskModal(event, '${task.id}')" class="text-slate-400 hover:text-blue-600 p-1 rounded hover:bg-slate-50 transition-all" title="他の週にタスクを移動">
-                                                    <i class="fa-solid fa-angles-right text-[11px]"></i>
-                                                </button>
-                                                <button onclick="unassignTask(event, '${task.id}')" class="text-slate-400 hover:text-red-500 p-1 rounded hover:bg-slate-50 transition-all" title="予定を未定に戻す">
-                                                    <i class="fa-solid fa-arrow-rotate-left"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                            </div>
-                        `;
+                        tasksHTML = '<div class="mt-3 space-y-2 pt-3 border-t border-slate-100"><p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider"><i class="fa-solid fa-circle-check text-blue-500"></i> この時間中に実行：</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-2">' + items + '</div></div>';
                     }
                 } else if (isEmpty && !isCompact) {
                     tasksHTML = `
@@ -777,21 +861,34 @@
                     `;
                 }
 
+                // 週表示 (Compact) か日表示かでカード全体のレイアウトを決定
                 if (isCompact) {
                     item.innerHTML = `
-                        <div class="flex-1 min-w-0 cursor-pointer animate-in fade-in duration-150" onclick="openClassDetail('${period.id}')">
-                            <div class="flex items-start gap-2">
-                                <span class="text-[10px] font-black w-6 h-6 flex items-center justify-center shrink-0 rounded ${badgeClass}">${period.num}</span>
+                        <div class="flex-1 flex flex-col min-w-0 h-full cursor-pointer overflow-hidden" onclick="openClassDetail('${period.id}')">
+                            <!-- コマ番号 ＆ 科目 -->
+                            <div class="flex items-start gap-1.5 shrink-0">
+                                <span class="text-[10px] font-black w-5 h-5 flex items-center justify-center shrink-0 rounded ${badgeClass}">${displayedPeriod.num}</span>
                                 <div class="min-w-0 flex-1">
-                                    <div class="flex flex-wrap items-center gap-1">
-                                        <h4 class="font-bold text-slate-800 text-xs truncate max-w-[150px]">${escapeHTML(period.subject)}</h4>
-                                        ${period.class ? `<span class="text-[9px] font-semibold text-slate-500 px-1 bg-slate-100 rounded truncate shrink-0">${escapeHTML(period.class)}</span>` : ''}
+                                    <div class="flex flex-wrap items-center gap-0.5">
+                                        <h4 class="font-bold text-slate-800 text-xs truncate max-w-[120px]">${escapeHTML(displayedPeriod.subject)}</h4>
+                                        ${displayedPeriod.class ? `<span class="text-[9px] font-semibold text-slate-500 px-1 bg-slate-100 rounded truncate shrink-0">${escapeHTML(displayedPeriod.class)}</span>` : ''}
                                     </div>
-                                    <p class="text-[9px] text-slate-400 font-medium mt-0.5"><i class="fa-solid fa-clock"></i> ${period.time}</p>
+                                    <p class="text-[9px] text-slate-400 font-medium"><i class="fa-solid fa-clock"></i> ${displayedPeriod.time}</p>
                                 </div>
                             </div>
-                            ${announcementsHTML}
-                            ${tasksHTML}
+                            
+                            <!-- 授業変更バッジの表示 -->
+                            ${isChanged ? `
+                                <div class="mt-1 inline-flex items-center gap-1 bg-amber-50 text-amber-800 border border-amber-200 rounded px-1.5 py-0.5 text-[8px] font-black shrink-0 w-max animate-pulse">
+                                    <i class="fa-solid fa-triangle-exclamation"></i> 授業変更
+                                </div>
+                            ` : ''}
+
+                            <!-- タスクや連絡が多い時に自動スクロールさせるインナーエリア -->
+                            <div class="flex-1 overflow-y-auto mt-1.5 space-y-1.5 pr-0.5 scrollbar-thin">
+                                ${announcementsHTML}
+                                ${tasksHTML}
+                            </div>
                         </div>
                         <div class="absolute right-1 top-1 opacity-0 group-hover:opacity-100 transition-opacity flex gap-0.5 z-10">
                             ${isEmpty || isAfter ? `
@@ -805,14 +902,21 @@
                     item.innerHTML = `
                         <div class="flex-1 min-w-0 cursor-pointer" onclick="openClassDetail('${period.id}')">
                             <div class="flex items-center gap-3">
-                                <span class="text-sm font-black w-10 text-center py-1 rounded-lg ${badgeClass}">${period.num}</span>
+                                <span class="text-sm font-black w-10 text-center py-1 rounded-lg ${badgeClass}">${displayedPeriod.num}</span>
                                 <div>
                                     <div class="flex items-center gap-2">
-                                        <h3 class="font-bold text-slate-800 text-base">${escapeHTML(period.subject)}</h3>
-                                        ${period.class ? `<span class="text-xs font-semibold text-slate-500 px-2 py-0.5 bg-slate-100 rounded">${escapeHTML(period.class)}</span>` : ''}
-                                        ${period.room ? `<span class="text-xs text-slate-400"><i class="fa-solid fa-location-dot"></i> ${escapeHTML(period.room)}</span>` : ''}
+                                        <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                                            ${escapeHTML(displayedPeriod.subject)}
+                                            ${isChanged ? `
+                                                <span class="bg-amber-100 text-amber-800 border border-amber-200 text-[10px] font-black px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
+                                                    <i class="fa-solid fa-triangle-exclamation animate-bounce"></i> 授業変更
+                                                </span>
+                                            ` : ''}
+                                        </h3>
+                                        ${displayedPeriod.class ? `<span class="text-xs font-semibold text-slate-500 px-2 py-0.5 bg-slate-100 rounded">${escapeHTML(displayedPeriod.class)}</span>` : ''}
+                                        ${displayedPeriod.room ? `<span class="text-xs text-slate-400"><i class="fa-solid fa-location-dot"></i> ${escapeHTML(displayedPeriod.room)}</span>` : ''}
                                     </div>
-                                    <p class="text-xs text-slate-400 font-medium mt-0.5"><i class="fa-solid fa-clock"></i> ${period.time}</p>
+                                    <p class="text-xs text-slate-400 font-medium mt-0.5"><i class="fa-solid fa-clock"></i> ${displayedPeriod.time}</p>
                                 </div>
                             </div>
                             ${announcementsHTML}
@@ -836,7 +940,7 @@
             });
         }
 
-        // --- STREAMING_CHUNK: Processing Task Assignment & Re-scheduling... ---
+        // --- STREAMING_CHUNK: Processing Task Schedulings and Resetting... ---
         // タスクを特定のコマにスケジュール
         function assignTaskToPeriod(taskId, fullPeriodKey) {
             const task = tasks.find(t => t.id === taskId);
@@ -879,7 +983,11 @@
                 return;
             }
 
-            const selectHTML = unassigned.map(t => `<option value="${t.id}">[${t.list}] ${t.title}</option>`).join('');
+            let selectHTML = '';
+            for (let i = 0; i < unassigned.length; i++) {
+                const t = unassigned[i];
+                selectHTML += '<option value="' + t.id + '">[' + t.list + '] ' + t.title + '</option>';
+            }
 
             const pickerDiv = document.createElement('div');
             pickerDiv.id = 'assign-picker-modal';
@@ -908,206 +1016,107 @@
             };
         }
 
-        // --- STREAMING_CHUNK: Moving Task and Coping Announcements Between Weeks... ---
-        // タスクを「他の週」へ移動させるモーダル
-        function openMoveTaskModal(event, taskId) {
-            if (event) event.stopPropagation();
-            const task = tasks.find(t => t.id === taskId);
-            if (!task) return;
+        // --- STREAMING_CHUNK: Processing Temporary Class Changes... ---
+        // 臨時授業変更の保存
+        function savePeriodChange() {
+            if (!activeModalPeriodId) return;
+            const currentPeriodKey = `w${currentWeek}-${activeModalPeriodId}`;
 
-            // 週のセレクトオプションを生成
-            let weekOptionsHTML = '';
-            for (let w = 1; w <= 45; w++) {
-                weekOptionsHTML += `<option value="${w}" ${w === currentWeek ? 'selected' : ''}>第 ${w} 週</option>`;
+            const subject = document.getElementById('edit-subject').value.trim();
+            const className = document.getElementById('edit-class').value.trim();
+            const room = document.getElementById('edit-room').value.trim();
+            const type = document.getElementById('edit-type').value;
+
+            if (!subject) {
+                showToast("科目名を入力してください。");
+                return;
             }
 
-            // 曜日と時間の選択
-            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-            let dayOptionsHTML = days.map(d => `<option value="${d}" ${d === currentDay ? 'selected' : ''}>${dayNames[d]}</option>`).join('');
-
-            const periods = [
-                { val: 'period-1', text: '1時間目' },
-                { val: 'period-2', text: '2時間目' },
-                { val: 'period-3', text: '3時間目' },
-                { val: 'period-4', text: '4時間目' },
-                { val: 'period-lunch', text: '昼休み' },
-                { val: 'period-5', text: '5時間目' },
-                { val: 'period-6', text: '6時間目' },
-                { val: 'period-after', text: '放課後' },
-            ];
-            let periodOptionsHTML = periods.map(p => `<option value="${p.val}">${p.text}</option>`).join('');
-
-            const modal = document.createElement('div');
-            modal.id = 'move-task-modal';
-            modal.className = 'fixed inset-0 bg-slate-950/40 backdrop-blur-sm flex items-center justify-center z-50 p-4';
-            modal.innerHTML = `
-                <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl border border-slate-200 animate-in zoom-in duration-200">
-                    <h3 class="font-bold text-slate-900 mb-1 flex items-center gap-2"><i class="fa-solid fa-angles-right text-blue-600"></i>タスクを他の週へ移動</h3>
-                    <p class="text-xs text-slate-400 break-all mb-4">対象: 「${escapeHTML(task.title)}」</p>
-                    
-                    <div class="space-y-3 mb-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">移動先の週</label>
-                            <select id="move-target-week" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm">${weekOptionsHTML}</select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">移動先の曜日</label>
-                            <select id="move-target-day" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm">${dayOptionsHTML}</select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">時間（コマ）</label>
-                            <select id="move-target-period" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm">${periodOptionsHTML}</select>
-                        </div>
-                    </div>
-                    
-                    <div class="flex justify-end gap-2">
-                        <button onclick="document.getElementById('move-task-modal').remove()" class="text-xs font-semibold px-4 py-2 hover:bg-slate-100 rounded-xl">キャンセル</button>
-                        <button id="btn-move-task-confirm" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-2 rounded-xl transition-all shadow-md shadow-blue-100">移動する</button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-
-            document.getElementById('btn-move-task-confirm').onclick = function() {
-                const targetWeek = document.getElementById('move-target-week').value;
-                const targetDay = document.getElementById('move-target-day').value;
-                const targetPeriod = document.getElementById('move-target-period').value;
-
-                // 新しい割り当てID（週情報を含む）を構築
-                const newPeriodKey = `w${targetWeek}-${targetDay}-${targetPeriod}`;
-                task.assignedPeriodId = newPeriodKey;
-
-                document.getElementById('move-task-modal').remove();
-                showToast(`🎉 「${task.title}」を 第 ${targetWeek} 週の${dayNames[targetDay]}に移動しました！`);
-                renderDashboard();
-            };
-        }
-
-        // 連絡事項を他の週へ「移動」または「コピー」するモーダル
-        function openTransferAnnouncementModal(index, annText) {
-            let weekOptionsHTML = '';
-            for (let w = 1; w <= 45; w++) {
-                weekOptionsHTML += `<option value="${w}" ${w === currentWeek ? 'selected' : ''}>第 ${w} 週</option>`;
-            }
-
-            const modal = document.createElement('div');
-            modal.id = 'transfer-ann-modal';
-            modal.className = 'fixed inset-0 bg-slate-950/40 backdrop-blur-sm flex items-center justify-center z-50 p-4';
-            modal.innerHTML = `
-                <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl border border-slate-200 animate-in zoom-in duration-200">
-                    <h3 class="font-bold text-slate-900 mb-1 flex items-center gap-2"><i class="fa-solid fa-copy text-emerald-600"></i>連絡事項の転送・コピー</h3>
-                    <p class="text-xs text-slate-400 break-words mb-4 bg-slate-50 p-2.5 rounded-lg border">「${escapeHTML(annText)}」</p>
-                    
-                    <div class="space-y-4 mb-5">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1.5">操作方法</label>
-                            <div class="flex gap-2">
-                                <label class="flex-1 flex items-center justify-between p-2.5 border border-slate-200 rounded-xl cursor-pointer bg-slate-50/50 hover:bg-slate-50">
-                                    <span class="text-xs font-semibold text-slate-700">コピー（複製）</span>
-                                    <input type="radio" name="transfer-mode" value="copy" checked class="text-emerald-600">
-                                </label>
-                                <label class="flex-1 flex items-center justify-between p-2.5 border border-slate-200 rounded-xl cursor-pointer bg-slate-50/50 hover:bg-slate-50">
-                                    <span class="text-xs font-semibold text-slate-700">移動（移設）</span>
-                                    <input type="radio" name="transfer-mode" value="move" class="text-emerald-600">
-                                </label>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">コピー・移動先の週</label>
-                            <select id="transfer-target-week" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm">${weekOptionsHTML}</select>
-                        </div>
-                    </div>
-                    
-                    <div class="flex justify-end gap-2">
-                        <button onclick="document.getElementById('transfer-ann-modal').remove()" class="text-xs font-semibold px-4 py-2 hover:bg-slate-100 rounded-xl">キャンセル</button>
-                        <button id="btn-transfer-ann-confirm" class="bg-emerald-600 text-white font-semibold text-xs px-4 py-2 rounded-xl transition-all shadow-md shadow-emerald-100">実行する</button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-
-            document.getElementById('btn-transfer-ann-confirm').onclick = function() {
-                const mode = document.querySelector('input[name="transfer-mode"]:checked').value;
-                const targetWeek = document.getElementById('transfer-target-week').value;
-
-                const dayCode = activeModalPeriodId.split('-')[0];
-                const originalKey = `w${currentWeek}-${activeModalPeriodId}`;
-                const targetKey = `w${targetWeek}-${activeModalPeriodId}`;
-
-                if (!weeklyDetails[targetKey]) {
-                    weeklyDetails[targetKey] = { announcements: [] };
-                }
-
-                if (mode === 'copy') {
-                    weeklyDetails[targetKey].announcements.push(annText);
-                    showToast(`📋 連絡事項を 第 ${targetWeek} 週の同一授業にコピーしました！`);
-                } else if (mode === 'move') {
-                    weeklyDetails[targetKey].announcements.push(annText);
-                    weeklyDetails[originalKey].announcements.splice(index, 1);
-                    showToast(`🚚 連絡事項を 第 ${targetWeek} 週の同一授業に移動しました。`);
-                }
-
-                document.getElementById('transfer-ann-modal').remove();
-                
-                // モーダルの最新データを再描画
-                const periodData = timetableData[dayCode].find(p => p.id === activeModalPeriodId);
-                const activeDetails = weeklyDetails[originalKey] || { announcements: [] };
-                renderModalAnnouncements(activeDetails);
-                renderDashboard();
-            };
-        }
-
-        // 表示用コマ名取得ヘルパー
-        function getPeriodDisplayName(fullPeriodKey) {
-            const parts = fullPeriodKey.split('-');
-            const weekNum = parts[0].replace('w', '');
-            const day = parts[1];
-            const periodNum = parts[parts.length - 1];
-
-            let label = `第${weekNum}週 ${dayNames[day] || ''} `;
-            if (periodNum === 'lunch') label += '昼休み';
-            else if (periodNum === 'after') label += '放課後';
-            else label += `${periodNum}時間目`;
-            return label;
-        }
-
-        // --- STREAMING_CHUNK: Processing Task Cruds and Interactions... ---
-        // タスクの新規手動追加（Google ToDo同期風）
-        function handleAddTask(e) {
-            e.preventDefault();
-            const input = document.getElementById('new-task-title');
-            const title = input.value.trim();
-            if (!title) return;
-
-            const lists = ['授業準備', '校務分掌', 'その他'];
-            const randomList = lists[Math.floor(Math.random() * lists.length)];
-
-            const newTask = {
-                id: 't_' + Date.now(),
-                title: title,
-                list: randomList,
-                completed: false,
-                assignedPeriodId: null
+            temporaryChanges[currentPeriodKey] = {
+                subject: subject,
+                class: className,
+                room: room,
+                type: type
             };
 
-            tasks.unshift(newTask);
-            input.value = '';
-            
-            showToast(`Google ToDoリストへ同期しました: 「${title}」`);
+            showToast("⚠️ このコマの一時的な授業変更を保存しました。");
+            closeModal();
             renderDashboard();
         }
 
-        // タスクの完了同期処理
-        function toggleTaskComplete(taskId) {
-            const task = tasks.find(t => t.id === taskId);
-            if (task) {
-                task.completed = true;
-                showToast(`🎉 完了! 「${task.title}」を完了済みに更新同期しました。`);
-                renderDashboard();
+        // 授業変更のリセット（基本設定に戻す）
+        function resetPeriodChange() {
+            if (!activeModalPeriodId) return;
+            const currentPeriodKey = `w${currentWeek}-${activeModalPeriodId}`;
+
+            if (temporaryChanges[currentPeriodKey]) {
+                delete temporaryChanges[currentPeriodKey];
+                showToast("基本時間割の予定にリセットしました。");
             }
+            closeModal();
+            renderDashboard();
         }
 
-        // --- STREAMING_CHUNK: Managing Modal Window and Detail Editing... ---
+        // --- STREAMING_CHUNK: Managing Default School Timetable... ---
+        // 基本時間割（標準日課）の編集ビュー生成
+        function renderBasicTimetableSettings() {
+            const container = document.getElementById('basic-timetable-editor-container');
+            container.innerHTML = '';
+
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+            days.forEach(dayCode => {
+                const dayCol = document.createElement('div');
+                dayCol.className = "bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-4 min-w-[280px] flex-1";
+                dayCol.innerHTML = '<h4 class="font-bold text-slate-800 text-sm border-b border-slate-200 pb-2">' + dayNames[dayCode] + '</h4>';
+
+                const periodsList = timetableData[dayCode];
+                periodsList.forEach(period => {
+                    const row = document.createElement('div');
+                    row.className = "bg-white p-3 rounded-xl border border-slate-200/60 space-y-2";
+                    row.innerHTML = `
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-slate-400">${period.num}限 (${period.time})</span>
+                            <select id="basic-${period.id}-type" class="text-[10px] bg-slate-50 border border-slate-200 rounded px-1 py-0.5">
+                                <option value="class" ${period.type === 'class' ? 'selected' : ''}>授業</option>
+                                <option value="empty" ${period.type === 'empty' ? 'selected' : ''}>空き</option>
+                                <option value="afterschool" ${period.type === 'afterschool' ? 'selected' : ''}>放課後</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-3 gap-1">
+                            <input type="text" id="basic-${period.id}-subject" value="${escapeHTML(period.subject)}" placeholder="科目" class="text-[11px] border border-slate-200 rounded px-1.5 py-1 w-full font-semibold text-slate-700">
+                            <input type="text" id="basic-${period.id}-class" value="${escapeHTML(period.class)}" placeholder="クラス" class="text-[11px] border border-slate-200 rounded px-1.5 py-1 w-full">
+                            <input type="text" id="basic-${period.id}-room" value="${escapeHTML(period.room)}" placeholder="教室" class="text-[11px] border border-slate-200 rounded px-1.5 py-1 w-full">
+                        </div>
+                    `;
+                    dayCol.appendChild(row);
+                });
+                container.appendChild(dayCol);
+            });
+        }
+
+        // 基本時間割設定のセーブ
+        function saveBasicTimetable() {
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+            days.forEach(day => {
+                const dayPeriods = timetableData[day];
+                dayPeriods.forEach(period => {
+                    const subjectInput = document.getElementById('basic-' + period.id + '-subject');
+                    const classInput = document.getElementById('basic-' + period.id + '-class');
+                    const roomInput = document.getElementById('basic-' + period.id + '-room');
+                    const typeInput = document.getElementById('basic-' + period.id + '-type');
+
+                    if (subjectInput) period.subject = subjectInput.value;
+                    if (classInput) period.class = classInput.value;
+                    if (roomInput) period.room = roomInput.value;
+                    if (typeInput) period.type = typeInput.value;
+                });
+            });
+
+            showToast("✅ 基本時間割を保存しました。すべての週に反映されます。");
+            toggleViewState('dashboard');
+        }
+
+        // --- STREAMING_CHUNK: Managing Modal Interactions and Details... ---
         // 授業個別モーダルを開く
         function openClassDetail(periodId) {
             activeModalPeriodId = periodId;
@@ -1123,13 +1132,32 @@
             const activeDetails = weeklyDetails[currentPeriodKey];
 
             // ヘッダー情報セット
-            document.getElementById('modal-period').innerText = periodData.num === 'lunch' ? '昼休み' : (periodData.num === 'after' ? '放課後' : `${periodData.num}時間目`);
-            document.getElementById('modal-title').innerText = periodData.subject + (periodData.class ? ` (${periodData.class})` : '');
+            const isChanged = !!temporaryChanges[currentPeriodKey];
+            const displayedPeriod = isChanged ? { ...periodData, ...temporaryChanges[currentPeriodKey] } : periodData;
+
+            document.getElementById('modal-period').innerText = displayedPeriod.num === 'lunch' ? '昼休み' : (displayedPeriod.num === 'after' ? '放課後' : `${displayedPeriod.num}時間目`);
+            document.getElementById('modal-title').innerText = displayedPeriod.subject + (displayedPeriod.class ? ` (${displayedPeriod.class})` : '');
             document.getElementById('modal-week-indicator').innerText = `第 ${currentWeek} 週`;
-            
+
+            // 授業変更フォームの初期化
+            const tempChange = temporaryChanges[currentPeriodKey];
+            if (tempChange) {
+                document.getElementById('edit-subject').value = tempChange.subject || '';
+                document.getElementById('edit-class').value = tempChange.class || '';
+                document.getElementById('edit-room').value = tempChange.room || '';
+                document.getElementById('edit-type').value = tempChange.type || 'class';
+                document.getElementById('btn-reset-change').classList.remove('hidden');
+            } else {
+                document.getElementById('edit-subject').value = periodData.subject || '';
+                document.getElementById('edit-class').value = periodData.class || '';
+                document.getElementById('edit-room').value = periodData.room || '';
+                document.getElementById('edit-type').value = periodData.type || 'class';
+                document.getElementById('btn-reset-change').classList.add('hidden');
+            }
+
             // 連絡事項一覧の描画
             renderModalAnnouncements(activeDetails);
-            
+
             // この週のコマにアサインされたタスクの描画
             renderModalAssignedTasks(currentPeriodKey);
 
@@ -1162,7 +1190,7 @@
                 const li = document.createElement('li');
                 li.className = "flex items-center justify-between bg-emerald-50/50 border border-emerald-100/70 p-2.5 rounded-xl text-xs";
                 li.innerHTML = `
-                    <span class="font-medium text-emerald-900 flex-1 pr-2 leading-relaxed"><i class="fa-solid fa-bullhorn text-emerald-500 mr-1.5"></i>${escapeHTML(ann)}</span>
+                    <span class="font-semibold text-emerald-900 flex-1 pr-2 leading-relaxed"><i class="fa-solid fa-bullhorn text-emerald-500 mr-1.5"></i>${escapeHTML(ann)}</span>
                     <div class="flex items-center gap-1 shrink-0">
                         <!-- コピー＆移動ボタン -->
                         <button onclick="openTransferAnnouncementModal(${idx}, '${escapeHTML(ann)}')" class="text-slate-400 hover:text-emerald-600 p-1 rounded hover:bg-white transition-all" title="他の週へコピーまたは移動">
@@ -1189,6 +1217,7 @@
                 input.value = '';
                 renderModalAnnouncements(weeklyDetails[currentPeriodKey]);
                 showToast("生徒への連絡事項を追加しました。");
+                renderDashboard();
             }
         }
 
@@ -1200,6 +1229,7 @@
                 weeklyDetails[currentPeriodKey].announcements.splice(index, 1);
                 renderModalAnnouncements(weeklyDetails[currentPeriodKey]);
                 showToast("連絡事項を削除しました。");
+                renderDashboard();
             }
         }
 
@@ -1258,8 +1288,217 @@
             }
         }
 
-        // --- STREAMING_CHUNK: Google API Settings Simulation... ---
-        // API同期設定ダイアログ
+        // --- STREAMING_CHUNK: Managing Task Schedulings across Weeks... ---
+        // タスクを「他の週」へ移動させるモーダル
+        function openMoveTaskModal(event, taskId) {
+            if (event) event.stopPropagation();
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) return;
+
+            // 週のセレクトオプションを生成
+            let weekOptionsHTML = '';
+            for (let w = 1; w <= 45; w++) {
+                weekOptionsHTML += '<option value="' + w + '" ' + (w === currentWeek ? 'selected' : '') + '>第 ' + w + ' 週</option>';
+            }
+
+            // 曜日と時間の選択
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+            let dayOptionsHTML = '';
+            for (let i = 0; i < days.length; i++) {
+                const d = days[i];
+                dayOptionsHTML += '<option value="' + d + '" ' + (d === currentDay ? 'selected' : '') + '>' + dayNames[d] + '</option>';
+            }
+
+            const periods = [
+                { val: 'period-1', text: '1時間目' },
+                { val: 'period-2', text: '2時間目' },
+                { val: 'period-3', text: '3時間目' },
+                { val: 'period-4', text: '4時間目' },
+                { val: 'period-lunch', text: '昼休み' },
+                { val: 'period-5', text: '5時間目' },
+                { val: 'period-6', text: '6時間目' },
+                { val: 'period-after', text: '放課後' },
+            ];
+            let periodOptionsHTML = '';
+            for (let i = 0; i < periods.length; i++) {
+                const p = periods[i];
+                periodOptionsHTML += '<option value="' + p.val + '">' + p.text + '</option>';
+            }
+
+            const modal = document.createElement('div');
+            modal.id = 'move-task-modal';
+            modal.className = 'fixed inset-0 bg-slate-950/40 backdrop-blur-sm flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl border border-slate-200 animate-in zoom-in duration-200">
+                    <h3 class="font-bold text-slate-900 mb-1 flex items-center gap-2"><i class="fa-solid fa-angles-right text-blue-600"></i>タスクを他の週へ移動</h3>
+                    <p class="text-xs text-slate-400 break-all mb-4">対象: 「${escapeHTML(task.title)}」</p>
+                    
+                    <div class="space-y-3 mb-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1">移動先の週</label>
+                            <select id="move-target-week" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm">${weekOptionsHTML}</select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1">移動先の曜日</label>
+                            <select id="move-target-day" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm">${dayOptionsHTML}</select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1">時間（コマ）</label>
+                            <select id="move-target-period" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm">${periodOptionsHTML}</select>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end gap-2">
+                        <button onclick="document.getElementById('move-task-modal').remove()" class="text-xs font-semibold px-4 py-2 hover:bg-slate-100 rounded-xl">キャンセル</button>
+                        <button id="btn-move-task-confirm" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-2 rounded-xl transition-all shadow-md shadow-blue-100">移動する</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            document.getElementById('btn-move-task-confirm').onclick = function() {
+                const targetWeek = document.getElementById('move-target-week').value;
+                const targetDay = document.getElementById('move-target-day').value;
+                const targetPeriod = document.getElementById('move-target-period').value;
+
+                // 新しい割り当てID（週情報を含む）を構築
+                const newPeriodKey = `w${targetWeek}-${targetDay}-${targetPeriod}`;
+                task.assignedPeriodId = newPeriodKey;
+
+                document.getElementById('move-task-modal').remove();
+                showToast("🎉 「" + task.title + "」を第" + targetWeek + "週の" + dayNames[targetDay] + "に移動しました！");
+                renderDashboard();
+            };
+        }
+
+        // 連絡事項を他の週へ「移動」または「コピー」するモーダル
+        function openTransferAnnouncementModal(index, annText) {
+            let weekOptionsHTML = '';
+            for (let w = 1; w <= 45; w++) {
+                weekOptionsHTML += '<option value="' + w + '" ' + (w === currentWeek ? 'selected' : '') + '>第 ' + w + ' 週</option>';
+            }
+
+            const modal = document.createElement('div');
+            modal.id = 'transfer-ann-modal';
+            modal.className = 'fixed inset-0 bg-slate-950/40 backdrop-blur-sm flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl border border-slate-200 animate-in zoom-in duration-200">
+                    <h3 class="font-bold text-slate-900 mb-1 flex items-center gap-2"><i class="fa-solid fa-copy text-emerald-600"></i>連絡事項の転送・コピー</h3>
+                    <p class="text-xs text-slate-400 break-words mb-4 bg-slate-50 p-2.5 rounded-lg border">「${escapeHTML(annText)}」</p>
+                    
+                    <div class="space-y-4 mb-5">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1.5">操作方法</label>
+                            <div class="flex gap-2">
+                                <label class="flex-1 flex items-center justify-between p-2.5 border border-slate-200 rounded-xl cursor-pointer bg-slate-50/50 hover:bg-slate-50">
+                                    <span class="text-xs font-semibold text-slate-700">コピー（複製）</span>
+                                    <input type="radio" name="transfer-mode" value="copy" checked class="text-emerald-600">
+                                </label>
+                                <label class="flex-1 flex items-center justify-between p-2.5 border border-slate-200 rounded-xl cursor-pointer bg-slate-50/50 hover:bg-slate-50">
+                                    <span class="text-xs font-semibold text-slate-700">移動（移設）</span>
+                                    <input type="radio" name="transfer-mode" value="move" class="text-emerald-600">
+                                </label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1">コピー・移動先の週</label>
+                            <select id="transfer-target-week" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm">${weekOptionsHTML}</select>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end gap-2">
+                        <button onclick="document.getElementById('transfer-ann-modal').remove()" class="text-xs font-semibold px-4 py-2 hover:bg-slate-100 rounded-xl">キャンセル</button>
+                        <button id="btn-transfer-ann-confirm" class="bg-emerald-600 text-white font-semibold text-xs px-4 py-2 rounded-xl transition-all shadow-md shadow-emerald-100">実行する</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            document.getElementById('btn-transfer-ann-confirm').onclick = function() {
+                const mode = document.querySelector('input[name="transfer-mode"]:checked').value;
+                const targetWeek = document.getElementById('transfer-target-week').value;
+
+                const dayCode = activeModalPeriodId.split('-')[0];
+                const originalKey = `w${currentWeek}-${activeModalPeriodId}`;
+                const targetKey = `w${targetWeek}-${activeModalPeriodId}`;
+
+                if (!weeklyDetails[targetKey]) {
+                    weeklyDetails[targetKey] = { announcements: [] };
+                }
+
+                if (mode === 'copy') {
+                    weeklyDetails[targetKey].announcements.push(annText);
+                    showToast("📋 連絡事項を 第 " + targetWeek + " 週の同一授業にコピーしました！");
+                } else if (mode === 'move') {
+                    weeklyDetails[targetKey].announcements.push(annText);
+                    const origIndex = weeklyDetails[originalKey].announcements.indexOf(annText);
+                    if (origIndex > -1) {
+                        weeklyDetails[originalKey].announcements.splice(origIndex, 1);
+                    }
+                    showToast("🚚 連絡事項を 第 " + targetWeek + " 週の同一授業に移動しました。");
+                }
+
+                document.getElementById('transfer-ann-modal').remove();
+                
+                // モーダルの最新データを再描画
+                const periodData = timetableData[dayCode].find(p => p.id === activeModalPeriodId);
+                const activeDetails = weeklyDetails[originalKey] || { announcements: [] };
+                renderModalAnnouncements(activeDetails);
+                renderDashboard();
+            };
+        }
+
+        // 表示用コマ名取得ヘルパー
+        function getPeriodDisplayName(fullPeriodKey) {
+            const parts = fullPeriodKey.split('-');
+            const weekNum = parts[0].replace('w', '');
+            const day = parts[1];
+            const periodNum = parts[parts.length - 1];
+
+            let label = '第' + weekNum + '週 ' + (dayNames[day] || '') + ' ';
+            if (periodNum === 'lunch') label += '昼休み';
+            else if (periodNum === 'after') label += '放課後';
+            else label += periodNum + '時間目';
+            return label;
+        }
+
+        // --- STREAMING_CHUNK: Managing Task Cruds and Integrations... ---
+        // タスクの新規手動追加（Google ToDo同期風）
+        function handleAddTask(e) {
+            e.preventDefault();
+            const input = document.getElementById('new-task-title');
+            const title = input.value.trim();
+            if (!title) return;
+
+            const lists = ['授業準備', '校務分掌', 'その他'];
+            const randomList = lists[Math.floor(Math.random() * lists.length)];
+
+            const newTask = {
+                id: 't_' + Date.now(),
+                title: title,
+                list: randomList,
+                completed: false,
+                assignedPeriodId: null
+            };
+
+            tasks.unshift(newTask);
+            input.value = '';
+            
+            showToast("Google ToDoリストへ同期しました: 「" + title + "」");
+            renderDashboard();
+        }
+
+        // タスクの完了同期処理
+        function toggleTaskComplete(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            if (task) {
+                task.completed = true;
+                showToast("🎉 完了! 「" + task.title + "」を完了済みに更新同期しました。");
+                renderDashboard();
+            }
+        }
+
+        // API同期設定
         function openSyncSettings() {
             document.getElementById('settings-modal').classList.remove('hidden');
         }
@@ -1304,6 +1543,7 @@
 
         // --- 共通ユーティリティ ---
         function escapeHTML(str) {
+            if (!str) return '';
             return str.replace(/[&<>'"]/g, 
                 tag => ({
                     '&': '&amp;',
