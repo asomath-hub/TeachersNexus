@@ -103,7 +103,7 @@
     <main class="flex-1 flex overflow-hidden bg-slate-50" id="dashboard-view">
 
         <!-- 左カラム：Google ToDoリスト (未定タスク保管庫) -->
-        <section class="w-80 md:w-96 border-r border-slate-200 bg-white flex flex-col shrink-0">
+        <section class="w-72 md:w-80 border-r border-slate-200 bg-white flex flex-col shrink-0">
             <!-- セクションヘッダー -->
             <div class="p-4 border-b border-slate-100 bg-slate-50/50">
                 <div class="flex items-center justify-between mb-3">
@@ -253,7 +253,7 @@
                             基本設定に戻す
                         </button>
                     </div>
-                    <div class="grid grid-cols-2 gap-2">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                         <div>
                             <label class="block text-[10px] font-bold text-slate-400 mb-1">科目名</label>
                             <input type="text" id="edit-subject" class="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs">
@@ -263,19 +263,13 @@
                             <input type="text" id="edit-class" class="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs">
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-400 mb-1">教室</label>
-                            <input type="text" id="edit-room" class="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-400 mb-1">コマの種類</label>
-                            <select id="edit-type" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs">
-                                <option value="class">授業</option>
-                                <option value="empty">空きコマ</option>
-                                <option value="afterschool">放課後・その他</option>
-                            </select>
-                        </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 mb-1">コマの種類</label>
+                        <select id="edit-type" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs">
+                            <option value="class">授業</option>
+                            <option value="empty">空きコマ</option>
+                            <option value="afterschool">放課後・その他</option>
+                        </select>
                     </div>
                     <div class="flex justify-end pt-1">
                         <button onclick="savePeriodChange()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-[11px] px-3 py-1.5 rounded-lg shadow-sm transition-all">
@@ -469,7 +463,6 @@
             'w1-Fri-period-2': {
                 subject: '数学I',
                 class: '1年B組',
-                room: '1B教室',
                 type: 'class'
             }
         };
@@ -477,54 +470,54 @@
         // 基本となる1日の時間割の構造
         let timetableData = {
             'Mon': [
-                { id: 'Mon-period-1', num: '1', time: '08:45 - 09:35', type: 'class', subject: '数学I', class: '1年A組', room: '1A教室' },
-                { id: 'Mon-period-2', num: '2', time: '09:45 - 10:35', type: 'class', subject: '数学II', class: '2年B組', room: '2B教室' },
-                { id: 'Mon-period-3', num: '3', time: '10:45 - 11:35', type: 'empty', subject: '空きコマ', class: '', room: '' },
-                { id: 'Mon-period-4', num: '4', time: '11:45 - 12:35', type: 'class', subject: '数学I', class: '1年B組', room: '1B教室' },
-                { id: 'Mon-period-lunch', num: '昼', time: '12:35 - 13:20', type: 'empty', subject: '昼休み', class: '', room: '' },
-                { id: 'Mon-period-5', num: '5', time: '13:20 - 14:10', type: 'class', subject: '総合学習', class: '1年A組', room: '体育館' },
-                { id: 'Mon-period-6', num: '6', time: '14:20 - 15:10', type: 'class', subject: '学活', class: '1年A組', room: '1A教室' },
-                { id: 'Mon-period-after', num: '放', time: '15:20 - 17:00', type: 'afterschool', subject: '部活動・校務', class: '野球部', room: 'グラウンド' }
+                { id: 'Mon-period-1', num: '1', time: '08:45 - 09:35', type: 'class', subject: '数学I', class: '1年A組' },
+                { id: 'Mon-period-2', num: '2', time: '09:45 - 10:35', type: 'class', subject: '数学II', class: '2年B組' },
+                { id: 'Mon-period-3', num: '3', time: '10:45 - 11:35', type: 'empty', subject: '空きコマ', class: '' },
+                { id: 'Mon-period-4', num: '4', time: '11:45 - 12:35', type: 'class', subject: '数学I', class: '1年B組' },
+                { id: 'Mon-period-lunch', num: '昼', time: '12:35 - 13:20', type: 'empty', subject: '昼休み', class: '' },
+                { id: 'Mon-period-5', num: '5', time: '13:20 - 14:10', type: 'class', subject: '総合学習', class: '1年A組' },
+                { id: 'Mon-period-6', num: '6', time: '14:20 - 15:10', type: 'class', subject: '学活', class: '1年A組' },
+                { id: 'Mon-period-after', num: '放', time: '15:20 - 17:00', type: 'afterschool', subject: '部活動・校務', class: '野球部' }
             ],
             'Tue': [
-                { id: 'Tue-period-1', num: '1', time: '08:45 - 09:35', type: 'empty', subject: '空きコマ', class: '', room: '' },
-                { id: 'Tue-period-2', num: '2', time: '09:45 - 10:35', type: 'class', subject: '数学I', class: '1年A組', room: '1A教室' },
-                { id: 'Tue-period-3', num: '3', time: '10:45 - 11:35', type: 'class', subject: '数学II', class: '2年B組', room: '2B教室' },
-                { id: 'Tue-period-4', num: '4', time: '11:45 - 12:35', type: 'class', subject: '数学I', class: '1年B組', room: '1B教室' },
-                { id: 'Tue-period-lunch', num: '昼', time: '12:35 - 13:20', type: 'empty', subject: '昼休み', class: '', room: '' },
-                { id: 'Tue-period-5', num: '5', time: '13:20 - 14:10', type: 'empty', subject: '空きコマ', class: '', room: '' },
-                { id: 'Tue-period-6', num: '6', time: '14:20 - 15:10', type: 'class', subject: '数学演習', class: '3年C組', room: '3C教室' },
-                { id: 'Tue-period-after', num: '放', time: '15:20 - 17:00', type: 'afterschool', subject: '学年会議', class: '職員室', room: '' }
+                { id: 'Tue-period-1', num: '1', time: '08:45 - 09:35', type: 'empty', subject: '空きコマ', class: '' },
+                { id: 'Tue-period-2', num: '2', time: '09:45 - 10:35', type: 'class', subject: '数学I', class: '1年A組' },
+                { id: 'Tue-period-3', num: '3', time: '10:45 - 11:35', type: 'class', subject: '数学II', class: '2年B組' },
+                { id: 'Tue-period-4', num: '4', time: '11:45 - 12:35', type: 'class', subject: '数学I', class: '1年B組' },
+                { id: 'Tue-period-lunch', num: '昼', time: '12:35 - 13:20', type: 'empty', subject: '昼休み', class: '' },
+                { id: 'Tue-period-5', num: '5', time: '13:20 - 14:10', type: 'empty', subject: '空きコマ', class: '' },
+                { id: 'Tue-period-6', num: '6', time: '14:20 - 15:10', type: 'class', subject: '数学演習', class: '3年C組' },
+                { id: 'Tue-period-after', num: '放', time: '15:20 - 17:00', type: 'afterschool', subject: '学年会議', class: '職員室' }
             ],
             'Wed': [
-                { id: 'Wed-period-1', num: '1', time: '08:45 - 09:35', type: 'class', subject: '数学I', class: '1年B組', room: '1B教室' },
-                { id: 'Wed-period-2', num: '2', time: '09:45 - 10:35', type: 'class', subject: '数学I', class: '1年A組', room: '1A教室' },
-                { id: 'Wed-period-3', num: '3', time: '10:45 - 11:35', type: 'empty', subject: '空きコマ', class: '', room: '' },
-                { id: 'Wed-period-4', num: '4', time: '11:45 - 12:35', type: 'class', subject: '数学II', class: '2年B組', room: '2B教室' },
-                { id: 'Wed-period-lunch', num: '昼', time: '12:35 - 13:20', type: 'empty', subject: '昼休み', class: '', room: '' },
-                { id: 'Wed-period-5', num: '5', time: '13:20 - 14:10', type: 'class', subject: '数学演習', class: '3年C組', room: '3C教室' },
-                { id: 'Wed-period-6', num: '6', time: '14:20 - 15:10', type: 'empty', subject: '空きコマ', class: '', room: '' },
-                { id: 'Wed-period-after', num: '放', time: '15:20 - 17:00', type: 'afterschool', subject: '出張（研究会）', class: '外部', room: '' }
+                { id: 'Wed-period-1', num: '1', time: '08:45 - 09:35', type: 'class', subject: '数学I', class: '1年B組' },
+                { id: 'Wed-period-2', num: '2', time: '09:45 - 10:35', type: 'class', subject: '数学I', class: '1年A組' },
+                { id: 'Wed-period-3', num: '3', time: '10:45 - 11:35', type: 'empty', subject: '空きコマ', class: '' },
+                { id: 'Wed-period-4', num: '4', time: '11:45 - 12:35', type: 'class', subject: '数学II', class: '2年B組' },
+                { id: 'Wed-period-lunch', num: '昼', time: '12:35 - 13:20', type: 'empty', subject: '昼休み', class: '' },
+                { id: 'Wed-period-5', num: '5', time: '13:20 - 14:10', type: 'class', subject: '数学演習', class: '3年C組' },
+                { id: 'Wed-period-6', num: '6', time: '14:20 - 15:10', type: 'empty', subject: '空きコマ', class: '' },
+                { id: 'Wed-period-after', num: '放', time: '15:20 - 17:00', type: 'afterschool', subject: '出張（研究会）', class: '外部' }
             ],
             'Thu': [
-                { id: 'Thu-period-1', num: '1', time: '08:45 - 09:35', type: 'class', subject: '数学II', class: '2年B組', room: '2B教室' },
-                { id: 'Thu-period-2', num: '2', time: '09:45 - 10:35', type: 'class', subject: '数学I', class: '1年B組', room: '1B教室' },
-                { id: 'Thu-period-3', num: '3', time: '10:45 - 11:35', type: 'class', subject: '数学I', class: '1年A組', room: '1A教室' },
-                { id: 'Thu-period-4', num: '4', time: '11:45 - 12:35', type: 'empty', subject: '空きコマ', class: '', room: '' },
-                { id: 'Thu-period-lunch', num: '昼', time: '12:35 - 13:20', type: 'empty', subject: '昼休み', class: '', room: '' },
-                { id: 'Thu-period-5', num: '5', time: '13:20 - 14:10', type: 'class', subject: '数学演習', class: '3年C組', room: '3C教室' },
-                { id: 'Thu-period-6', num: '6', time: '14:20 - 15:10', type: 'empty', subject: '空きコマ', class: '', room: '' },
-                { id: 'Thu-period-after', num: '放', time: '15:20 - 17:00', type: 'afterschool', subject: '部活動指導', class: '野球部', room: 'グラウンド' }
+                { id: 'Thu-period-1', num: '1', time: '08:45 - 09:35', type: 'class', subject: '数学II', class: '2年B組' },
+                { id: 'Thu-period-2', num: '2', time: '09:45 - 10:35', type: 'class', subject: '数学I', class: '1年B組' },
+                { id: 'Thu-period-3', num: '3', time: '10:45 - 11:35', type: 'class', subject: '数学I', class: '1年A組' },
+                { id: 'Thu-period-4', num: '4', time: '11:45 - 12:35', type: 'empty', subject: '空きコマ', class: '' },
+                { id: 'Thu-period-lunch', num: '昼', time: '12:35 - 13:20', type: 'empty', subject: '昼休み', class: '' },
+                { id: 'Thu-period-5', num: '5', time: '13:20 - 14:10', type: 'class', subject: '数学演習', class: '3年C組' },
+                { id: 'Thu-period-6', num: '6', time: '14:20 - 15:10', type: 'empty', subject: '空きコマ', class: '' },
+                { id: 'Thu-period-after', num: '放', time: '15:20 - 17:00', type: 'afterschool', subject: '部活動指導', class: '野球部' }
             ],
             'Fri': [
-                { id: 'Fri-period-1', num: '1', time: '08:45 - 09:35', type: 'class', subject: '数学I', class: '1年A組', room: '1A教室' },
-                { id: 'Fri-period-2', num: '2', time: '09:45 - 10:35', type: 'empty', subject: '空きコマ', class: '', room: '' },
-                { id: 'Fri-period-3', num: '3', time: '10:45 - 11:35', type: 'class', subject: '数学II', class: '2年B組', room: '2B教室' },
-                { id: 'Fri-period-4', num: '4', time: '11:45 - 12:35', type: 'class', subject: '数学I', class: '1年B組', room: '1B教室' },
-                { id: 'Fri-period-lunch', num: '昼', time: '12:35 - 13:20', type: 'empty', subject: '昼休み', class: '', room: '' },
-                { id: 'Fri-period-5', num: '5', time: '13:20 - 14:10', type: 'empty', subject: '空きコマ', class: '', room: '' },
-                { id: 'Fri-period-6', num: '6', time: '14:20 - 15:10', type: 'class', subject: '数学演習', class: '3年C組', room: '3C教室' },
-                { id: 'Fri-period-after', num: '放', time: '15:20 - 17:00', type: 'afterschool', subject: '部活動・校務', class: '野球部', room: 'グラウンド' }
+                { id: 'Fri-period-1', num: '1', time: '08:45 - 09:35', type: 'class', subject: '数学I', class: '1年A組' },
+                { id: 'Fri-period-2', num: '2', time: '09:45 - 10:35', type: 'empty', subject: '空きコマ', class: '' },
+                { id: 'Fri-period-3', num: '3', time: '10:45 - 11:35', type: 'class', subject: '数学II', class: '2年B組' },
+                { id: 'Fri-period-4', num: '4', time: '11:45 - 12:35', type: 'class', subject: '数学I', class: '1年B組' },
+                { id: 'Fri-period-lunch', num: '昼', time: '12:35 - 13:20', type: 'empty', subject: '昼休み', class: '' },
+                { id: 'Fri-period-5', num: '5', time: '13:20 - 14:10', type: 'empty', subject: '空きコマ', class: '' },
+                { id: 'Fri-period-6', num: '6', time: '14:20 - 15:10', type: 'class', subject: '数学演習', class: '3年C組' },
+                { id: 'Fri-period-after', num: '放', time: '15:20 - 17:00', type: 'afterschool', subject: '部活動・校務', class: '野球部' }
             ]
         };
 
@@ -946,7 +939,6 @@
                                              isChanged ? '            <span class="bg-amber-100 text-amber-800 border border-amber-200 text-[10px] font-black px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm"><i class="fa-solid fa-triangle-exclamation animate-bounce"></i> 授業変更</span>' : '',
                         '                </h3>',
                                          displayedPeriod.class ? '            <span class="text-xs font-semibold text-slate-500 px-2 py-0.5 bg-slate-100 rounded">' + escapeHTML(displayedPeriod.class) + '</span>' : '',
-                                         displayedPeriod.room ? '            <span class="text-xs text-slate-400"><i class="fa-solid fa-location-dot"></i> ' + escapeHTML(displayedPeriod.room) + '</span>' : '',
                         '            </div>',
                         '            <p class="text-xs text-slate-400 font-medium mt-0.5"><i class="fa-solid fa-clock"></i> ' + displayedPeriod.time + '</p>',
                         '        </div>',
@@ -1048,7 +1040,6 @@
 
             const subject = document.getElementById('edit-subject').value.trim();
             const className = document.getElementById('edit-class').value.trim();
-            const room = document.getElementById('edit-room').value.trim();
             const type = document.getElementById('edit-type').value;
 
             if (!subject) {
@@ -1059,7 +1050,6 @@
             temporaryChanges[currentPeriodKey] = {
                 subject: subject,
                 class: className,
-                room: room,
                 type: type
             };
 
@@ -1106,10 +1096,9 @@
                         '        <option value="afterschool" ' + (period.type === 'afterschool' ? 'selected' : '') + '>放課後</option>',
                         '    </select>',
                         '</div>',
-                        '<div class="grid grid-cols-3 gap-1">',
+                        '<div class="grid grid-cols-2 gap-1">',
                         '    <input type="text" id="basic-' + period.id + '-subject" value="' + escapeHTML(period.subject) + '" placeholder="科目" class="text-[11px] border border-slate-200 rounded px-1.5 py-1 w-full font-semibold text-slate-700">',
                         '    <input type="text" id="basic-' + period.id + '-class" value="' + escapeHTML(period.class) + '" placeholder="クラス" class="text-[11px] border border-slate-200 rounded px-1.5 py-1 w-full">',
-                        '    <input type="text" id="basic-' + period.id + '-room" value="' + escapeHTML(period.room) + '" placeholder="教室" class="text-[11px] border border-slate-200 rounded px-1.5 py-1 w-full">',
                         '</div>'
                     ].join('\n');
                     dayCol.appendChild(row);
@@ -1126,12 +1115,10 @@
                 dayPeriods.forEach(period => {
                     const subjectInput = document.getElementById('basic-' + period.id + '-subject');
                     const classInput = document.getElementById('basic-' + period.id + '-class');
-                    const roomInput = document.getElementById('basic-' + period.id + '-room');
                     const typeInput = document.getElementById('basic-' + period.id + '-type');
 
                     if (subjectInput) period.subject = subjectInput.value;
                     if (classInput) period.class = classInput.value;
-                    if (roomInput) period.room = roomInput.value;
                     if (typeInput) period.type = typeInput.value;
                 });
             });
@@ -1166,13 +1153,11 @@
             if (tempChange) {
                 document.getElementById('edit-subject').value = tempChange.subject || '';
                 document.getElementById('edit-class').value = tempChange.class || '';
-                document.getElementById('edit-room').value = tempChange.room || '';
                 document.getElementById('edit-type').value = tempChange.type || 'class';
                 document.getElementById('btn-reset-change').classList.remove('hidden');
             } else {
                 document.getElementById('edit-subject').value = periodData.subject || '';
                 document.getElementById('edit-class').value = periodData.class || '';
-                document.getElementById('edit-room').value = periodData.room || '';
                 document.getElementById('edit-type').value = periodData.type || 'class';
                 document.getElementById('btn-reset-change').classList.add('hidden');
             }
