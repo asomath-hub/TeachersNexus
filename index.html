@@ -104,6 +104,18 @@
                     </div>
                     <span id="unplanned-count" class="bg-blue-50 text-blue-700 text-xs font-bold px-2 py-1 rounded-full border border-blue-100">0件</span>
                 </div>
+                
+                <!-- 💡 デモ体験ガイド（先生が判断しやすいように追加） -->
+                <div class="mb-3 p-3 bg-gradient-to-r from-emerald-50 to-blue-50 border border-emerald-100 rounded-xl text-xs">
+                    <p class="font-bold text-slate-800 mb-1">
+                        <i class="fa-solid fa-wand-magic-sparkles text-emerald-600 mr-1"></i>デモ動作の確認ガイド
+                    </p>
+                    <ul class="space-y-1 text-[11px] text-slate-600 list-disc list-inside">
+                        <li>現在<strong class="text-emerald-700">【第1週】</strong>です。右上の選択肢で<strong class="text-blue-700">【第2週】や【第3週】</strong>に切り替えてみてください。時間割のタスクやメモが完全に連動して切り替わります！</li>
+                        <li>各コマをタップして、連絡メモの「コピー」やタスクの「他の週へ移動」をぜひお試しください。</li>
+                    </ul>
+                </div>
+
                 <p class="text-xs text-slate-500 leading-relaxed mb-3">
                     スケジュール未設定のタスクです。右側の時間割にドラッグするか「配置」して予定を組みましょう。
                 </p>
@@ -285,6 +297,7 @@
     </div>
 
     <script>
+        // --- STREAMING_CHUNK: Initializing Demo Data States... ---
         // --- 状態管理 ---
         let currentDay = 'Fri'; // 初期選択曜日
         let currentWeek = 1;   // 初期選択週（1〜45）
@@ -301,28 +314,54 @@
             'Fri': '金曜日'
         };
 
-        // デフォルトのタスク
-        // assignedPeriodId は w{weekNum}-{periodId} で週別の紐付けを管理するように拡張
+        // デフォルトのタスク（第1週、第2週、第3週にリアルな初期データを事前アサイン）
         let tasks = [
+            // --- 未定タスクプール ---
             { id: 't1', title: '1年A組 数学小テストの印刷', list: '授業準備', completed: false, assignedPeriodId: null },
             { id: 't2', title: '中間試験の作成（〜2/15）', list: '授業準備', completed: false, assignedPeriodId: null },
             { id: 't3', title: '職員会議用の資料読み込み', list: '校務分掌', completed: false, assignedPeriodId: null },
             { id: 't4', title: '修学旅行のしおり原稿提出', list: '校務分掌', completed: false, assignedPeriodId: null },
             { id: 't5', title: '野球部 遠征バスの手配確認', list: 'その他', completed: false, assignedPeriodId: null },
             { id: 't6', title: '保護者面談の日程調整メール', list: 'その他', completed: false, assignedPeriodId: null },
-            { id: 't7', title: '来週の授業計画の作成', list: '授業準備', completed: false, assignedPeriodId: 'w1-Mon-period-3' }, // 第1週の月曜の空きコマに事前割当
+            
+            // --- 第1週 にあらかじめ割り当てられているタスク ---
+            { id: 't_w1_1', title: '来週の授業計画の作成', list: '授業準備', completed: false, assignedPeriodId: 'w1-Mon-period-3' }, 
+            { id: 't_w1_2', title: '週末提出分の宿題ワーク回収・検印', list: '授業準備', completed: false, assignedPeriodId: 'w1-Fri-period-3' },
+            { id: 't_w1_3', title: '学年費購入申請書の提出（事務室）', list: '校務分掌', completed: false, assignedPeriodId: 'w1-Wed-period-3' },
+            { id: 't_w1_4', title: '部活動の週末遠征承諾書の集計', list: 'その他', completed: false, assignedPeriodId: 'w1-Fri-period-after' },
+
+            // --- 第2週 にあらかじめ割り当てられているタスク ---
+            { id: 't_w2_1', title: '研究授業の指導案作成（一次案）', list: '授業準備', completed: false, assignedPeriodId: 'w2-Tue-period-1' },
+            { id: 't_w2_2', title: '学年通信（第2号）の執筆・印刷', list: '校務分掌', completed: false, assignedPeriodId: 'w2-Thu-period-4' },
+            { id: 't_w2_3', title: '外部模試のデータ入力・分析', list: '校務分掌', completed: false, assignedPeriodId: 'w2-Wed-period-3' },
+
+            // --- 第3週 にあらかじめ割り当てられているタスク ---
+            { id: 't_w3_1', title: '中間試験の範囲表・学習のポイント作成', list: '授業準備', completed: false, assignedPeriodId: 'w3-Mon-period-3' },
+            { id: 't_w3_2', title: '三者面談希望日程アンケートのExcel集計', list: 'その他', completed: false, assignedPeriodId: 'w3-Tue-period-5' }
         ];
 
         // 45週間分の独立したデータ（生徒への連絡事項、メモ等）
         // キー：w{weekNum}-{periodId} (例: "w1-Mon-period-1")
         let weeklyDetails = {
-            'w1-Mon-period-1': { announcements: ['宿題のノートを提出させること'] },
+            // === 第1週 のリアルな連絡事項メモ ===
+            'w1-Mon-period-1': { announcements: ['宿題のノートを忘れず提出させること'] },
             'w1-Mon-period-2': { announcements: ['教科書P.45の公式を再説明'] },
-            'w1-Mon-period-5': { announcements: ['進路ガイダンス冊子を持参させる'] },
+            'w1-Mon-period-5': { announcements: ['進路ガイダンス冊子を各自持参させる'] },
             'w1-Mon-period-6': { announcements: ['連絡帳の記入、美化委員への指示'] },
-            'w1-Fri-period-1': { announcements: ['小テストの予告をすること'] },
-            'w1-Fri-period-3': { announcements: ['宿題提出日を週明けと告げる'] },
-            'w1-Fri-period-after': { announcements: ['グラウンドの週末美化'] }
+            'w1-Fri-period-1': { announcements: ['月曜日の数学小テスト予告をすること'] },
+            'w1-Fri-period-3': { announcements: ['宿題提出日は来週月曜日と告げる'] },
+            'w1-Fri-period-after': { announcements: ['グラウンドの週末部活前美化活動'] },
+
+            // === 第2週 のリアルな連絡事項メモ（1週目から進んだ授業内容） ===
+            'w2-Mon-period-1': { announcements: ['先週回収したノートを返却すること', '小テストの再試対象者に追試日程を伝える'] },
+            'w2-Tue-period-2': { announcements: ['ワークP.24までを木曜日までに解いておくよう指示'] },
+            'w2-Wed-period-2': { announcements: ['プロジェクター使用のため、授業場所を視聴覚室に変更すると伝える'] },
+            'w2-Fri-period-6': { announcements: ['席替えの実施（終礼時）'] },
+
+            // === 第3週 のリアルな連絡事項メモ（さらに進んだ授業内容や行事のメモ） ===
+            'w3-Mon-period-2': { announcements: ['中間テストの範囲を正式発表・範囲用紙を配布'] },
+            'w3-Wed-period-1': { announcements: ['コンパスと定規を持参するように前日連絡'] },
+            'w3-Thu-period-3': { announcements: ['提出物（ワーク・ノート）の最終締め切り（明日厳守）'] }
         };
 
         // 基本となる1日の時間割の枠組み構造（不変テンプレート）
