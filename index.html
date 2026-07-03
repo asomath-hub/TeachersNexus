@@ -41,7 +41,7 @@
 <body class="h-full overflow-hidden flex flex-col text-slate-800">
 
     <!-- アプリヘッダー -->
-    <header class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between shrink-0 shadow-sm z-10">
+    <header class="bg-white border-b border-slate-200 px-6 py-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between shrink-0 shadow-sm z-10">
         <div class="flex items-center gap-3">
             <div class="bg-emerald-600 text-white p-2.5 rounded-xl shadow-md shadow-emerald-100 flex items-center justify-center">
                 <i class="fa-solid fa-graduation-cap text-xl"></i>
@@ -53,44 +53,47 @@
         </div>
 
         <!-- 表示モード & 曜日ナビゲーション -->
-        <div class="flex items-center gap-4">
-            <!-- 日表示 / 週表示 のタブトグル -->
+        <div class="flex items-center gap-4 flex-wrap">
+            <!-- 日表示 / 3日表示 / 週表示 のタブトグル -->
             <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
-                <button onclick="setViewMode('daily')" id="btn-view-daily" class="px-4 py-2 text-xs font-bold rounded-lg transition-all duration-200 bg-white text-slate-800 shadow-sm">
-                    <i class="fa-regular fa-calendar-minus mr-1"></i>日表示
+                <button onclick="setViewMode('daily')" id="btn-view-daily" class="px-3 py-2 text-xs font-bold rounded-lg transition-all duration-200 bg-white text-slate-800 shadow-sm">
+                    日表示
                 </button>
-                <button onclick="setViewMode('weekly')" id="btn-view-weekly" class="px-4 py-2 text-xs font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900">
-                    <i class="fa-regular fa-calendar-days mr-1"></i>週表示
+                <button onclick="setViewMode('three-day')" id="btn-view-three-day" class="px-3 py-2 text-xs font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900">
+                    3日表示
+                </button>
+                <button onclick="setViewMode('weekly')" id="btn-view-weekly" class="px-3 py-2 text-xs font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900">
+                    週表示
                 </button>
             </div>
 
-            <!-- 曜日・日付ナビゲーション（日表示の時のみ表示） -->
-            <div id="day-nav-container" class="flex items-center gap-2 bg-slate-100 p-1 rounded-xl">
-                <button onclick="changeDay('Mon')" id="btn-Mon" class="day-btn px-4 py-2 text-sm font-bold rounded-lg transition-all duration-200 bg-white text-emerald-700 shadow-sm">月</button>
-                <button onclick="changeDay('Tue')" id="btn-Tue" class="day-btn px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900">火</button>
-                <button onclick="changeDay('Wed')" id="btn-Wed" class="day-btn px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900">水</button>
-                <button onclick="changeDay('Thu')" id="btn-Thu" class="day-btn px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900">木</button>
-                <button onclick="changeDay('Fri')" id="btn-Fri" class="day-btn px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900">金</button>
+            <!-- 曜日ナビゲーション（日表示・3日表示の時のみ有効） -->
+            <div id="day-nav-container" class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
+                <button onclick="changeDay('Mon')" id="btn-Mon" class="day-btn px-3 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 bg-white text-emerald-700 shadow-sm">月</button>
+                <button onclick="changeDay('Tue')" id="btn-Tue" class="day-btn px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900">火</button>
+                <button onclick="changeDay('Wed')" id="btn-Wed" class="day-btn px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900">水</button>
+                <button onclick="changeDay('Thu')" id="btn-Thu" class="day-btn px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900">木</button>
+                <button onclick="changeDay('Fri')" id="btn-Fri" class="day-btn px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900">金</button>
             </div>
         </div>
 
         <!-- アクション & Googleアカウント連携 -->
         <div class="flex items-center gap-3">
-            <button onclick="toggleViewState('basic-settings')" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-md shadow-slate-200 transition-all">
+            <button onclick="toggleViewState('basic-settings')" class="bg-slate-900 hover:bg-slate-800 text-white px-3.5 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-md shadow-slate-200 transition-all">
                 <i class="fa-solid fa-gears"></i> 基本時間割
             </button>
 
-            <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 px-4 py-2 rounded-xl">
-                <div class="relative flex h-3.5 w-3.5">
+            <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl">
+                <div class="relative flex h-3 w-3">
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                 </div>
                 <div class="text-left">
-                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Google API Status</p>
+                    <p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Google API Status</p>
                     <p class="text-xs font-semibold text-slate-700" id="google-account-text">個人用アカウント同期中</p>
                 </div>
                 <button onclick="openSyncSettings()" class="text-slate-400 hover:text-slate-600 p-1" title="API接続設定">
-                    <i class="fa-solid fa-gear text-sm"></i>
+                    <i class="fa-solid fa-gear text-xs"></i>
                 </button>
             </div>
         </div>
@@ -106,7 +109,7 @@
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-list-check text-blue-600 text-lg"></i>
-                        <h2 class="font-bold text-slate-800 text-base">Google ToDo (未定タスク)</h2>
+                        <h2 class="font-bold text-slate-800 text-base">Google ToDo (未定)</h2>
                     </div>
                     <span id="unplanned-count" class="bg-blue-50 text-blue-700 text-xs font-bold px-2 py-1 rounded-full border border-blue-100">0件</span>
                 </div>
@@ -114,19 +117,15 @@
                 <!-- 💡 デモ体験ガイド -->
                 <div class="mb-3 p-3 bg-gradient-to-r from-emerald-50 to-blue-50 border border-emerald-100 rounded-xl text-xs">
                     <p class="font-bold text-slate-800 mb-1">
-                        <i class="fa-solid fa-wand-magic-sparkles text-emerald-600 mr-1"></i>デモ動作の確認ガイド
+                        <i class="fa-solid fa-wand-magic-sparkles text-emerald-600 mr-1"></i>デモ操作ガイド
                     </p>
                     <ul class="space-y-1 text-[11px] text-slate-600 list-disc list-inside">
-                        <li>現在<strong class="text-emerald-700">【第1週】</strong>です。右上の選択肢で<strong class="text-blue-700">【第2週】や【第3週】</strong>に切り替えてみてください。</li>
-                        <li>各コマをタップして、連絡メモの「コピー」やタスクの「他の週へ移動」をぜひお試しください。</li>
-                        <li><strong>「基本時間割」</strong>を押すと、デフォルト日課を設定・変更できます。</li>
+                        <li>上部のトグルで<strong class="text-blue-700">「3日表示」</strong>や<strong class="text-emerald-700">「週表示」</strong>に切り替えてみてください。</li>
+                        <li>週間スクロールは各曜日の縦位置がビシッと揃ってスクロールします。</li>
+                        <li>各コマをタップして授業変更や他週への連絡メモ複製をお試しください。</li>
                     </ul>
                 </div>
 
-                <p class="text-xs text-slate-500 leading-relaxed mb-3">
-                    スケジュール未設定のタスクです。右側の時間割にドラッグするか「配置」して予定を組みましょう。
-                </p>
-                
                 <!-- 新規タスク追加フォーム -->
                 <form id="new-task-form" onsubmit="handleAddTask(event)" class="flex gap-2">
                     <input type="text" id="new-task-title" required placeholder="新しいタスクを入力..." 
@@ -157,7 +156,7 @@
             </div>
         </section>
 
-        <!-- 右カラム：時間割 (空きコマ / 放課後) -->
+        <!-- 右カラム：時間割 (週間・3日・日表示すべてを内包) -->
         <section class="flex-1 flex flex-col overflow-hidden">
             <!-- 本日のサマリーバー ＆ 45週切り替えスマートコントロール -->
             <div class="bg-white border-b border-slate-200 px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 shrink-0 shadow-sm">
@@ -179,22 +178,24 @@
 
                     <span class="text-slate-300 hidden sm:inline">|</span>
 
-                    <div class="flex items-center gap-3">
-                        <span class="text-2xl font-black text-slate-900" id="current-day-label">月曜日</span>
-                        <span class="text-sm font-medium text-slate-500 bg-slate-100 px-3 py-1 rounded-full" id="day-date-label">7月3日(金)</span>
+                    <div class="flex flex-col">
+                        <span class="text-xl font-black text-slate-900" id="current-day-label">月曜日</span>
+                        <span class="text-xs font-bold text-slate-500" id="day-date-label">4月6日(月)</span>
                     </div>
                 </div>
                 
-                <div class="flex items-center gap-4 text-xs text-slate-500">
-                    <span class="flex items-center gap-1"><span class="w-3 h-3 bg-emerald-50 rounded"></span> 授業</span>
-                    <span class="flex items-center gap-1"><span class="w-3 h-3 bg-amber-50 rounded border border-dashed border-amber-300"></span> 空きコマ</span>
-                    <span class="flex items-center gap-1"><span class="w-3 h-3 bg-indigo-50 rounded"></span> 放課後・その他</span>
+                <div class="flex items-center gap-3 text-[11px] text-slate-500">
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 bg-emerald-100 rounded"></span> 授業</span>
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 bg-amber-50 rounded border border-dashed border-amber-300"></span> 空き</span>
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 bg-indigo-50 rounded"></span> 放課後</span>
                 </div>
             </div>
 
-            <!-- 時間割スクロール領域 -->
-            <div class="flex-1 overflow-y-auto p-6 space-y-4" id="timetable-container">
-                <!-- JavaScriptで動的生成 -->
+            <!-- 統一時間割：全体縦スクロール領域 -->
+            <div class="flex-1 overflow-y-auto overflow-x-auto p-6" id="timetable-scroll-wrapper">
+                <div id="timetable-container" class="w-full">
+                    <!-- JavaScriptで曜日カラムを動的生成（3日・週・日ごとにCSSグリッド調整） -->
+                </div>
             </div>
         </section>
     </main>
@@ -225,7 +226,7 @@
         </div>
     </section>
 
-    <!-- モーダル：授業カード詳細編集（生徒への連絡事項、個別タスク、臨時授業変更） -->
+    <!-- モーダル：授業カード詳細編集 -->
     <div id="class-detail-modal" class="hidden fixed inset-0 bg-slate-950/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in duration-200">
             <!-- モーダルヘッダー -->
@@ -246,7 +247,7 @@
                 <div class="bg-amber-50/40 border border-amber-100 p-4 rounded-xl space-y-3">
                     <div class="flex items-center justify-between">
                         <label class="block text-xs font-bold text-amber-800 uppercase tracking-wider flex items-center gap-1.5">
-                            <i class="fa-solid fa-triangle-exclamation"></i> このコマだけ授業変更（一時上書き）
+                            <i class="fa-solid fa-triangle-exclamation"></i> この週だけ授業変更（一時上書き）
                         </label>
                         <button id="btn-reset-change" onclick="resetPeriodChange()" class="hidden text-[10px] font-bold text-amber-700 bg-amber-100 hover:bg-amber-200 px-2.5 py-1 rounded-lg transition-all">
                             基本設定に戻す
@@ -302,7 +303,7 @@
                     </div>
 
                     <!-- 連絡事項一覧 -->
-                    <ul class="space-y-2 max-h-48 overflow-y-auto pr-1" id="modal-announcement-list">
+                    <ul class="space-y-2 max-h-41 overflow-y-auto pr-1" id="modal-announcement-list">
                         <!-- 動的生成 -->
                     </ul>
                 </div>
@@ -314,8 +315,6 @@
                     <label class="block text-sm font-bold text-slate-700 mb-2">
                         <i class="fa-solid fa-circle-check text-blue-600 mr-1.5"></i>この時間にやること（ToDo）
                     </label>
-                    
-                    <!-- コマ別内包ToDoリスト -->
                     <div class="space-y-2" id="modal-assigned-tasks">
                         <!-- 動的生成 -->
                     </div>
@@ -365,7 +364,7 @@
         </div>
     </div>
 
-    <!-- お祝い演出時のポップアップ通知 -->
+    <!-- トースト通知 -->
     <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 text-white px-5 py-3.5 rounded-xl shadow-xl flex items-center gap-3 translate-y-20 opacity-0 pointer-events-none transition-all duration-300 z-50">
         <div class="bg-emerald-500 text-white p-1.5 rounded-lg flex items-center justify-center">
             <i class="fa-solid fa-check"></i>
@@ -379,10 +378,10 @@
         let currentWeek = 1;   // 初期選択週（1〜45）
         let selectedFilter = 'all'; // タスクフィルタ
         let activeModalPeriodId = null; // 現在モーダルで開いている授業枠のオリジナルID
-        let viewMode = 'daily'; // 表示モード ('daily' または 'weekly')
+        let viewMode = 'daily'; // 表示モード ('daily', 'three-day', 'weekly')
         let viewState = 'dashboard'; // ビューの状態 ('dashboard' または 'basic-settings')
 
-        // 曜日のマッピング
+        // 曜日の日本語マップ
         const dayNames = {
             'Mon': '月曜日',
             'Tue': '火曜日',
@@ -391,7 +390,35 @@
             'Fri': '金曜日'
         };
 
-        // デフォルトのタスク
+        // 2026年度カレンダーの基準日（第1週の月曜日 = 2026年4月6日）
+        const baseDate = new Date(2026, 3, 6); // 3 = 4月
+
+        // 特定の週と曜日から正確な「月日」を計算してフォーマットする関数
+        function getFormattedDate(weekNum, dayCode) {
+            const dayOffsets = { 'Mon': 0, 'Tue': 1, 'Wed': 2, 'Thu': 3, 'Fri': 4 };
+            const offsetDays = (weekNum - 1) * 7 + (dayOffsets[dayCode] || 0);
+            const targetDate = new Date(baseDate.getTime() + offsetDays * 24 * 60 * 60 * 1000);
+            const m = targetDate.getMonth() + 1;
+            const d = targetDate.getDate();
+            const dayKanji = { 'Mon': '月', 'Tue': '火', 'Wed': '水', 'Thu': '木', 'Fri': '金' }[dayCode] || '';
+            return m + '月' + d + '日(' + dayKanji + ')';
+        }
+
+        // 週間スケジュール用の範囲日付テキストを生成する
+        function getWeekRangeString(weekNum) {
+            const startOffset = (weekNum - 1) * 7;
+            const startDate = new Date(baseDate.getTime() + startOffset * 24 * 60 * 60 * 1000);
+            const endDate = new Date(baseDate.getTime() + (startOffset + 4) * 24 * 60 * 60 * 1000); // 金曜日
+            
+            const sm = startDate.getMonth() + 1;
+            const sd = startDate.getDate();
+            const em = endDate.getMonth() + 1;
+            const ed = endDate.getDate();
+            
+            return '第' + weekNum + '週 (' + sm + '月' + sd + '日 〜 ' + em + '月' + ed + '日)';
+        }
+
+        // デフォルトのタスクデータ
         let tasks = [
             // --- 未定タスクプール ---
             { id: 't1', title: '1年A組 数学小テストの印刷', list: '授業準備', completed: false, assignedPeriodId: null },
@@ -417,10 +444,9 @@
             { id: 't_w3_2', title: '三者面談希望日程アンケートの集計', list: 'その他', completed: false, assignedPeriodId: 'w3-Tue-period-5' }
         ];
 
-        // 45週間分の独立したデータ（生徒への連絡事項、メモ等）
+        // 45週間分の独立データ（連絡事項など）
         let weeklyDetails = {
-            // === 第1週 の連絡事項メモ ===
-            'w1-Mon-period-1': { announcements: ['宿宿のノートを忘れず提出させること'] },
+            'w1-Mon-period-1': { announcements: ['宿題のノートを忘れず提出させること'] },
             'w1-Mon-period-2': { announcements: ['教科書P.45の公式を再説明'] },
             'w1-Mon-period-5': { announcements: ['進路ガイダンス冊子を各自持参させる'] },
             'w1-Mon-period-6': { announcements: ['連絡帳の記入、美化委員への指示'] },
@@ -428,20 +454,17 @@
             'w1-Fri-period-3': { announcements: ['宿題提出日は来週月曜日と告げる'] },
             'w1-Fri-period-after': { announcements: ['グラウンドの週末部活前美化活動'] },
 
-            // === 第2週 の連絡事項メモ ===
             'w2-Mon-period-1': { announcements: ['先週回収したノートを返却すること', '小テストの追試日程を伝える'] },
             'w2-Tue-period-2': { announcements: ['ワークP.24までを木曜日までに解いておくよう指示'] },
             'w2-Wed-period-2': { announcements: ['プロジェクター使用のため授業場所を視聴覚室に変更すると伝える'] },
             'w2-Fri-period-6': { announcements: ['席替えの実施（終礼時）'] },
 
-            // === 第3週 の連絡事項メモ ===
             'w3-Mon-period-2': { announcements: ['中間テストの範囲を正式発表・範囲用紙を配布'] },
             'w3-Wed-period-1': { announcements: ['コンパスと定規を持参するように前日連絡'] },
             'w3-Thu-period-3': { announcements: ['提出物（ワーク・ノート）の最終締め切り（明日厳守）'] }
         };
 
-        // 45週間分の「授業変更（上書き）」データ
-        // キー：w{weekNum}-{periodId} (例: "w1-Fri-period-2")
+        // 45週間分の授業臨時上書き
         let temporaryChanges = {
             'w1-Fri-period-2': {
                 subject: '数学I',
@@ -451,7 +474,7 @@
             }
         };
 
-        // 基本となる1日の時間割の枠組み構造
+        // 基本となる1日の時間割の構造
         let timetableData = {
             'Mon': [
                 { id: 'Mon-period-1', num: '1', time: '08:45 - 09:35', type: 'class', subject: '数学I', class: '1年A組', room: '1A教室' },
@@ -505,34 +528,62 @@
             ]
         };
 
-        // --- STREAMING_CHUNK: Initializing App UI State and Load Event Handlers... ---
-        // 初期ロード
+        // --- STREAMING_CHUNK: Setting up View Controllers and Navigation... ---
+        // アプリ起動
         window.onload = function() {
             generateWeekSelectorOptions();
             renderDashboard();
         };
 
-        // 1〜45週のプルダウン選択肢を動的に生成する
+        // 45週間プルダウン生成
         function generateWeekSelectorOptions() {
             const selector = document.getElementById('week-selector');
             selector.innerHTML = '';
             for (let w = 1; w <= 45; w++) {
                 const opt = document.createElement('option');
                 opt.value = w;
-                opt.text = `第 ${w} 週`;
+                opt.text = '第 ' + w + ' 週';
                 if (w === currentWeek) opt.selected = true;
                 selector.appendChild(opt);
             }
         }
 
-        // メイン描画コントロール
+        // 基本描画
         function renderDashboard() {
             renderUnplannedTasks();
             renderTimetable();
-            updateCountBadges();
+            updateCountAndHeaders();
         }
 
-        // ビュー遷移管理
+        // バッジとカレンダー日付表示の動的アップデート
+        function updateCountAndHeaders() {
+            // タスクバッジ更新
+            const unassigned = tasks.filter(t => !t.assignedPeriodId && !t.completed).length;
+            document.getElementById('unplanned-count').innerText = unassigned + '件';
+
+            // カレンダータイトル・日付連動
+            const selector = document.getElementById('week-selector');
+            if (selector) selector.value = currentWeek;
+
+            const dayDateLabel = document.getElementById('day-date-label');
+            const currentDayLabel = document.getElementById('current-day-label');
+
+            if (viewMode === 'daily') {
+                currentDayLabel.innerText = dayNames[currentDay];
+                dayDateLabel.innerText = '第' + currentWeek + '週 | ' + getFormattedDate(currentWeek, currentDay);
+            } else if (viewMode === 'three-day') {
+                currentDayLabel.innerText = '3日スケジュール';
+                const days = get3DaysList();
+                const startStr = getFormattedDate(currentWeek, days[0]);
+                const endStr = getFormattedDate(currentWeek, days[2]);
+                dayDateLabel.innerText = '第' + currentWeek + '週 | ' + startStr + ' 〜 ' + endStr;
+            } else {
+                currentDayLabel.innerText = '週間スケジュール';
+                dayDateLabel.innerText = getWeekRangeString(currentWeek);
+            }
+        }
+
+        // ビュー状態変更
         function toggleViewState(targetState) {
             viewState = targetState;
             const dashboard = document.getElementById('dashboard-view');
@@ -549,95 +600,80 @@
             }
         }
 
-        // 表示モード（日表示 / 週表示）の切り替え
+        // 表示モード（日 / 3日 / 週）変更
         function setViewMode(mode) {
             viewMode = mode;
             const btnDaily = document.getElementById('btn-view-daily');
+            const btnThree = document.getElementById('btn-view-three-day');
             const btnWeekly = document.getElementById('btn-view-weekly');
             const dayNav = document.getElementById('day-nav-container');
 
-            if (mode === 'daily') {
-                btnDaily.className = "px-4 py-2 text-xs font-bold rounded-lg transition-all duration-200 bg-white text-slate-800 shadow-sm";
-                btnWeekly.className = "px-4 py-2 text-xs font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900";
-                dayNav.classList.remove('hidden');
-                
-                // サマリー表示の切り替え
-                document.getElementById('current-day-label').innerText = dayNames[currentDay];
-                const dates = { 'Mon': '7月6日(月)', 'Tue': '7月7日(火)', 'Wed': '7月8日(水)', 'Thu': '7月9日(木)', 'Fri': '7月3日(金)' };
-                document.getElementById('day-date-label').innerText = dates[currentDay];
-                document.getElementById('day-date-label').classList.remove('hidden');
-            } else {
-                btnDaily.className = "px-4 py-2 text-xs font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900";
-                btnWeekly.className = "px-4 py-2 text-xs font-bold rounded-lg transition-all duration-200 bg-white text-slate-800 shadow-sm";
-                dayNav.classList.add('hidden');
+            // ボタンのスタイル復元
+            const baseBtnStyle = "px-3 py-2 text-xs font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900";
+            const activeBtnStyle = "px-3 py-2 text-xs font-bold rounded-lg transition-all duration-200 bg-white text-slate-800 shadow-sm";
 
-                // 週間スケジュール表示用のサマリーテキスト
-                document.getElementById('current-day-label').innerText = "週間スケジュール";
-                document.getElementById('day-date-label').innerText = `第 ${currentWeek} 週`;
+            btnDaily.className = baseBtnStyle;
+            btnThree.className = baseBtnStyle;
+            btnWeekly.className = baseBtnStyle;
+
+            if (mode === 'daily') {
+                btnDaily.className = activeBtnStyle;
+                dayNav.classList.remove('hidden');
+            } else if (mode === 'three-day') {
+                btnThree.className = activeBtnStyle;
+                dayNav.classList.remove('hidden'); // 3日表示の基準日変更のため表示
+            } else {
+                btnWeekly.className = activeBtnStyle;
+                dayNav.classList.add('hidden');
             }
             renderDashboard();
         }
 
-        // バッジカウンタの更新
-        function updateCountBadges() {
-            const unassigned = tasks.filter(t => !t.assignedPeriodId && !t.completed).length;
-            document.getElementById('unplanned-count').innerText = `${unassigned}件`;
-        }
-
-        // 曜日切り替え（日表示モード用）
+        // 基準曜日切り替え
         function changeDay(dayCode) {
             currentDay = dayCode;
             
-            // ボタンのスタイル更新
             document.querySelectorAll('.day-btn').forEach(btn => {
-                btn.className = "day-btn px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900";
+                btn.className = "day-btn px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900";
             });
-            const activeBtn = document.getElementById(`btn-${dayCode}`);
-            activeBtn.className = "day-btn px-4 py-2 text-sm font-bold rounded-lg transition-all duration-200 bg-white text-emerald-700 shadow-sm";
-
-            // ラベルの更新
-            document.getElementById('current-day-label').innerText = dayNames[dayCode];
-            
-            // 日付表記をシミュレート
-            const dates = { 'Mon': '7月6日(月)', 'Tue': '7月7日(火)', 'Wed': '7月8日(水)', 'Thu': '7月9日(木)', 'Fri': '7月3日(金)' };
-            document.getElementById('day-date-label').innerText = dates[dayCode];
+            const activeBtn = document.getElementById('btn-' + dayCode);
+            if (activeBtn) {
+                activeBtn.className = "day-btn px-3 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 bg-white text-emerald-700 shadow-sm";
+            }
 
             renderDashboard();
         }
 
-        // 週セレクターコントロール
+        // 週セレクター
         function selectWeek(weekNum) {
             currentWeek = parseInt(weekNum, 10);
-            if (viewMode === 'weekly') {
-                document.getElementById('day-date-label').innerText = `第 ${currentWeek} 週`;
-            }
             renderDashboard();
-            showToast(`第 ${currentWeek} 週 に切り替えました。`);
+            showToast('第 ' + currentWeek + ' 週 に切り替えました。');
         }
 
-        // 週を前後に進める
         function navigateWeek(direction) {
             let targetWeek = currentWeek + direction;
             if (targetWeek >= 1 && targetWeek <= 45) {
                 currentWeek = targetWeek;
-                document.getElementById('week-selector').value = targetWeek;
                 selectWeek(targetWeek);
             }
         }
 
-        // 未定タスクプールカテゴリ選択
+        // ToDoフィルタ
         function filterTasks(listCategory) {
             selectedFilter = listCategory;
             document.querySelectorAll('.list-tab').forEach(tab => {
                 tab.className = "list-tab shrink-0 px-3 py-1 text-xs font-medium rounded-full text-slate-600 hover:bg-slate-100";
             });
-            const activeTab = document.getElementById(`list-tab-${listCategory}`);
-            activeTab.className = "list-tab shrink-0 px-3 py-1 text-xs font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-100";
+            const activeTab = document.getElementById('list-tab-' + listCategory);
+            if (activeTab) {
+                activeTab.className = "list-tab shrink-0 px-3 py-1 text-xs font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-100";
+            }
             renderUnplannedTasks();
         }
 
-        // --- STREAMING_CHUNK: Rendering Google Tasks Pool... ---
-        // 未定タスク（Google ToDo側）の描画
+        // --- STREAMING_CHUNK: Drawing Google Unassigned Tasks Pool... ---
+        // Google ToDo (未定リスト) のレンダリング
         function renderUnplannedTasks() {
             const listContainer = document.getElementById('unplanned-task-list');
             listContainer.innerHTML = '';
@@ -650,13 +686,13 @@
             });
 
             if (filtered.length === 0) {
-                listContainer.innerHTML = `
-                    <div class="flex flex-col items-center justify-center py-10 text-slate-400 text-center">
-                        <i class="fa-solid fa-circle-check text-slate-200 text-5xl mb-3"></i>
-                        <p class="text-sm font-bold">すばらしい！未定タスクはありません</p>
-                        <p class="text-xs">新しいタスクを入力するか、すでに割り当てたタスクに取り組みましょう。</p>
-                    </div>
-                `;
+                listContainer.innerHTML = [
+                    '<div class="flex flex-col items-center justify-center py-10 text-slate-400 text-center">',
+                    '    <i class="fa-solid fa-circle-check text-slate-200 text-5xl mb-3"></i>',
+                    '    <p class="text-sm font-bold">すばらしい！未定タスクはありません</p>',
+                    '    <p class="text-xs">新しいタスクを入力するか、すでに割り当てたタスクに取り組みましょう。</p>',
+                    '</div>'
+                ].join('\n');
                 return;
             }
 
@@ -670,86 +706,119 @@
                 card.className = "bg-white border border-slate-200 p-3.5 rounded-xl shadow-sm hover:shadow-md hover:border-blue-400 transition-all cursor-grab active:cursor-grabbing flex flex-col gap-2 relative group";
                 card.draggable = true;
                 
-                card.addEventListener('dragstart', (e) => {
+                card.addEventListener('dragstart', function(e) {
                     e.dataTransfer.setData('text/plain', task.id);
                     card.classList.add('opacity-40');
                 });
-                card.addEventListener('dragend', () => {
+                card.addEventListener('dragend', function() {
                     card.classList.remove('opacity-40');
                 });
 
-                card.innerHTML = `
-                    <div class="flex items-start gap-2.5">
-                        <input type="checkbox" onchange="toggleTaskComplete('${task.id}')" class="mt-1 w-4 h-4 text-blue-600 rounded focus:ring-blue-500 border-slate-300">
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium text-slate-800 break-words leading-snug">${escapeHTML(task.title)}</p>
-                            <div class="flex items-center gap-1.5 mt-1.5">
-                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${listColorClass}">${task.list}</span>
-                                <span class="text-[10px] text-slate-400"><i class="fa-solid fa-cloud-arrow-up"></i> Google同期</span>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- タッチ環境向けの配置ショートカット -->
-                    <div class="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
-                        <button onclick="quickAssign('${task.id}')" title="空きコマにクイック配置" class="px-2 py-0.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-md text-[10px] font-bold transition-all">
-                            配置 <i class="fa-solid fa-chevron-right"></i>
-                        </button>
-                    </div>
-                `;
+                card.innerHTML = [
+                    '<div class="flex items-start gap-2.5">',
+                    '    <input type="checkbox" onchange="toggleTaskComplete(\'' + task.id + '\')" class="mt-1 w-4 h-4 text-blue-600 rounded focus:ring-blue-500 border-slate-300">',
+                    '    <div class="flex-1 min-w-0">',
+                    '        <p class="text-sm font-medium text-slate-800 break-words leading-snug">' + escapeHTML(task.title) + '</p>',
+                    '        <div class="flex items-center gap-1.5 mt-1.5">',
+                    '            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ' + listColorClass + '">' + task.list + '</span>',
+                    '            <span class="text-[10px] text-slate-400"><i class="fa-solid fa-cloud-arrow-up"></i> Google同期</span>',
+                    '        </div>',
+                    '    </div>',
+                    '</div>',
+                    '<div class="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">',
+                    '    <button onclick="quickAssign(\'' + task.id + '\')" class="px-2 py-0.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-md text-[10px] font-bold transition-all">',
+                    '        配置 <i class="fa-solid fa-chevron-right"></i>',
+                    '    </button>',
+                    '</div>'
+                ].join('\n');
                 listContainer.appendChild(card);
             });
         }
 
-        // --- STREAMING_CHUNK: Processing Daily and Weekly Timetables... ---
-        // 時間割（デイリー・タイムライン ＆ ウィークリーグリッド）の描画
+        // --- STREAMING_CHUNK: Processing 3-Day sliding list helper... ---
+        // 3日表示の時に描画すべき曜日リストをスライディングして取得
+        function get3DaysList() {
+            if (currentDay === 'Mon') return ['Mon', 'Tue', 'Wed'];
+            if (currentDay === 'Tue') return ['Tue', 'Wed', 'Thu'];
+            return ['Wed', 'Thu', 'Fri']; // Wed, Thu, Friのいずれかが選ばれている時
+        }
+
+        // --- STREAMING_CHUNK: Processing Grid Layouts (Daily, 3-Day, Weekly) ---
+        // 時間割パネルの構築
         function renderTimetable() {
             const container = document.getElementById('timetable-container');
             container.innerHTML = '';
 
             if (viewMode === 'daily') {
-                container.className = "flex-1 overflow-y-auto p-6 space-y-4 animate-fade-in";
-                const dayPeriods = timetableData[currentDay] || [];
-                renderPeriodsList(dayPeriods, container, false);
-            } else {
-                container.className = "flex-1 overflow-x-auto overflow-y-hidden p-4 flex gap-4 min-w-full h-full items-stretch";
+                // デイリー：縦方向1本のみ
+                container.className = "flex flex-col space-y-4 w-full max-w-3xl mx-auto";
                 
-                const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-                days.forEach(dayCode => {
+                const dayCol = document.createElement('div');
+                dayCol.className = "bg-white border border-slate-200 rounded-2xl p-5 shadow-sm";
+                
+                const header = document.createElement('div');
+                header.className = "flex items-center justify-between mb-4 pb-3 border-b border-slate-100";
+                header.innerHTML = '<span class="font-bold text-slate-800 text-lg">' + dayNames[currentDay] + ' の時間割</span><span class="text-xs text-slate-400 font-bold">' + getFormattedDate(currentWeek, currentDay) + '</span>';
+                dayCol.appendChild(header);
+
+                const listWrapper = document.createElement('div');
+                listWrapper.className = "space-y-4";
+                renderPeriodsList(timetableData[currentDay] || [], listWrapper, false, currentDay);
+                dayCol.appendChild(listWrapper);
+
+                container.appendChild(dayCol);
+
+            } else {
+                // 3日表示、または週表示（共通大判スクロール設計）
+                const isThreeDay = (viewMode === 'three-day');
+                
+                if (isThreeDay) {
+                    container.className = "grid grid-cols-1 md:grid-cols-3 gap-4 items-start w-full";
+                } else {
+                    container.className = "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 items-start w-full";
+                }
+
+                const targetDays = isThreeDay ? get3DaysList() : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+
+                targetDays.forEach(dayCode => {
                     const dayCol = document.createElement('div');
-                    dayCol.className = "w-64 md:w-72 flex flex-col h-full bg-slate-100/40 border border-slate-200/50 rounded-2xl p-3 shrink-0";
-                    
-                    const header = document.createElement('div');
                     const isToday = (dayCode === 'Fri'); // デモ上の今日設定
-                    header.className = "flex items-center justify-between mb-3 pb-2 border-b border-slate-200 shrink-0";
-                    header.innerHTML = `
-                        <div class="flex items-center gap-2">
-                            <span class="font-bold text-slate-800 text-sm md:text-base">${dayNames[dayCode]}</span>
-                            ${isToday ? `<span class="bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm">今日</span>` : ''}
-                        </div>
-                    `;
+                    
+                    dayCol.className = "bg-white border border-slate-200/60 rounded-2xl p-4 flex flex-col shadow-sm relative";
+                    
+                    // ヘッダーを最上部に固定する (Sticky top)
+                    const header = document.createElement('div');
+                    header.className = "sticky top-0 bg-white pb-3 mb-2 border-b border-slate-100 z-10 flex items-center justify-between";
+                    header.innerHTML = [
+                        '<div class="flex items-center gap-2">',
+                        '    <span class="font-bold text-slate-800 text-sm md:text-base">' + dayNames[dayCode].replace('曜日', '') + '</span>',
+                        isToday ? '    <span class="bg-emerald-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded shadow-sm">今日</span>' : '',
+                        '</div>',
+                        '<span class="text-[10px] text-slate-400 font-bold">' + getFormattedDate(currentWeek, dayCode).split('(')[0] + '</span>'
+                    ].join('\n');
                     dayCol.appendChild(header);
 
-                    const periodsListWrapper = document.createElement('div');
-                    periodsListWrapper.className = "flex-1 overflow-y-auto space-y-3 pr-1 pb-10";
+                    const listWrapper = document.createElement('div');
+                    listWrapper.className = "space-y-3";
                     
-                    const dayPeriods = timetableData[dayCode] || [];
-                    renderPeriodsList(dayPeriods, periodsListWrapper, true);
+                    renderPeriodsList(timetableData[dayCode] || [], listWrapper, true, dayCode);
+                    dayCol.appendChild(listWrapper);
 
-                    dayCol.appendChild(periodsListWrapper);
                     container.appendChild(dayCol);
                 });
             }
         }
 
-        // --- STREAMING_CHUNK: Rendering Period Cards with Static Alignment... ---
-        // コマ一覧のレンダリングヘルパー（共通設計・バグ修正版）
-        function renderPeriodsList(dayPeriods, targetContainer, isCompact = false) {
+        // --- STREAMING_CHUNK: Constructing Unifying Alignment Cards... ---
+        // 時間割コマ（各カード）のレンダリング
+        function renderPeriodsList(dayPeriods, targetContainer, isCompact, dayCode) {
             dayPeriods.forEach(period => {
-                const currentPeriodKey = `w${currentWeek}-${period.id}`;
+                const currentPeriodKey = 'w' + currentWeek + '-' + period.id;
                 
-                // 【バグ修正】授業変更（臨時上書き）データがあるか正確に判定し、あればデータを統合する
-                const isChanged = !!temporaryChanges[currentPeriodKey];
-                const displayedPeriod = isChanged ? { ...period, ...temporaryChanges[currentPeriodKey] } : period;
+                // 授業変更の取得
+                const tempChange = temporaryChanges[currentPeriodKey];
+                const isChanged = !!tempChange;
+                const displayedPeriod = isChanged ? { ...period, ...tempChange } : period;
 
                 const isClass = displayedPeriod.type === 'class';
                 const isEmpty = displayedPeriod.type === 'empty';
@@ -773,45 +842,41 @@
                     mainAccent = "border-l-4 border-l-indigo-500";
                 }
 
-                // 割り当てられたタスクの特定（週・コマと完全連動）
+                // タスクと連絡事項データ
                 const assignedTasks = tasks.filter(t => t.assignedPeriodId === currentPeriodKey && !t.completed);
-
-                // 週ごとの詳細（連絡事項）データの取得
                 const details = weeklyDetails[currentPeriodKey] || { announcements: [] };
 
-                // コマ自体のサイズがタスク量で変わらないように、高さを完全固定 (h-36: 約144px / 昼休みは55px / 放課後は105px)
                 const item = document.createElement('div');
+
+                // 高さを完全に揃える (ガタつきを根絶)
                 if (isCompact) {
                     let compactHeight = "h-36";
                     if (period.num === '昼') compactHeight = "h-[55px]";
                     if (period.num === '放') compactHeight = "h-[105px]";
-                    item.className = `${bgClass} border ${mainAccent} rounded-xl p-3 flex flex-col justify-between ${compactHeight} transition-all duration-200 relative group shadow-sm text-left`;
+                    item.className = bgClass + " border " + mainAccent + " rounded-xl p-3 flex flex-col justify-between " + compactHeight + " transition-all duration-200 relative group shadow-sm text-left overflow-hidden";
                 } else {
-                    item.className = `${bgClass} border ${mainAccent} rounded-2xl p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all duration-200 relative group shadow-sm`;
+                    item.className = bgClass + " border " + mainAccent + " rounded-2xl p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all duration-200 relative group shadow-sm";
                 }
                 item.id = period.id;
 
                 // ドラッグ＆ドロップ受け入れハンドラ
-                item.addEventListener('dragover', (e) => {
+                item.addEventListener('dragover', function(e) {
                     e.preventDefault();
                     item.classList.add('drag-over');
                 });
-                item.addEventListener('dragleave', () => {
+                item.addEventListener('dragleave', function() {
                     item.classList.remove('drag-over');
                 });
-                item.addEventListener('drop', (e) => {
+                item.addEventListener('drop', function(e) {
                     e.preventDefault();
                     item.classList.remove('drag-over');
-                    const taskId = e.dataTransfer.setData('text/plain', ''); // For security
-                    const activeDraggedId = Array.from(document.querySelectorAll('.opacity-40')).map(el => el.id || ''); // fallback trigger
-                    // Get taskId via custom storage or find active dragging
-                    const foundTask = tasks.find(t => !t.assignedPeriodId && !t.completed); // fallback to first task for demo
+                    const foundTask = tasks.find(t => !t.assignedPeriodId && !t.completed); // デモ用フォールバック
                     if (foundTask) {
                         assignTaskToPeriod(foundTask.id, currentPeriodKey);
                     }
                 });
 
-                // 生徒への連絡事項UI生成 (ネストしたバッククォートを排除)
+                // 1. 生徒への連絡事項UI生成
                 let announcementsHTML = '';
                 if (details.announcements && details.announcements.length > 0) {
                     let items = '';
@@ -823,159 +888,118 @@
                             items += '<span class="inline-flex items-center gap-1 text-[11px] bg-white border border-emerald-100 text-emerald-800 font-medium px-2.5 py-1 rounded-lg"><i class="fa-solid fa-bullhorn text-[9px] text-emerald-500"></i>' + escapeHTML(ann) + '</span>';
                         }
                     }
-                    if (isCompact) {
-                        announcementsHTML = '<div class="flex flex-wrap gap-1">' + items + '</div>';
-                    } else {
-                        announcementsHTML = '<div class="mt-2.5 flex flex-wrap gap-1.5">' + items + '</div>';
-                    }
+                    announcementsHTML = isCompact ? '<div class="flex flex-wrap gap-1">' + items + '</div>' : '<div class="mt-2.5 flex flex-wrap gap-1.5">' + items + '</div>';
                 } else if (isClass && !isCompact) {
-                    announcementsHTML = `
-                        <p class="text-xs text-slate-400 italic mt-2.5">
-                            <i class="fa-solid fa-pen"></i> タップして生徒への連絡事項を追加
-                        </p>
-                    `;
+                    announcementsHTML = '<p class="text-xs text-slate-400 italic mt-2.5"><i class="fa-solid fa-pen"></i> タップして生徒への連絡事項を追加</p>';
                 }
 
-                // 割り当てられたタスク（ToDo）の表示HTML (ネストしたバッククォートを排除)
+                // 2. 割り当てタスクUI生成
                 let tasksHTML = '';
                 if (assignedTasks.length > 0) {
                     let items = '';
                     for (let i = 0; i < assignedTasks.length; i++) {
-                        const task = assignedTasks[i];
+                        const t = assignedTasks[i];
                         if (isCompact) {
-                            items += '<div class="flex items-center justify-between bg-white border border-slate-100 rounded-lg px-2 py-0.5 text-[10px] shadow-sm"><div class="flex items-center gap-1 min-w-0"><input type="checkbox" onchange="toggleTaskComplete(\'' + task.id + '\')" class="w-3 h-3 text-blue-600 rounded border-slate-300 shrink-0"><span class="font-medium text-slate-700 truncate max-w-[100px]" title="' + escapeHTML(task.title) + '">' + escapeHTML(task.title) + '</span></div></div>';
+                            items += '<div class="flex items-center justify-between bg-white border border-slate-100 rounded-lg px-2 py-0.5 text-[9px] shadow-sm"><div class="flex items-center gap-1 min-w-0"><input type="checkbox" onchange="toggleTaskComplete(\'' + t.id + '\')" class="w-2.5 h-2.5 text-blue-600 rounded border-slate-300 shrink-0"><span class="font-medium text-slate-700 truncate max-w-[90px]" title="' + escapeHTML(t.title) + '">' + escapeHTML(t.title) + '</span></div></div>';
                         } else {
-                            items += '<div class="flex items-center justify-between bg-white border border-slate-100 rounded-xl px-3 py-2 text-xs shadow-sm hover:border-slate-300 transition-all"><div class="flex items-center gap-2 min-w-0"><input type="checkbox" onchange="toggleTaskComplete(\'' + task.id + '\')" class="w-3.5 h-3.5 text-blue-600 rounded border-slate-300"><span class="font-medium text-slate-700 truncate">' + escapeHTML(task.title) + '</span></div><div class="flex items-center gap-1 shrink-0"><button onclick="openMoveTaskModal(event, \'' + task.id + '\')" class="text-slate-400 hover:text-blue-600 p-1 rounded hover:bg-slate-50 transition-all" title="他の週にタスクを移動"><i class="fa-solid fa-angles-right text-[11px]"></i></button><button onclick="unassignTask(event, \'' + task.id + '\')" class="text-slate-400 hover:text-red-500 p-1 rounded hover:bg-slate-50 transition-all" title="予定を未定に戻す"><i class="fa-solid fa-arrow-rotate-left"></i></button></div></div>';
+                            items += '<div class="flex items-center justify-between bg-white border border-slate-100 rounded-xl px-3 py-2 text-xs shadow-sm hover:border-slate-300 transition-all"><div class="flex items-center gap-2 min-w-0"><input type="checkbox" onchange="toggleTaskComplete(\'' + t.id + '\')" class="w-3.5 h-3.5 text-blue-600 rounded border-slate-300"><span class="font-medium text-slate-700 truncate">' + escapeHTML(t.title) + '</span></div><div class="flex items-center gap-1 shrink-0"><button onclick="openMoveTaskModal(event, \'' + t.id + '\')" class="text-slate-400 hover:text-blue-600 p-1 rounded hover:bg-slate-50 transition-all" title="他の週にタスクを移動"><i class="fa-solid fa-angles-right text-[11px]"></i></button><button onclick="unassignTask(event, \'' + t.id + '\')" class="text-slate-400 hover:text-red-500 p-1 rounded hover:bg-slate-50 transition-all" title="予定を未定に戻す"><i class="fa-solid fa-arrow-rotate-left"></i></button></div></div>';
                         }
                     }
-                    if (isCompact) {
-                        tasksHTML = '<div class="mt-2 space-y-1 pt-2 border-t border-slate-100">' + items + '</div>';
-                    } else {
-                        tasksHTML = '<div class="mt-3 space-y-2 pt-3 border-t border-slate-100"><p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider"><i class="fa-solid fa-circle-check text-blue-500"></i> この時間中に実行：</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-2">' + items + '</div></div>';
-                    }
+                    tasksHTML = isCompact ? '<div class="mt-2 space-y-1 pt-1.5 border-t border-slate-100">' + items + '</div>' : '<div class="mt-3 space-y-2 pt-3 border-t border-slate-100"><p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider"><i class="fa-solid fa-circle-check text-blue-500"></i> この時間にやること：</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-2">' + items + '</div></div>';
                 } else if (isEmpty && !isCompact) {
-                    tasksHTML = `
-                        <div class="mt-2 text-center py-3 bg-amber-50/20 border border-dashed border-amber-200/50 rounded-xl">
-                            <p class="text-xs text-amber-800 font-medium">空きコマです。やるべきタスクをここに配置しましょう！</p>
-                        </div>
-                    `;
+                    tasksHTML = '<div class="mt-2 text-center py-3 bg-amber-50/20 border border-dashed border-amber-200/50 rounded-xl"><p class="text-xs text-amber-800 font-medium">空きコマです。やるべきタスクをここに配置しましょう！</p></div>';
                 }
 
-                // 週表示 (Compact) か日表示かでカード全体のレイアウトを決定
+                // 3. 画面モードに応じた最終HTMLの埋め込み (ネストなしの安全結合)
                 if (isCompact) {
-                    item.innerHTML = `
-                        <div class="flex-1 flex flex-col min-w-0 h-full cursor-pointer overflow-hidden" onclick="openClassDetail('${period.id}')">
-                            <!-- コマ番号 ＆ 科目 -->
-                            <div class="flex items-start gap-1.5 shrink-0">
-                                <span class="text-[10px] font-black w-5 h-5 flex items-center justify-center shrink-0 rounded ${badgeClass}">${displayedPeriod.num}</span>
-                                <div class="min-w-0 flex-1">
-                                    <div class="flex flex-wrap items-center gap-0.5">
-                                        <h4 class="font-bold text-slate-800 text-xs truncate max-w-[120px]">${escapeHTML(displayedPeriod.subject)}</h4>
-                                        ${displayedPeriod.class ? `<span class="text-[9px] font-semibold text-slate-500 px-1 bg-slate-100 rounded truncate shrink-0">${escapeHTML(displayedPeriod.class)}</span>` : ''}
-                                    </div>
-                                    <p class="text-[9px] text-slate-400 font-medium"><i class="fa-solid fa-clock"></i> ${displayedPeriod.time}</p>
-                                </div>
-                            </div>
-                            
-                            <!-- 授業変更バッジの表示 -->
-                            ${isChanged ? `
-                                <div class="mt-1 inline-flex items-center gap-1 bg-amber-50 text-amber-800 border border-amber-200 rounded px-1.5 py-0.5 text-[8px] font-black shrink-0 w-max animate-pulse">
-                                    <i class="fa-solid fa-triangle-exclamation"></i> 授業変更
-                                </div>
-                            ` : ''}
-
-                            <!-- タスクや連絡が多い時に自動スクロールさせるインナーエリア -->
-                            <div class="flex-1 overflow-y-auto mt-1.5 space-y-1.5 pr-0.5 scrollbar-thin">
-                                ${announcementsHTML}
-                                ${tasksHTML}
-                            </div>
-                        </div>
-                        <div class="absolute right-1 top-1 opacity-0 group-hover:opacity-100 transition-opacity flex gap-0.5 z-10">
-                            ${isEmpty || isAfter ? `
-                                <button onclick="openAssignPicker('${currentPeriodKey}')" class="p-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-[9px]" title="タスクを割当">
-                                    <i class="fa-solid fa-plus"></i>
-                                </button>
-                            ` : ''}
-                        </div>
-                    `;
+                    item.innerHTML = [
+                        '<div class="flex-1 flex flex-col min-w-0 h-full cursor-pointer overflow-hidden" onclick="openClassDetail(\'' + period.id + '\')">',
+                        '    <div class="flex items-start gap-1.5 shrink-0">',
+                        '        <span class="text-[10px] font-black w-5 h-5 flex items-center justify-center shrink-0 rounded ' + badgeClass + '">' + displayedPeriod.num + '</span>',
+                        '        <div class="min-w-0 flex-1">',
+                        '            <div class="flex flex-wrap items-center gap-0.5">',
+                        '                <h4 class="font-bold text-slate-800 text-xs truncate max-w-[120px]">' + escapeHTML(displayedPeriod.subject) + '</h4>',
+                                         displayedPeriod.class ? '            <span class="text-[9px] font-semibold text-slate-500 px-1 bg-slate-100 rounded truncate shrink-0">' + escapeHTML(displayedPeriod.class) + '</span>' : '',
+                        '            </div>',
+                        '            <p class="text-[9px] text-slate-400 font-medium"><i class="fa-solid fa-clock"></i> ' + displayedPeriod.time + '</p>',
+                        '        </div>',
+                        '    </div>',
+                        isChanged ? '    <div class="mt-1 inline-flex items-center gap-1 bg-amber-50 text-amber-800 border border-amber-200 rounded px-1 py-0.5 text-[8px] font-black shrink-0 w-max animate-pulse"><i class="fa-solid fa-triangle-exclamation"></i> 授業変更</div>' : '',
+                        '    <div class="flex-1 overflow-y-auto mt-1 space-y-1 pr-0.5 scrollbar-thin">',
+                                 announcementsHTML,
+                                 tasksHTML,
+                        '    </div>',
+                        '</div>',
+                        '<div class="absolute right-1 top-1 opacity-0 group-hover:opacity-100 transition-opacity flex gap-0.5 z-10">',
+                             (isEmpty || isAfter) ? '    <button onclick="openAssignPicker(\'' + currentPeriodKey + '\')" class="p-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-[9px]" title="タスクを割当"><i class="fa-solid fa-plus"></i></button>' : '',
+                        '</div>'
+                    ].join('\n');
                 } else {
-                    item.innerHTML = `
-                        <div class="flex-1 min-w-0 cursor-pointer" onclick="openClassDetail('${period.id}')">
-                            <div class="flex items-center gap-3">
-                                <span class="text-sm font-black w-10 text-center py-1 rounded-lg ${badgeClass}">${displayedPeriod.num}</span>
-                                <div>
-                                    <div class="flex items-center gap-2">
-                                        <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
-                                            ${escapeHTML(displayedPeriod.subject)}
-                                            ${isChanged ? `
-                                                <span class="bg-amber-100 text-amber-800 border border-amber-200 text-[10px] font-black px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
-                                                    <i class="fa-solid fa-triangle-exclamation animate-bounce"></i> 授業変更
-                                                </span>
-                                            ` : ''}
-                                        </h3>
-                                        ${displayedPeriod.class ? `<span class="text-xs font-semibold text-slate-500 px-2 py-0.5 bg-slate-100 rounded">${escapeHTML(displayedPeriod.class)}</span>` : ''}
-                                        ${displayedPeriod.room ? `<span class="text-xs text-slate-400"><i class="fa-solid fa-location-dot"></i> ${escapeHTML(displayedPeriod.room)}</span>` : ''}
-                                    </div>
-                                    <p class="text-xs text-slate-400 font-medium mt-0.5"><i class="fa-solid fa-clock"></i> ${displayedPeriod.time}</p>
-                                </div>
-                            </div>
-                            ${announcementsHTML}
-                            ${tasksHTML}
-                        </div>
-                        <div class="flex items-center gap-2 shrink-0 justify-end md:border-l md:border-slate-100 md:pl-4">
-                            ${isClass ? `
-                                <button onclick="openClassDetail('${period.id}')" class="text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-2 rounded-xl border border-emerald-100 transition-all flex items-center gap-1.5">
-                                    <i class="fa-solid fa-bullhorn"></i> 連絡編集
-                                </button>
-                            ` : ''}
-                            ${isEmpty || isAfter ? `
-                                <button onclick="openAssignPicker('${currentPeriodKey}')" class="text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-xl border border-blue-100 transition-all flex items-center gap-1.5">
-                                    <i class="fa-solid fa-plus"></i> タスクを割当
-                                </button>
-                            ` : ''}
-                        </div>
-                    `;
+                    item.innerHTML = [
+                        '<div class="flex-1 min-w-0 cursor-pointer" onclick="openClassDetail(\'' + period.id + '\')">',
+                        '    <div class="flex items-center gap-3">',
+                        '        <span class="text-sm font-black w-10 text-center py-1 rounded-lg ' + badgeClass + '">' + displayedPeriod.num + '</span>',
+                        '        <div>',
+                        '            <div class="flex items-center gap-2">',
+                        '                <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">',
+                                             escapeHTML(displayedPeriod.subject),
+                                             isChanged ? '            <span class="bg-amber-100 text-amber-800 border border-amber-200 text-[10px] font-black px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm"><i class="fa-solid fa-triangle-exclamation animate-bounce"></i> 授業変更</span>' : '',
+                        '                </h3>',
+                                         displayedPeriod.class ? '            <span class="text-xs font-semibold text-slate-500 px-2 py-0.5 bg-slate-100 rounded">' + escapeHTML(displayedPeriod.class) + '</span>' : '',
+                                         displayedPeriod.room ? '            <span class="text-xs text-slate-400"><i class="fa-solid fa-location-dot"></i> ' + escapeHTML(displayedPeriod.room) + '</span>' : '',
+                        '            </div>',
+                        '            <p class="text-xs text-slate-400 font-medium mt-0.5"><i class="fa-solid fa-clock"></i> ' + displayedPeriod.time + '</p>',
+                        '        </div>',
+                        '    </div>',
+                             announcementsHTML,
+                             tasksHTML,
+                        '</div>',
+                        '<div class="flex items-center gap-2 shrink-0 justify-end md:border-l md:border-slate-100 md:pl-4">',
+                             isClass ? '    <button onclick="openClassDetail(\'' + period.id + '\')" class="text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-2 rounded-xl border border-emerald-100 transition-all flex items-center gap-1.5"><i class="fa-solid fa-bullhorn"></i> 連絡編集</button>' : '',
+                             (isEmpty || isAfter) ? '    <button onclick="openAssignPicker(\'' + currentPeriodKey + '\')" class="text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-xl border border-blue-100 transition-all flex items-center gap-1.5"><i class="fa-solid fa-plus"></i> タスクを割当</button>' : '',
+                        '</div>'
+                    ].join('\n');
                 }
                 targetContainer.appendChild(item);
             });
         }
 
-        // --- STREAMING_CHUNK: Processing Task Schedulings and Resetting... ---
-        // タスクを特定のコマにスケジュール
+        // --- STREAMING_CHUNK: Managing Task Schedulings across Weeks... ---
+        // タスク特定コマ割り当て
         function assignTaskToPeriod(taskId, fullPeriodKey) {
             const task = tasks.find(t => t.id === taskId);
             if (task) {
                 task.assignedPeriodId = fullPeriodKey;
                 const readableTime = getPeriodDisplayName(fullPeriodKey);
-                showToast(`「${task.title}」を ${readableTime} にスケジュールしました。`);
+                showToast('「' + task.title + '」を ' + readableTime + ' にスケジュールしました。');
                 renderDashboard();
             }
         }
 
-        // タスクのスケジュールを解除して未定リストに戻す
+        // タスク割り当て解除
         function unassignTask(event, taskId) {
             if (event) event.stopPropagation();
             const task = tasks.find(t => t.id === taskId);
             if (task) {
                 task.assignedPeriodId = null;
-                showToast(`「${task.title}」のスケジュールを解除して未定に戻しました。`);
+                showToast('「' + task.title + '」のスケジュールを解除しました。');
                 renderDashboard();
             }
         }
 
-        // クイック配置
+        // 今日の空き枠にクイック割り当て
         function quickAssign(taskId) {
             const dayPeriods = timetableData[currentDay];
             const emptyPeriod = dayPeriods.find(p => p.type === 'empty' || p.type === 'afterschool');
             if (emptyPeriod) {
-                const fullPeriodKey = `w${currentWeek}-${emptyPeriod.id}`;
+                const fullPeriodKey = 'w' + currentWeek + '-' + emptyPeriod.id;
                 assignTaskToPeriod(taskId, fullPeriodKey);
             } else {
-                showToast("配置可能な空きコマが今日はありません。ドラッグして別の曜日へ直接配置してください。");
+                showToast("本日は空きコマがありません。カレンダーへドラッグドロップしてください。");
             }
         }
 
-        // アサインピッカー（iPadタップ配置用）
+        // 空きコマにタスクをピッカーで割り当てる（iPadタップ操作用）
         function openAssignPicker(fullPeriodKey) {
             const unassigned = tasks.filter(t => !t.assignedPeriodId && !t.completed);
             if (unassigned.length === 0) {
@@ -992,19 +1016,19 @@
             const pickerDiv = document.createElement('div');
             pickerDiv.id = 'assign-picker-modal';
             pickerDiv.className = 'fixed inset-0 bg-slate-950/40 backdrop-blur-sm flex items-center justify-center z-50 p-4';
-            pickerDiv.innerHTML = `
-                <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl border border-slate-200 animate-in zoom-in duration-200">
-                    <h3 class="font-bold text-slate-900 mb-2"><i class="fa-solid fa-link text-blue-600 mr-2"></i>ToDoタスクを割り当て</h3>
-                    <p class="text-xs text-slate-500 mb-4">この時間枠で実行するGoogle Tasksを選択してください。</p>
-                    <select id="picker-select-task" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm mb-4">
-                        ${selectHTML}
-                    </select>
-                    <div class="flex justify-end gap-2">
-                        <button onclick="document.getElementById('assign-picker-modal').remove()" class="text-xs font-semibold px-4 py-2 hover:bg-slate-100 rounded-xl">キャンセル</button>
-                        <button id="btn-picker-confirm" class="bg-blue-600 text-white font-semibold text-xs px-4 py-2 rounded-xl">割り当てる</button>
-                    </div>
-                </div>
-            `;
+            pickerDiv.innerHTML = [
+                '<div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl border border-slate-200 animate-in zoom-in duration-200">',
+                '    <h3 class="font-bold text-slate-900 mb-2"><i class="fa-solid fa-link text-blue-600 mr-2"></i>ToDoタスクを割り当て</h3>',
+                '    <p class="text-xs text-slate-500 mb-4">この時間枠で実行するGoogle Tasksを選択してください。</p>',
+                '    <select id="picker-select-task" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm mb-4">',
+                         selectHTML,
+                '    </select>',
+                '    <div class="flex justify-end gap-2">',
+                '        <button onclick="document.getElementById(\'assign-picker-modal\').remove()" class="text-xs font-semibold px-4 py-2 hover:bg-slate-100 rounded-xl">キャンセル</button>',
+                '        <button id="btn-picker-confirm" class="bg-blue-600 text-white font-semibold text-xs px-4 py-2 rounded-xl">割り当てる</button>',
+                '    </div>',
+                '</div>'
+            ].join('\n');
             document.body.appendChild(pickerDiv);
 
             document.getElementById('btn-picker-confirm').onclick = function() {
@@ -1016,11 +1040,11 @@
             };
         }
 
-        // --- STREAMING_CHUNK: Processing Temporary Class Changes... ---
-        // 臨時授業変更の保存
+        // --- STREAMING_CHUNK: Processing Class Overrides & Temporary Changes... ---
+        // 授業臨時変更の保存
         function savePeriodChange() {
             if (!activeModalPeriodId) return;
-            const currentPeriodKey = `w${currentWeek}-${activeModalPeriodId}`;
+            const currentPeriodKey = 'w' + currentWeek + '-' + activeModalPeriodId;
 
             const subject = document.getElementById('edit-subject').value.trim();
             const className = document.getElementById('edit-class').value.trim();
@@ -1039,26 +1063,26 @@
                 type: type
             };
 
-            showToast("⚠️ このコマの一時的な授業変更を保存しました。");
+            showToast("⚠️ この週の該当コマに一時変更を適用しました。");
             closeModal();
             renderDashboard();
         }
 
-        // 授業変更のリセット（基本設定に戻す）
+        // 臨時変更リセット
         function resetPeriodChange() {
             if (!activeModalPeriodId) return;
-            const currentPeriodKey = `w${currentWeek}-${activeModalPeriodId}`;
+            const currentPeriodKey = 'w' + currentWeek + '-' + activeModalPeriodId;
 
             if (temporaryChanges[currentPeriodKey]) {
                 delete temporaryChanges[currentPeriodKey];
-                showToast("基本時間割の予定にリセットしました。");
+                showToast("基本時間割の設定に戻しました。");
             }
             closeModal();
             renderDashboard();
         }
 
-        // --- STREAMING_CHUNK: Managing Default School Timetable... ---
-        // 基本時間割（標準日課）の編集ビュー生成
+        // --- STREAMING_CHUNK: Managing default Master School Schedule... ---
+        // 基本時間割（マスター）設定
         function renderBasicTimetableSettings() {
             const container = document.getElementById('basic-timetable-editor-container');
             container.innerHTML = '';
@@ -1073,28 +1097,28 @@
                 periodsList.forEach(period => {
                     const row = document.createElement('div');
                     row.className = "bg-white p-3 rounded-xl border border-slate-200/60 space-y-2";
-                    row.innerHTML = `
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-slate-400">${period.num}限 (${period.time})</span>
-                            <select id="basic-${period.id}-type" class="text-[10px] bg-slate-50 border border-slate-200 rounded px-1 py-0.5">
-                                <option value="class" ${period.type === 'class' ? 'selected' : ''}>授業</option>
-                                <option value="empty" ${period.type === 'empty' ? 'selected' : ''}>空き</option>
-                                <option value="afterschool" ${period.type === 'afterschool' ? 'selected' : ''}>放課後</option>
-                            </select>
-                        </div>
-                        <div class="grid grid-cols-3 gap-1">
-                            <input type="text" id="basic-${period.id}-subject" value="${escapeHTML(period.subject)}" placeholder="科目" class="text-[11px] border border-slate-200 rounded px-1.5 py-1 w-full font-semibold text-slate-700">
-                            <input type="text" id="basic-${period.id}-class" value="${escapeHTML(period.class)}" placeholder="クラス" class="text-[11px] border border-slate-200 rounded px-1.5 py-1 w-full">
-                            <input type="text" id="basic-${period.id}-room" value="${escapeHTML(period.room)}" placeholder="教室" class="text-[11px] border border-slate-200 rounded px-1.5 py-1 w-full">
-                        </div>
-                    `;
+                    row.innerHTML = [
+                        '<div class="flex items-center justify-between">',
+                        '    <span class="text-xs font-bold text-slate-400">' + period.num + '限 (' + period.time + ')</span>',
+                        '    <select id="basic-' + period.id + '-type" class="text-[10px] bg-slate-50 border border-slate-200 rounded px-1 py-0.5">',
+                        '        <option value="class" ' + (period.type === 'class' ? 'selected' : '') + '>授業</option>',
+                        '        <option value="empty" ' + (period.type === 'empty' ? 'selected' : '') + '>空き</option>',
+                        '        <option value="afterschool" ' + (period.type === 'afterschool' ? 'selected' : '') + '>放課後</option>',
+                        '    </select>',
+                        '</div>',
+                        '<div class="grid grid-cols-3 gap-1">',
+                        '    <input type="text" id="basic-' + period.id + '-subject" value="' + escapeHTML(period.subject) + '" placeholder="科目" class="text-[11px] border border-slate-200 rounded px-1.5 py-1 w-full font-semibold text-slate-700">',
+                        '    <input type="text" id="basic-' + period.id + '-class" value="' + escapeHTML(period.class) + '" placeholder="クラス" class="text-[11px] border border-slate-200 rounded px-1.5 py-1 w-full">',
+                        '    <input type="text" id="basic-' + period.id + '-room" value="' + escapeHTML(period.room) + '" placeholder="教室" class="text-[11px] border border-slate-200 rounded px-1.5 py-1 w-full">',
+                        '</div>'
+                    ].join('\n');
                     dayCol.appendChild(row);
                 });
                 container.appendChild(dayCol);
             });
         }
 
-        // 基本時間割設定のセーブ
+        // 基本時間割保存
         function saveBasicTimetable() {
             const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
             days.forEach(day => {
@@ -1112,35 +1136,33 @@
                 });
             });
 
-            showToast("✅ 基本時間割を保存しました。すべての週に反映されます。");
+            showToast("✅ 基本時間割を保存しました。すべての週の初期日課に反映されます。");
             toggleViewState('dashboard');
         }
 
-        // --- STREAMING_CHUNK: Managing Modal Interactions and Details... ---
-        // 授業個別モーダルを開く
+        // --- STREAMING_CHUNK: Managing Modal Windows... ---
+        // 詳細モーダルオープン
         function openClassDetail(periodId) {
             activeModalPeriodId = periodId;
             const dayCode = periodId.split('-')[0];
             const periodData = timetableData[dayCode].find(p => p.id === periodId);
             if (!periodData) return;
 
-            // 週ごとの詳細情報の検索・初期化
-            const currentPeriodKey = `w${currentWeek}-${periodId}`;
+            const currentPeriodKey = 'w' + currentWeek + '-' + periodId;
             if (!weeklyDetails[currentPeriodKey]) {
                 weeklyDetails[currentPeriodKey] = { announcements: [] };
             }
             const activeDetails = weeklyDetails[currentPeriodKey];
 
-            // ヘッダー情報セット
-            const isChanged = !!temporaryChanges[currentPeriodKey];
-            const displayedPeriod = isChanged ? { ...periodData, ...temporaryChanges[currentPeriodKey] } : periodData;
-
-            document.getElementById('modal-period').innerText = displayedPeriod.num === 'lunch' ? '昼休み' : (displayedPeriod.num === 'after' ? '放課後' : `${displayedPeriod.num}時間目`);
-            document.getElementById('modal-title').innerText = displayedPeriod.subject + (displayedPeriod.class ? ` (${displayedPeriod.class})` : '');
-            document.getElementById('modal-week-indicator').innerText = `第 ${currentWeek} 週`;
-
-            // 授業変更フォームの初期化
+            // 臨時変更考慮
             const tempChange = temporaryChanges[currentPeriodKey];
+            const displayedPeriod = tempChange ? { ...periodData, ...tempChange } : periodData;
+
+            document.getElementById('modal-period').innerText = displayedPeriod.num === 'lunch' ? '昼休み' : (displayedPeriod.num === 'after' ? '放課後' : displayedPeriod.num + '時間目');
+            document.getElementById('modal-title').innerText = displayedPeriod.subject + (displayedPeriod.class ? ' (' + displayedPeriod.class + ')' : '');
+            document.getElementById('modal-week-indicator').innerText = '第 ' + currentWeek + ' 週';
+
+            // 授業変更フォーム初期化
             if (tempChange) {
                 document.getElementById('edit-subject').value = tempChange.subject || '';
                 document.getElementById('edit-class').value = tempChange.class || '';
@@ -1155,22 +1177,18 @@
                 document.getElementById('btn-reset-change').classList.add('hidden');
             }
 
-            // 連絡事項一覧の描画
             renderModalAnnouncements(activeDetails);
-
-            // この週のコマにアサインされたタスクの描画
             renderModalAssignedTasks(currentPeriodKey);
 
             document.getElementById('class-detail-modal').classList.remove('hidden');
         }
 
-        // モーダルを閉じる
         function closeModal() {
             document.getElementById('class-detail-modal').classList.add('hidden');
             activeModalPeriodId = null;
         }
 
-        // モーダル内の連絡事項の描画
+        // モーダル内連絡事項レンダリング
         function renderModalAnnouncements(periodData) {
             const listEl = document.getElementById('modal-announcement-list');
             listEl.innerHTML = '';
@@ -1178,53 +1196,42 @@
             const announcements = periodData.announcements || [];
 
             if (announcements.length === 0) {
-                listEl.innerHTML = `
-                    <li class="text-xs text-slate-400 py-3 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200">
-                        登録された連絡事項はありません。上のフォームから追加してください。
-                    </li>
-                `;
+                listEl.innerHTML = '<li class="text-xs text-slate-400 py-3 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200">登録された連絡事項はありません。</li>';
                 return;
             }
 
             announcements.forEach((ann, idx) => {
                 const li = document.createElement('li');
                 li.className = "flex items-center justify-between bg-emerald-50/50 border border-emerald-100/70 p-2.5 rounded-xl text-xs";
-                li.innerHTML = `
-                    <span class="font-semibold text-emerald-900 flex-1 pr-2 leading-relaxed"><i class="fa-solid fa-bullhorn text-emerald-500 mr-1.5"></i>${escapeHTML(ann)}</span>
-                    <div class="flex items-center gap-1 shrink-0">
-                        <!-- コピー＆移動ボタン -->
-                        <button onclick="openTransferAnnouncementModal(${idx}, '${escapeHTML(ann)}')" class="text-slate-400 hover:text-emerald-600 p-1 rounded hover:bg-white transition-all" title="他の週へコピーまたは移動">
-                            <i class="fa-solid fa-copy"></i>
-                        </button>
-                        <button onclick="deleteAnnouncement(${idx})" class="text-slate-400 hover:text-red-500 p-1 rounded hover:bg-white transition-all" title="削除">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    </div>
-                `;
+                li.innerHTML = [
+                    '<span class="font-semibold text-emerald-900 flex-1 pr-2 leading-relaxed"><i class="fa-solid fa-bullhorn text-emerald-500 mr-1.5"></i>' + escapeHTML(ann) + '</span>',
+                    '<div class="flex items-center gap-1 shrink-0">',
+                    '    <button onclick="openTransferAnnouncementModal(' + idx + ', \'' + escapeHTML(ann) + '\')" class="text-slate-400 hover:text-emerald-600 p-1 rounded hover:bg-white transition-all" title="複製または移動"><i class="fa-solid fa-copy"></i></button>',
+                    '    <button onclick="deleteAnnouncement(' + idx + ')" class="text-slate-400 hover:text-red-500 p-1 rounded hover:bg-white transition-all" title="削除"><i class="fa-solid fa-trash-can"></i></button>',
+                    '</div>'
+                ].join('\n');
                 listEl.appendChild(li);
             });
         }
 
-        // 連絡事項追加
         function addAnnouncement() {
             const input = document.getElementById('new-announcement-input');
             const value = input.value.trim();
             if (!value || !activeModalPeriodId) return;
 
-            const currentPeriodKey = `w${currentWeek}-${activeModalPeriodId}`;
+            const currentPeriodKey = 'w' + currentWeek + '-' + activeModalPeriodId;
             if (weeklyDetails[currentPeriodKey]) {
                 weeklyDetails[currentPeriodKey].announcements.push(value);
                 input.value = '';
                 renderModalAnnouncements(weeklyDetails[currentPeriodKey]);
-                showToast("生徒への連絡事項を追加しました。");
+                showToast("連絡事項を追加しました。");
                 renderDashboard();
             }
         }
 
-        // 連絡事項削除
         function deleteAnnouncement(index) {
             if (!activeModalPeriodId) return;
-            const currentPeriodKey = `w${currentWeek}-${activeModalPeriodId}`;
+            const currentPeriodKey = 'w' + currentWeek + '-' + activeModalPeriodId;
             if (weeklyDetails[currentPeriodKey] && weeklyDetails[currentPeriodKey].announcements) {
                 weeklyDetails[currentPeriodKey].announcements.splice(index, 1);
                 renderModalAnnouncements(weeklyDetails[currentPeriodKey]);
@@ -1233,7 +1240,7 @@
             }
         }
 
-        // モーダル内：アサインされたタスクの描画
+        // モーダル内アサイン済タスク表示
         function renderModalAssignedTasks(currentPeriodKey) {
             const container = document.getElementById('modal-assigned-tasks');
             container.innerHTML = '';
@@ -1241,72 +1248,57 @@
             const assigned = tasks.filter(t => t.assignedPeriodId === currentPeriodKey && !t.completed);
 
             if (assigned.length === 0) {
-                container.innerHTML = `
-                    <div class="text-xs text-slate-400 py-3 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200">
-                        この時間割枠には、やることがまだありません。
-                    </div>
-                `;
+                container.innerHTML = '<div class="text-xs text-slate-400 py-3 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200">この時間のタスクはありません。</div>';
                 return;
             }
 
             assigned.forEach(task => {
                 const div = document.createElement('div');
-                div.className = "flex items-center justify-between bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-xs animate-in fade-in duration-100";
-                div.innerHTML = `
-                    <div class="flex items-center gap-2">
-                        <input type="checkbox" onchange="toggleTaskCompleteInModal('${task.id}')" class="w-3.5 h-3.5 text-blue-600 rounded border-slate-300">
-                        <span class="font-semibold text-slate-800">${escapeHTML(task.title)}</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <button onclick="openMoveTaskModal(event, '${task.id}')" class="text-[10px] text-blue-600 hover:underline">
-                            移動
-                        </button>
-                        <button onclick="unassignTaskInModal('${task.id}')" class="text-[10px] text-slate-400 hover:text-red-500 hover:underline">
-                            解除
-                        </button>
-                    </div>
-                `;
+                div.className = "flex items-center justify-between bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-xs";
+                div.innerHTML = [
+                    '<div class="flex items-center gap-2">',
+                    '    <input type="checkbox" onchange="toggleTaskCompleteInModal(\'' + task.id + '\')" class="w-3.5 h-3.5 text-blue-600 rounded border-slate-300">',
+                    '    <span class="font-semibold text-slate-800">' + escapeHTML(task.title) + '</span>',
+                    '</div>',
+                    '<div class="flex items-center gap-2">',
+                    '    <button onclick="openMoveTaskModal(event, \'' + task.id + '\')" class="text-[10px] text-blue-600 hover:underline">移動</button>',
+                    '    <button onclick="unassignTaskInModal(\'' + task.id + '\')" class="text-[10px] text-slate-400 hover:text-red-500 hover:underline">解除</button>',
+                    '</div>'
+                ].join('\n');
                 container.appendChild(div);
             });
         }
 
-        // モーダル内でのタスク完了処理
         function toggleTaskCompleteInModal(taskId) {
             toggleTaskComplete(taskId);
             if (activeModalPeriodId) {
-                const currentPeriodKey = `w${currentWeek}-${activeModalPeriodId}`;
-                renderModalAssignedTasks(currentPeriodKey);
+                renderModalAssignedTasks('w' + currentWeek + '-' + activeModalPeriodId);
             }
         }
 
-        // モーダル内でのタスク配置解除処理
         function unassignTaskInModal(taskId) {
             unassignTask(null, taskId);
             if (activeModalPeriodId) {
-                const currentPeriodKey = `w${currentWeek}-${activeModalPeriodId}`;
-                renderModalAssignedTasks(currentPeriodKey);
+                renderModalAssignedTasks('w' + currentWeek + '-' + activeModalPeriodId);
             }
         }
 
-        // --- STREAMING_CHUNK: Managing Task Schedulings across Weeks... ---
-        // タスクを「他の週」へ移動させるモーダル
+        // --- STREAMING_CHUNK: Schedulers for Inter-week actions... ---
+        // タスクを「他週」へワープ・移動するモーダル
         function openMoveTaskModal(event, taskId) {
             if (event) event.stopPropagation();
             const task = tasks.find(t => t.id === taskId);
             if (!task) return;
 
-            // 週のセレクトオプションを生成
             let weekOptionsHTML = '';
             for (let w = 1; w <= 45; w++) {
                 weekOptionsHTML += '<option value="' + w + '" ' + (w === currentWeek ? 'selected' : '') + '>第 ' + w + ' 週</option>';
             }
 
-            // 曜日と時間の選択
             const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
             let dayOptionsHTML = '';
             for (let i = 0; i < days.length; i++) {
-                const d = days[i];
-                dayOptionsHTML += '<option value="' + d + '" ' + (d === currentDay ? 'selected' : '') + '>' + dayNames[d] + '</option>';
+                dayOptionsHTML += '<option value="' + days[i] + '" ' + (days[i] === currentDay ? 'selected' : '') + '>' + dayNames[days[i]] + '</option>';
             }
 
             const periods = [
@@ -1317,61 +1309,57 @@
                 { val: 'period-lunch', text: '昼休み' },
                 { val: 'period-5', text: '5時間目' },
                 { val: 'period-6', text: '6時間目' },
-                { val: 'period-after', text: '放課後' },
+                { val: 'period-after', text: '放課後' }
             ];
             let periodOptionsHTML = '';
             for (let i = 0; i < periods.length; i++) {
-                const p = periods[i];
-                periodOptionsHTML += '<option value="' + p.val + '">' + p.text + '</option>';
+                periodOptionsHTML += '<option value="' + periods[i].val + '">' + periods[i].text + '</option>';
             }
 
             const modal = document.createElement('div');
             modal.id = 'move-task-modal';
             modal.className = 'fixed inset-0 bg-slate-950/40 backdrop-blur-sm flex items-center justify-center z-50 p-4';
-            modal.innerHTML = `
-                <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl border border-slate-200 animate-in zoom-in duration-200">
-                    <h3 class="font-bold text-slate-900 mb-1 flex items-center gap-2"><i class="fa-solid fa-angles-right text-blue-600"></i>タスクを他の週へ移動</h3>
-                    <p class="text-xs text-slate-400 break-all mb-4">対象: 「${escapeHTML(task.title)}」</p>
-                    
-                    <div class="space-y-3 mb-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">移動先の週</label>
-                            <select id="move-target-week" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm">${weekOptionsHTML}</select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">移動先の曜日</label>
-                            <select id="move-target-day" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm">${dayOptionsHTML}</select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">時間（コマ）</label>
-                            <select id="move-target-period" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm">${periodOptionsHTML}</select>
-                        </div>
-                    </div>
-                    
-                    <div class="flex justify-end gap-2">
-                        <button onclick="document.getElementById('move-task-modal').remove()" class="text-xs font-semibold px-4 py-2 hover:bg-slate-100 rounded-xl">キャンセル</button>
-                        <button id="btn-move-task-confirm" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-2 rounded-xl transition-all shadow-md shadow-blue-100">移動する</button>
-                    </div>
-                </div>
-            `;
+            modal.innerHTML = [
+                '<div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl border border-slate-200 animate-in zoom-in duration-200">',
+                '    <h3 class="font-bold text-slate-900 mb-1 flex items-center gap-2"><i class="fa-solid fa-angles-right text-blue-600"></i>タスクを他週へ移動</h3>',
+                '    <p class="text-xs text-slate-400 break-all mb-4">対象: ' + escapeHTML(task.title) + '</p>',
+                '    <div class="space-y-3 mb-4">',
+                '        <div>',
+                '            <label class="block text-xs font-bold text-slate-500 mb-1">移動先の週</label>',
+                '            <select id="move-target-week" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm">' + weekOptionsHTML + '</select>',
+                '        </div>',
+                '        <div>',
+                '            <label class="block text-xs font-bold text-slate-500 mb-1">移動先の曜日</label>',
+                '            <select id="move-target-day" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm">' + dayOptionsHTML + '</select>',
+                '        </div>',
+                '        <div>',
+                '            <label class="block text-xs font-bold text-slate-500 mb-1">時間枠 (コマ)</label>',
+                '            <select id="move-target-period" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm">' + periodOptionsHTML + '</select>',
+                '        </div>',
+                '    </div>',
+                '    <div class="flex justify-end gap-2">',
+                '        <button onclick="document.getElementById(\'move-task-modal\').remove()" class="text-xs font-semibold px-4 py-2 hover:bg-slate-100 rounded-xl">キャンセル</button>',
+                '        <button id="btn-move-task-confirm" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-2 rounded-xl transition-all shadow-md">移動する</button>',
+                '    </div>',
+                '</div>'
+            ].join('\n');
             document.body.appendChild(modal);
 
             document.getElementById('btn-move-task-confirm').onclick = function() {
-                const targetWeek = document.getElementById('move-target-week').value;
-                const targetDay = document.getElementById('move-target-day').value;
-                const targetPeriod = document.getElementById('move-target-period').value;
+                const targetW = document.getElementById('move-target-week').value;
+                const targetD = document.getElementById('move-target-day').value;
+                const targetP = document.getElementById('move-target-period').value;
 
-                // 新しい割り当てID（週情報を含む）を構築
-                const newPeriodKey = `w${targetWeek}-${targetDay}-${targetPeriod}`;
-                task.assignedPeriodId = newPeriodKey;
+                task.assignedPeriodId = 'w' + targetW + '-' + targetD + '-' + targetP;
 
                 document.getElementById('move-task-modal').remove();
-                showToast("🎉 「" + task.title + "」を第" + targetWeek + "週の" + dayNames[targetDay] + "に移動しました！");
+                showToast('🎉 タスクを 第' + targetW + '週の' + dayNames[targetD] + 'にスライド移動しました！');
                 renderDashboard();
+                if (activeModalPeriodId) closeModal();
             };
         }
 
-        // 連絡事項を他の週へ「移動」または「コピー」するモーダル
+        // 連絡メモを他週へ「コピー」または「移動」するモーダル
         function openTransferAnnouncementModal(index, annText) {
             let weekOptionsHTML = '';
             for (let w = 1; w <= 45; w++) {
@@ -1381,37 +1369,35 @@
             const modal = document.createElement('div');
             modal.id = 'transfer-ann-modal';
             modal.className = 'fixed inset-0 bg-slate-950/40 backdrop-blur-sm flex items-center justify-center z-50 p-4';
-            modal.innerHTML = `
-                <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl border border-slate-200 animate-in zoom-in duration-200">
-                    <h3 class="font-bold text-slate-900 mb-1 flex items-center gap-2"><i class="fa-solid fa-copy text-emerald-600"></i>連絡事項の転送・コピー</h3>
-                    <p class="text-xs text-slate-400 break-words mb-4 bg-slate-50 p-2.5 rounded-lg border">「${escapeHTML(annText)}」</p>
-                    
-                    <div class="space-y-4 mb-5">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1.5">操作方法</label>
-                            <div class="flex gap-2">
-                                <label class="flex-1 flex items-center justify-between p-2.5 border border-slate-200 rounded-xl cursor-pointer bg-slate-50/50 hover:bg-slate-50">
-                                    <span class="text-xs font-semibold text-slate-700">コピー（複製）</span>
-                                    <input type="radio" name="transfer-mode" value="copy" checked class="text-emerald-600">
-                                </label>
-                                <label class="flex-1 flex items-center justify-between p-2.5 border border-slate-200 rounded-xl cursor-pointer bg-slate-50/50 hover:bg-slate-50">
-                                    <span class="text-xs font-semibold text-slate-700">移動（移設）</span>
-                                    <input type="radio" name="transfer-mode" value="move" class="text-emerald-600">
-                                </label>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">コピー・移動先の週</label>
-                            <select id="transfer-target-week" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm">${weekOptionsHTML}</select>
-                        </div>
-                    </div>
-                    
-                    <div class="flex justify-end gap-2">
-                        <button onclick="document.getElementById('transfer-ann-modal').remove()" class="text-xs font-semibold px-4 py-2 hover:bg-slate-100 rounded-xl">キャンセル</button>
-                        <button id="btn-transfer-ann-confirm" class="bg-emerald-600 text-white font-semibold text-xs px-4 py-2 rounded-xl transition-all shadow-md shadow-emerald-100">実行する</button>
-                    </div>
-                </div>
-            `;
+            modal.innerHTML = [
+                '<div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl border border-slate-200 animate-in zoom-in duration-200">',
+                '    <h3 class="font-bold text-slate-900 mb-1 flex items-center gap-2"><i class="fa-solid fa-copy text-emerald-600"></i>連絡事項の転送・コピー</h3>',
+                '    <p class="text-xs text-slate-400 break-words mb-4 bg-slate-50 p-2.5 rounded-lg border">「' + escapeHTML(annText) + '」</p>',
+                '    <div class="space-y-4 mb-5">',
+                '        <div>',
+                '            <label class="block text-xs font-bold text-slate-500 mb-1.5">操作モード</label>',
+                '            <div class="flex gap-2">',
+                '                <label class="flex-1 flex items-center justify-between p-2.5 border border-slate-200 rounded-xl cursor-pointer bg-slate-50/50 hover:bg-slate-50">',
+                '                    <span class="text-xs font-semibold text-slate-700">コピー (複製)</span>',
+                '                    <input type="radio" name="transfer-mode" value="copy" checked class="text-emerald-600">',
+                '                </label>',
+                '                <label class="flex-1 flex items-center justify-between p-2.5 border border-slate-200 rounded-xl cursor-pointer bg-slate-50/50 hover:bg-slate-50">',
+                '                    <span class="text-xs font-semibold text-slate-700">移動 (移設)</span>',
+                '                    <input type="radio" name="transfer-mode" value="move" class="text-emerald-600">',
+                '                </label>',
+                '            </div>',
+                '        </div>',
+                '        <div>',
+                '            <label class="block text-xs font-bold text-slate-500 mb-1">転送先の週</label>',
+                '            <select id="transfer-target-week" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm">' + weekOptionsHTML + '</select>',
+                '        </div>',
+                '    </div>',
+                '    <div class="flex justify-end gap-2">',
+                '        <button onclick="document.getElementById(\'transfer-ann-modal\').remove()" class="text-xs font-semibold px-4 py-2 hover:bg-slate-100 rounded-xl">キャンセル</button>',
+                '        <button id="btn-transfer-ann-confirm" class="bg-emerald-600 text-white font-semibold text-xs px-4 py-2 rounded-xl transition-all shadow-md shadow-emerald-100">実行する</button>',
+                '    </div>',
+                '</div>'
+            ].join('\n');
             document.body.appendChild(modal);
 
             document.getElementById('btn-transfer-ann-confirm').onclick = function() {
@@ -1419,8 +1405,8 @@
                 const targetWeek = document.getElementById('transfer-target-week').value;
 
                 const dayCode = activeModalPeriodId.split('-')[0];
-                const originalKey = `w${currentWeek}-${activeModalPeriodId}`;
-                const targetKey = `w${targetWeek}-${activeModalPeriodId}`;
+                const originalKey = 'w' + currentWeek + '-' + activeModalPeriodId;
+                const targetKey = 'w' + targetWeek + '-' + activeModalPeriodId;
 
                 if (!weeklyDetails[targetKey]) {
                     weeklyDetails[targetKey] = { announcements: [] };
@@ -1428,27 +1414,26 @@
 
                 if (mode === 'copy') {
                     weeklyDetails[targetKey].announcements.push(annText);
-                    showToast("📋 連絡事項を 第 " + targetWeek + " 週の同一授業にコピーしました！");
-                } else if (mode === 'move') {
+                    showToast('📋 第' + targetWeek + '週 の同じ時間に連絡事項をコピーしました！');
+                } else {
                     weeklyDetails[targetKey].announcements.push(annText);
                     const origIndex = weeklyDetails[originalKey].announcements.indexOf(annText);
                     if (origIndex > -1) {
                         weeklyDetails[originalKey].announcements.splice(origIndex, 1);
                     }
-                    showToast("🚚 連絡事項を 第 " + targetWeek + " 週の同一授業に移動しました。");
+                    showToast('🚚 第' + targetWeek + '週 の同じ時間に連絡事項を移動しました。');
                 }
 
                 document.getElementById('transfer-ann-modal').remove();
                 
-                // モーダルの最新データを再描画
-                const periodData = timetableData[dayCode].find(p => p.id === activeModalPeriodId);
+                // 表示更新
                 const activeDetails = weeklyDetails[originalKey] || { announcements: [] };
                 renderModalAnnouncements(activeDetails);
                 renderDashboard();
             };
         }
 
-        // 表示用コマ名取得ヘルパー
+        // ラベル表記ヘルパー
         function getPeriodDisplayName(fullPeriodKey) {
             const parts = fullPeriodKey.split('-');
             const weekNum = parts[0].replace('w', '');
@@ -1462,8 +1447,8 @@
             return label;
         }
 
-        // --- STREAMING_CHUNK: Managing Task Cruds and Integrations... ---
-        // タスクの新規手動追加（Google ToDo同期風）
+        // --- STREAMING_CHUNK: Tasks addition and Google simulators... ---
+        // 手動タスク追加
         function handleAddTask(e) {
             e.preventDefault();
             const input = document.getElementById('new-task-title');
@@ -1473,32 +1458,30 @@
             const lists = ['授業準備', '校務分掌', 'その他'];
             const randomList = lists[Math.floor(Math.random() * lists.length)];
 
-            const newTask = {
+            tasks.unshift({
                 id: 't_' + Date.now(),
                 title: title,
                 list: randomList,
                 completed: false,
                 assignedPeriodId: null
-            };
+            });
 
-            tasks.unshift(newTask);
             input.value = '';
-            
-            showToast("Google ToDoリストへ同期しました: 「" + title + "」");
+            showToast("Google ToDoリストと自動同期完了: 「" + title + "」");
             renderDashboard();
         }
 
-        // タスクの完了同期処理
+        // 完了処理
         function toggleTaskComplete(taskId) {
             const task = tasks.find(t => t.id === taskId);
             if (task) {
                 task.completed = true;
-                showToast("🎉 完了! 「" + task.title + "」を完了済みに更新同期しました。");
+                showToast("🎉 Google ToDo同期完了! 「" + task.title + "」を片付けました。");
                 renderDashboard();
             }
         }
 
-        // API同期設定
+        // 各種API設定モーダル
         function openSyncSettings() {
             document.getElementById('settings-modal').classList.remove('hidden');
         }
@@ -1511,58 +1494,58 @@
             const email = document.getElementById('settings-email').value;
             document.getElementById('google-account-text').innerText = email;
             closeSettingsModal();
-            showToast("Google Tasks API 設定情報を更新しました！");
+            showToast("Google APIの再接続に成功しました！");
         }
 
-        // 手動更新シミュレーション
+        // 手動更新トリガーシミュレータ
         function simulateSync() {
-            showToast("🔄 Google Tasks からタスク情報を同期中...");
-            setTimeout(() => {
-                const demoTitles = [
-                    '修学旅行アンケートの集計',
-                    '2B数学の補助プリント作成',
-                    '部活動保護者会への連絡送信',
-                    '実力テストの成績データ分析入力'
+            showToast("🔄 Google Tasks API 同期呼び出し中...");
+            setTimeout(function() {
+                const dummy = [
+                    '中間試験のテスト範囲発表の印刷',
+                    '3Bの三者面談希望スケジュール回収',
+                    '英語科の指導案打ち合わせ準備',
+                    '修学旅行しおり用データ整理'
                 ];
-                const randomTitle = demoTitles[Math.floor(Math.random() * demoTitles.length)];
+                const selectedTitle = dummy[Math.floor(Math.random() * dummy.length)];
                 
-                if (!tasks.some(t => t.title === randomTitle)) {
+                if (!tasks.some(t => t.title === selectedTitle)) {
                     tasks.unshift({
                         id: 't_sync_' + Date.now(),
-                        title: randomTitle,
-                        list: '校務分掌',
+                        title: selectedTitle,
+                        list: '授業準備',
                         completed: false,
                         assignedPeriodId: null
                     });
                 }
-                
                 renderDashboard();
-                showToast("✅ Google ToDoリストから最新タスクを同期しました！");
-            }, 1000);
+                showToast("✅ Google ToDoリストから最新タスクをインポートしました！");
+            }, 800);
         }
 
-        // --- 共通ユーティリティ ---
+        // HTMLエスケープ
         function escapeHTML(str) {
             if (!str) return '';
-            return str.replace(/[&<>'"]/g, 
-                tag => ({
+            return str.replace(/[&<>'"]/g, function(tag) {
+                return {
                     '&': '&amp;',
                     '<': '&lt;',
                     '>': '&gt;',
                     "'": '&#39;',
                     '"': '&quot;'
-                }[tag] || tag)
-            );
+                }[tag] || tag;
+            });
         }
 
+        // 通知トースト
         function showToast(message) {
             const toast = document.getElementById('toast');
             document.getElementById('toast-message').innerText = message;
             toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
             
-            setTimeout(() => {
+            setTimeout(function() {
                 toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
-            }, 3500);
+            }, 3000);
         }
     </script>
 </body>
