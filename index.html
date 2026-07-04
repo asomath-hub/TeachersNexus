@@ -510,6 +510,152 @@
             }
         }
 
+        // 基本時間割設定の描画
+        function renderBasicTimetableSettings() {
+            const container = document.getElementById('basic-timetable-editor-container');
+            if(!container) return;
+            container.innerHTML = '';
+
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+            days.forEach(dayCode => {
+                const dayCol = document.createElement('div');
+                dayCol.className = "bg-white border border-slate-200 rounded-2xl p-4 shadow-sm min-w-[280px] flex-1";
+                dayCol.innerHTML = '<h4 class="font-black text-slate-900 text-lg border-b border-slate-100 pb-3 mb-3">' + dayNames[dayCode] + '</h4>';
+
+                const periodsList = timetableData[dayCode] || [];
+                const wrapper = document.createElement('div');
+                wrapper.className = "space-y-3";
+
+                periodsList.forEach(period => {
+                    const row = document.createElement('div');
+                    row.className = "bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2";
+                    row.innerHTML = [
+                        '<div class="flex items-center justify-between">',
+                        '    <span class="text-xs font-bold text-slate-500 bg-white px-2 py-1 rounded shadow-sm">' + period.num + (period.num==='昼'||period.num==='放' ? '' : '限') + '</span>',
+                        '    <select id="basic-' + period.id + '-type" class="text-xs bg-white border border-slate-300 rounded-md px-2 py-1 font-bold text-slate-700 focus:outline-none focus:border-emerald-500">',
+                        '        <option value="class" ' + (period.type === 'class' ? 'selected' : '') + '>授業</option>',
+                        '        <option value="empty" ' + (period.type === 'empty' ? 'selected' : '') + '>空き</option>',
+                        '        <option value="afterschool" ' + (period.type === 'afterschool' ? 'selected' : '') + '>放課後</option>',
+                        '    </select>',
+                        '</div>',
+                        '<div class="grid grid-cols-2 gap-2 mt-1">',
+                        '    <div>',
+                        '       <label class="text-[10px] text-slate-400 font-bold ml-1">科目</label>',
+                        '       <input type="text" id="basic-' + period.id + '-subject" value="' + escapeHTML(period.subject) + '" placeholder="科目" class="text-sm bg-white border border-slate-300 rounded-md px-3 py-2 w-full font-black text-slate-900 focus:outline-none focus:border-emerald-500 transition-all">',
+                        '    </div>',
+                        '    <div>',
+                        '       <label class="text-[10px] text-slate-400 font-bold ml-1">クラス</label>',
+                        '       <input type="text" id="basic-' + period.id + '-class" value="' + escapeHTML(period.class) + '" placeholder="クラス" class="text-sm bg-white border border-slate-300 rounded-md px-3 py-2 w-full font-bold text-slate-700 focus:outline-none focus:border-emerald-500 transition-all">',
+                        '    </div>',
+                        '</div>'
+                    ].join('\n');
+                    wrapper.appendChild(row);
+                });
+                dayCol.appendChild(wrapper);
+                container.appendChild(dayCol);
+            });
+        }
+
+        // 基本時間割の保存
+        function saveBasicTimetable() {
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+            days.forEach(day => {
+                const dayPeriods = timetableData[day];
+                if(dayPeriods) {
+                    dayPeriods.forEach(period => {
+                        const subjectInput = document.getElementById('basic-' + period.id + '-subject');
+                        const classInput = document.getElementById('basic-' + period.id + '-class');
+                        const typeInput = document.getElementById('basic-' + period.id + '-type');
+
+                        if (subjectInput) period.subject = subjectInput.value;
+                        if (classInput) period.class = classInput.value;
+                        if (typeInput) period.type = typeInput.value;
+                    });
+                }
+            });
+
+            showToast("✅ 基本時間割を保存しました。");
+            toggleViewState('dashboard');
+            saveAllData();
+            renderDashboard();
+        }
+
+        // CSVエクスポート機能
+        function exportToCSV() {
+            closeControlMenu();
+            let csvContent = "データ区分,週番号,日付/曜日,時間枠/コマ,授業科目,対象クラス,授業種類,生徒への連絡・伝達事項,やること(タスク)\r\n";
+
+            for (let w = 1; w <= 45; w++) {
+                const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+                
+                days.forEach(day => {
+                    const dateStr = getFormattedDate(w, day);
+                    const periods = timetableData[day] || [];
+                    
+                    periods.forEach(p => {
+                        const currentPeriodKey = 'w' + w + '-' + p.id;
+                        const tempChange = temporaryChanges[currentPeriodKey];
+                        const displayPeriod = tempChange ? { ...p, ...tempChange } : p;
+                        
+                        const details = weeklyDetails[currentPeriodKey] || { announcements: [] };
+                        const annString = details.announcements.join(' | ');
+
+                        const assignedTasks = tasks.filter(t => t.assignedPeriodId === currentPeriodKey && !t.completed);
+                        const taskString = assignedTasks.map(t => "[" + t.list + "]" + t.title).join(' | ');
+
+                        let typeName = "授業";
+                        if (displayPeriod.type === 'empty') typeName = "空きコマ";
+                        if (displayPeriod.type === 'afterschool') typeName = "放課後";
+
+                        const row = [
+                            "時間割スケジュール",
+                            "第" + w + "週",
+                            dateStr,
+                            displayPeriod.num + (displayPeriod.num==='昼'||displayPeriod.num==='放' ? "" : "限"),
+                            displayPeriod.subject || "なし",
+                            displayPeriod.class || "なし",
+                            typeName,
+                            annString ? annString : "なし",
+                            taskString ? taskString : "なし"
+                        ].map(val => '"' + val.replace(/"/g, '""') + '"').join(',');
+
+                        csvContent += row + "\r\n";
+                    });
+                });
+            }
+
+            const unassignedTasks = tasks.filter(t => !t.assignedPeriodId && !t.completed);
+            if (unassignedTasks.length > 0) {
+                csvContent += "\r\n--- いつやるか決まっていないタスク(Google ToDoプール) ---\r\n";
+                csvContent += "データ区分,タスク分類,タスク内容,状態\r\n";
+                
+                unassignedTasks.forEach(t => {
+                    const row = [
+                        "未定タスク",
+                        t.list,
+                        t.title,
+                        "未完了"
+                    ].map(val => '"' + val.replace(/"/g, '""') + '"').join(',');
+                    csvContent += row + "\r\n";
+                });
+            }
+
+            const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+            const blob = new Blob([bom, csvContent], { type: "text/csv;charset=utf-8;" });
+            
+            const link = document.createElement("a");
+            if (link.download !== undefined) {
+                const url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", "Teachers_Nexus_全45週時間割タスク_" + new Date().toISOString().slice(0,10) + ".csv");
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showToast("📊 45週間分のCSVデータをダウンロードしました。");
+            }
+        }
+
         // --- 画面描画コア (時間割グリッドの生成) ---
         function renderDashboard() {
             renderUnplannedTasks();
