@@ -18,9 +18,7 @@
         .dark .border-slate-200, .dark .border-slate-100 { border-color: #334155; }
         .dark .text-slate-800, .dark .text-slate-900 { color: #f1f5f9; }
         .dark .text-slate-600 { color: #cbd5e1; }
-        /* スムーズな遷移 */
         * { transition: background-color 0.2s, border-color 0.2s; }
-        /* トースト通知 */
         #toast-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
         .toast { background: #1e293b; color: white; padding: 10px 20px; border-radius: 9999px; font-size: 12px; font-weight: bold; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); opacity: 0; animation: fadeInOut 3s forwards; }
         @keyframes fadeInOut { 0% { opacity: 0; transform: translateY(20px); } 10% { opacity: 1; transform: translateY(0); } 90% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-20px); } }
@@ -333,11 +331,9 @@
                 targetDayStr = days[dayIndex];
                 currentWeek = Math.max(1, weekNum);
             } else {
-                // 土日は翌週の月曜日
                 targetDayStr = 'Mon';
                 currentWeek = Math.max(1, weekNum + 1);
             }
-            
             currentDay = targetDayStr;
         }
 
@@ -360,13 +356,11 @@
             if (type === 'empty') return { bg: 'bg-transparent border-dashed', borderL: 'border-slate-300', badge: 'bg-slate-200 text-slate-700' };
             if (type === 'afterschool') return { bg: 'bg-indigo-50 border-solid', borderL: 'border-indigo-200', badge: 'bg-indigo-200 text-indigo-800' };
             
-            // 登録された科目リストから色を探す
             const found = subjectsList.find(s => s.name === subject);
             if (found) {
                 return colorPalettes[found.colorIndex % colorPalettes.length];
             }
             
-            // 未登録の科目はハッシュで自動的に色を決定
             let hash = 0;
             for (let i = 0; i < subject.length; i++) {
                 hash = subject.charCodeAt(i) + ((hash << 5) - hash);
@@ -382,11 +376,9 @@
                     const parsed = JSON.parse(svd);
                     timetableData = parsed.timetableData || generateDefaultTimetable();
                     
-                    // 古いデータ形式（6限まで）の場合、7限目を強制追加する
                     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
                     days.forEach(d => {
                         if (timetableData[d] && !timetableData[d].find(p => p.id === 'p7')) {
-                            // 7限目を探して、無ければ放課後の前に追加
                             const p7 = { id: `p7`, num: `7`, type: 'empty', subject: '空き', class: '' };
                             const afterIndex = timetableData[d].findIndex(p => p.id === 'p_after');
                             if (afterIndex > -1) {
@@ -424,20 +416,8 @@
             loadAllData();
             jumpToToday();
             updateDarkModeUI();
-            updateDataList(); // サジェスト用のプルダウンを生成
             renderLists();
             renderDashboard();
-        }
-
-        // HTMLの<datalist>を更新して、inputのプルダウンとして機能させる
-        function updateDataList() {
-            let dl = document.getElementById('registered-subjects');
-            if (!dl) {
-                dl = document.createElement('datalist');
-                dl.id = 'registered-subjects';
-                document.body.appendChild(dl);
-            }
-            dl.innerHTML = subjectsList.map(s => `<option value="${escapeHTML(s.name)}">`).join('');
         }
 
         function getFormattedDate(week, dayStr) {
@@ -482,7 +462,7 @@
         function get3Days() {
             const days = ['Mon','Tue','Wed','Thu','Fri'];
             let idx = days.indexOf(currentDay);
-            if(idx > 2) idx = 2; // 木・金が選ばれたら水木金
+            if(idx > 2) idx = 2;
             return [days[idx], days[idx+1], days[idx+2]];
         }
 
@@ -689,11 +669,10 @@
             
             document.getElementById('tc-type').value = d.type;
             
-            // 科目プルダウンの選択肢を動的に生成
+            // 科目プルダウンの生成
             const subjectSelect = document.getElementById('tc-subject');
             subjectSelect.innerHTML = '<option value="">(未設定)</option>' + 
                 subjectsList.map(s => `<option value="${escapeHTML(s.name)}" ${s.name === d.subject ? 'selected' : ''}>${escapeHTML(s.name)}</option>`).join('');
-            // リストにない科目がすでに設定されている場合は、それも選択肢に追加して選ばれた状態にする
             if (d.subject && !subjectsList.find(s => s.name === d.subject)) {
                 subjectSelect.innerHTML += `<option value="${escapeHTML(d.subject)}" selected>${escapeHTML(d.subject)}</option>`;
             }
@@ -851,7 +830,6 @@
             });
             subjectsList = newList;
             saveAllData();
-            updateDataList();
             closeSubjectSettingsModal();
             renderDashboard();
             showToast('科目設定を保存しました');
@@ -957,7 +935,6 @@
             reader.readAsText(file);
         }
 
-        // Google認証ダミー（UIのみ）
         function authenticateGoogle() {
             const display = document.getElementById('sync-status-display');
             display.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i> 同期済み';
