@@ -1,90 +1,80 @@
 <!DOCTYPE html>
-<html lang="ja" class="h-full bg-slate-50">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Teacher's Nexus - 教員用タスク＆時間割管理</title>
+    <title>Teacher's Nexus - 時間割＆タスク管理</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Noto+Sans+JP:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <script>
-        function onGsiLoad() { window.isGsiLoadedEarly = true; }
-    </script>
-    <script src="https://accounts.google.com/gsi/client" onload="onGsiLoad()" async defer></script>
-    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', 'Noto Sans JP', sans-serif; -webkit-tap-highlight-color: transparent; }
-        .drag-over { border: 2px dashed #3b82f6 !important; background-color: #eff6ff !important; transform: scale(1.01); }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
-        html.dark { background-color: #0f172a; color: #f8fafc; }
-        html.dark body { background-color: #0f172a; color: #f8fafc; }
-        html.dark .bg-slate-50 { background-color: #0f172a !important; border-color: #1e293b !important; }
-        html.dark .bg-white { background-color: #1e293b !important; border-color: #334155 !important; }
-        html.dark .bg-slate-100 { background-color: #334155 !important; }
-        html.dark .text-slate-900 { color: #f8fafc !important; }
-        html.dark .text-slate-800 { color: #e2e8f0 !important; }
-        html.dark .text-slate-700 { color: #cbd5e1 !important; }
-        html.dark .text-slate-600 { color: #94a3b8 !important; }
-        html.dark .border-slate-200 { border-color: #334155 !important; }
-        html.dark .border-slate-100 { border-color: #1e293b !important; }
-        html.dark .bg-slate-950\/40 { background-color: rgba(0, 0, 0, 0.7) !important; }
-        
-        html.dark .bg-blue-50\/40 { background-color: rgba(59,130,246,0.15)!important; border-color: rgba(59,130,246,0.3)!important; }
-        html.dark .bg-rose-50\/40 { background-color: rgba(244,63,94,0.15)!important; border-color: rgba(244,63,94,0.3)!important; }
-        html.dark .bg-emerald-50\/40 { background-color: rgba(16,185,129,0.15)!important; border-color: rgba(16,185,129,0.3)!important; }
-        html.dark .bg-amber-50\/40 { background-color: rgba(245,158,11,0.15)!important; border-color: rgba(245,158,11,0.3)!important; }
-        html.dark .bg-purple-50\/40 { background-color: rgba(168,85,247,0.15)!important; border-color: rgba(168,85,247,0.3)!important; }
-        html.dark .bg-cyan-50\/40 { background-color: rgba(6,182,212,0.15)!important; border-color: rgba(6,182,212,0.3)!important; }
-        html.dark .bg-orange-50\/40 { background-color: rgba(249,115,22,0.15)!important; border-color: rgba(249,115,22,0.3)!important; }
-        html.dark .bg-pink-50\/40 { background-color: rgba(236,72,153,0.15)!important; border-color: rgba(236,72,153,0.3)!important; }
-        html.dark .bg-teal-50\/40 { background-color: rgba(20,184,166,0.15)!important; border-color: rgba(20,184,166,0.3)!important; }
-        html.dark .bg-fuchsia-50\/40 { background-color: rgba(217,70,239,0.15)!important; border-color: rgba(217,70,239,0.3)!important; }
-        html.dark .bg-amber-50\/20 { background-color: rgba(245,158,11,0.05)!important; border-color: rgba(245,158,11,0.2)!important; }
-        html.dark .bg-indigo-50\/10 { background-color: rgba(99,102,241,0.1)!important; border-color: rgba(99,102,241,0.3)!important; }
+        .dark body { background-color: #0f172a; color: #f1f5f9; }
+        .dark .bg-slate-50 { background-color: #1e293b; }
+        .dark .bg-white { background-color: #0f172a; }
+        .dark .border-slate-200, .dark .border-slate-100 { border-color: #334155; }
+        .dark .text-slate-800, .dark .text-slate-900 { color: #f1f5f9; }
+        .dark .text-slate-600 { color: #cbd5e1; }
+        /* スムーズな遷移 */
+        * { transition: background-color 0.2s, border-color 0.2s; }
+        /* トースト通知 */
+        #toast-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+        .toast { background: #1e293b; color: white; padding: 10px 20px; border-radius: 9999px; font-size: 12px; font-weight: bold; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); opacity: 0; animation: fadeInOut 3s forwards; }
+        @keyframes fadeInOut { 0% { opacity: 0; transform: translateY(20px); } 10% { opacity: 1; transform: translateY(0); } 90% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-20px); } }
     </style>
 </head>
-<body class="h-full overflow-hidden flex flex-col text-slate-800 transition-colors duration-300">
+<body class="bg-slate-50 h-screen flex flex-col overflow-hidden text-slate-800">
 
-    <header class="bg-white border-b border-slate-200 px-4 md:px-6 py-2 md:py-3 flex flex-wrap lg:flex-nowrap items-center justify-between shrink-0 shadow-sm z-10 gap-y-2 gap-x-4">
-        <div class="flex items-center gap-2 md:gap-3 shrink-0">
-            <div class="bg-emerald-600 text-white p-2 md:p-2.5 rounded-xl shadow-md flex items-center justify-center">
-                <i class="fa-solid fa-graduation-cap text-xl md:text-2xl"></i>
+    <!-- ヘッダー -->
+    <header class="bg-white border-b border-slate-200 px-3 py-2 flex flex-col shrink-0">
+        <!-- 上段：ロゴとコントロール -->
+        <div class="flex items-center justify-between h-[40px]">
+            <div class="flex items-center gap-2">
+                <div class="bg-blue-600 text-white w-8 h-8 rounded-lg flex items-center justify-center shadow-sm">
+                    <i class="fa-solid fa-chalkboard-user text-sm"></i>
+                </div>
+                <h1 class="font-black text-lg text-slate-800 hidden md:block">Teacher's Nexus</h1>
             </div>
-            <div>
-                <h1 class="font-bold text-lg md:text-xl text-slate-900 tracking-tight">Teacher's Nexus</h1>
-                <p class="text-[10px] md:text-xs text-slate-500 font-semibold">教員用時間割＆タスク管理</p>
+            
+            <div class="flex items-center gap-2">
+                <!-- 表示切替 -->
+                <div class="bg-slate-100 p-0.5 rounded-lg flex text-xs font-bold shadow-inner">
+                    <button onclick="changeView('daily')" id="btn-view-daily" class="px-3 py-1.5 rounded-md bg-white shadow-sm text-blue-600">日</button>
+                    <button onclick="changeView('three-day')" id="btn-view-three-day" class="px-3 py-1.5 rounded-md text-slate-500 hover:text-slate-700">3日</button>
+                    <button onclick="changeView('weekly')" id="btn-view-weekly" class="px-3 py-1.5 rounded-md text-slate-500 hover:text-slate-700">週</button>
+                </div>
+                <!-- メニュー設定ボタン -->
+                <button onclick="openSettingsModal()" class="bg-slate-800 text-white px-3 py-1.5 rounded-lg font-bold text-xs shadow-sm hover:bg-slate-700">
+                    <i class="fa-solid fa-sliders"></i>
+                </button>
             </div>
         </div>
-
-        <div class="flex items-center gap-2 md:gap-4 flex-wrap sm:flex-nowrap shrink-0">
-            <div class="flex items-center bg-slate-100 p-1 rounded-xl shrink-0">
-                <button onclick="setViewMode('daily')" id="btn-view-daily" class="px-3 py-1.5 text-xs md:text-sm font-bold rounded-lg transition-all bg-white text-slate-900 shadow-sm">日表示</button>
-                <button onclick="setViewMode('three-day')" id="btn-view-three-day" class="px-3 py-1.5 text-xs md:text-sm font-semibold rounded-lg transition-all text-slate-600">3日表示</button>
-                <button onclick="setViewMode('weekly')" id="btn-view-weekly" class="px-3 py-1.5 text-xs md:text-sm font-semibold rounded-lg transition-all text-slate-600">週表示</button>
+        
+        <!-- 下段：日付と曜日ナビ -->
+        <div class="flex items-center justify-between h-[36px] mt-1">
+            <div class="flex items-center gap-2">
+                <h2 class="text-xl md:text-2xl font-black text-slate-900" id="current-day-label">月曜日</h2>
+                <span class="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded-md" id="day-date-label"></span>
             </div>
-            <div id="day-nav-container" class="flex items-center bg-slate-100 p-1 rounded-xl transition-opacity duration-200 shrink-0">
-                <button onclick="changeDay('Mon')" id="btn-Mon" class="day-btn px-3 py-1.5 text-xs md:text-sm font-bold rounded-lg transition-all bg-white text-emerald-700 shadow-sm">月</button>
-                <button onclick="changeDay('Tue')" id="btn-Tue" class="day-btn px-3 py-1.5 text-xs md:text-sm font-semibold rounded-lg transition-all text-slate-600">火</button>
-                <button onclick="changeDay('Wed')" id="btn-Wed" class="day-btn px-3 py-1.5 text-xs md:text-sm font-semibold rounded-lg transition-all text-slate-600">水</button>
-                <button onclick="changeDay('Thu')" id="btn-Thu" class="day-btn px-3 py-1.5 text-xs md:text-sm font-semibold rounded-lg transition-all text-slate-600">木</button>
-                <button onclick="changeDay('Fri')" id="btn-Fri" class="day-btn px-3 py-1.5 text-xs md:text-sm font-semibold rounded-lg transition-all text-slate-600">金</button>
+            <div id="day-nav-buttons" class="flex gap-1">
+                <button onclick="changeDay('Mon')" id="btn-day-Mon" class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold bg-blue-600 text-white shadow-sm">月</button>
+                <button onclick="changeDay('Tue')" id="btn-day-Tue" class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-slate-500 hover:bg-slate-100">火</button>
+                <button onclick="changeDay('Wed')" id="btn-day-Wed" class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-slate-500 hover:bg-slate-100">水</button>
+                <button onclick="changeDay('Thu')" id="btn-day-Thu" class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-slate-500 hover:bg-slate-100">木</button>
+                <button onclick="changeDay('Fri')" id="btn-day-Fri" class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-slate-500 hover:bg-slate-100">金</button>
             </div>
-            <button onclick="openSettingsModal()" class="bg-slate-900 hover:bg-slate-800 text-white px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm font-semibold flex items-center gap-1.5 shadow-md transition-all shrink-0">
-                <i class="fa-solid fa-sliders"></i> <span class="hidden sm:inline">メニュー設定</span>
-            </button>
         </div>
     </header>
 
-    <main class="flex-1 flex overflow-hidden bg-slate-50" id="dashboard-view">
+    <div class="flex-1 flex overflow-hidden">
         <!-- 左カラム：ToDoリスト -->
         <section class="w-64 md:w-72 border-r border-slate-200 bg-white flex flex-col shrink-0">
             <div class="p-3 border-b border-slate-100 bg-slate-50/50">
                 <div class="flex items-center justify-between mb-2">
-                    <h2 class="font-bold text-slate-800 text-sm md:text-base"><i class="fa-solid fa-list-check text-blue-600 mr-1"></i> Google ToDo</h2>
+                    <h2 class="font-bold text-slate-800 text-sm md:text-base"><i class="fa-solid fa-list-check text-blue-600 mr-1"></i> 未計画タスク</h2>
                     <span id="unplanned-count" class="bg-blue-50 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-100">0件</span>
                 </div>
                 <form id="new-task-form" onsubmit="handleAddTask(event)" class="flex gap-1.5">
@@ -92,124 +82,130 @@
                     <button type="submit" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg font-bold text-xs"><i class="fa-solid fa-plus"></i></button>
                 </form>
             </div>
+            
+            <!-- 移動中メッセージ領域 -->
+            <div id="moving-task-message" class="px-3 pt-2 empty:hidden"></div>
+            
             <div class="px-3 py-2 border-b border-slate-100 flex gap-1 overflow-x-auto shrink-0" id="list-tabs-container">
+                <!-- タブがここに生成されます -->
             </div>
             <div class="flex-1 overflow-y-auto p-3 space-y-2" id="unplanned-task-list">
+                <!-- タスクがここに生成されます -->
             </div>
         </section>
 
-        <section class="flex-1 flex flex-col overflow-hidden">
-            <div class="bg-white border-b border-slate-200 px-4 md:px-6 py-2 md:py-3 flex items-center justify-between shrink-0 shadow-sm">
-                <div class="flex items-center gap-3">
-                    <div class="flex items-center bg-slate-100 p-1 rounded-lg">
-                        <button onclick="navigateWeek(-1)" class="px-2 py-1 hover:bg-white rounded"><i class="fa-solid fa-chevron-left text-xs"></i></button>
-                        <select id="week-selector" onchange="selectWeek(this.value)" class="bg-transparent text-xs md:text-sm font-extrabold text-slate-900 outline-none px-1"></select>
-                        <button onclick="navigateWeek(1)" class="px-2 py-1 hover:bg-white rounded"><i class="fa-solid fa-chevron-right text-xs"></i></button>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="text-lg md:text-2xl font-black text-slate-900" id="current-day-label">月曜日</span>
-                        <span class="text-[10px] md:text-xs font-bold text-slate-500" id="day-date-label">4月6日(月)</span>
-                    </div>
-                </div>
+        <!-- メインカラム：時間割 -->
+        <main class="flex-1 bg-slate-50 p-2 md:p-4 overflow-y-auto">
+            <div id="timetable-container">
+                <!-- 時間割がここに生成されます -->
             </div>
-            <div class="flex-1 overflow-y-auto overflow-x-auto p-3 md:p-4" id="timetable-scroll-wrapper">
-                <div id="timetable-container" class="w-full"></div>
-            </div>
-        </section>
-    </main>
+        </main>
+    </div>
 
-    <section id="basic-settings-view" class="hidden flex-1 overflow-hidden flex flex-col bg-slate-50">
-        <div class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
-            <h2 class="font-bold text-lg text-slate-900"><i class="fa-solid fa-gears text-emerald-600 mr-2"></i>基本時間割の設定</h2>
-            <div class="flex gap-2">
-                <button onclick="toggleViewState('dashboard')" class="text-xs font-bold px-3 py-2 bg-slate-100 rounded-lg">キャンセル</button>
-                <button onclick="saveBasicTimetable()" class="text-xs font-bold px-4 py-2 bg-emerald-600 text-white rounded-lg">保存</button>
-            </div>
-        </div>
-        <div class="flex-1 overflow-auto p-6">
-            <div class="flex gap-4 min-w-max pb-10" id="basic-timetable-editor-container"></div>
-        </div>
-    </section>
-
-    <!-- 設定モーダル -->
+    <!-- コントロールメニューモーダル -->
     <div id="settings-modal" class="hidden fixed inset-0 bg-slate-950/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-        <div class="bg-white w-full max-w-md rounded-2xl shadow-xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
-            <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50 shrink-0">
-                <h3 class="font-bold text-slate-900 text-base"><i class="fa-solid fa-sliders text-blue-600 mr-2"></i>メニュー設定</h3>
-                <button onclick="closeSettingsModal()" class="text-slate-400 hover:bg-slate-200 p-1.5 rounded-lg"><i class="fa-solid fa-xmark"></i></button>
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-xl flex flex-col max-h-[90vh]">
+            <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="font-black text-slate-800 text-lg"><i class="fa-solid fa-sliders text-slate-500 mr-2"></i>メニュー設定</h3>
+                <button onclick="closeSettingsModal()" class="text-slate-400 hover:bg-slate-100 p-2 rounded-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
-            <div class="p-5 overflow-y-auto space-y-5">
-                <div class="bg-blue-50/50 border border-blue-100 p-4 rounded-xl space-y-3">
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold text-slate-700">Google ToDo 連携状況</span>
-                        <div class="flex items-center gap-1.5" id="sync-status-indicator">
-                            <span class="relative flex h-2.5 w-2.5"><span class="absolute inline-flex h-full w-full rounded-full bg-slate-400"></span></span>
-                            <span class="text-[10px] font-bold text-slate-500">未接続</span>
-                        </div>
-                    </div>
-                    <div>
-                        <input type="text" id="settings-client-id" placeholder="Google Client ID" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs focus:ring-1 focus:ring-blue-500">
-                    </div>
-                    <div id="settings-list-select-container" class="hidden">
-                        <select id="settings-target-list" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs"></select>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="startGoogleAuth()" id="btn-google-login" class="flex-1 bg-blue-600 text-white text-xs font-bold py-2 rounded-lg"><i class="fa-brands fa-google mr-1"></i>接続</button>
-                        <button onclick="disconnectGoogle()" id="btn-google-logout" class="hidden flex-1 bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded-lg">解除</button>
-                        <button onclick="manualSyncTrigger()" class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-2 rounded-lg" title="手動同期"><i class="fa-solid fa-rotate"></i></button>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <button onclick="exportToCSV()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 p-3 rounded-xl text-sm font-bold flex flex-col items-center justify-center gap-2 transition-all">
-                        <i class="fa-solid fa-file-excel text-xl"></i> CSVエクスポート
-                    </button>
-                    <button onclick="toggleViewState('basic-settings'); closeSettingsModal();" class="bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 p-3 rounded-xl text-sm font-bold flex flex-col items-center justify-center gap-2 transition-all">
-                        <i class="fa-solid fa-calendar-week text-xl"></i> 基本時間割の設定
-                    </button>
-                    <button onclick="toggleDarkMode()" id="btn-dark-mode" class="col-span-2 bg-slate-100 text-slate-800 border border-slate-200 p-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-moon text-indigo-600"></i> ダークモード切替
-                    </button>
-                </div>
-
-                <hr class="border-slate-100">
-
+            <div class="p-5 overflow-y-auto space-y-6">
+                <!-- 基本設定 -->
                 <div>
-                    <h4 class="text-xs font-bold text-slate-700 mb-2"><i class="fa-solid fa-cloud-arrow-down mr-1"></i>端末間データ同期（バックアップ）</h4>
-                    <p class="text-[10px] text-slate-500 mb-2">iPadとPC等で設定を同期するためのファイルを入出力します。</p>
+                    <h4 class="text-sm font-bold text-slate-800 mb-2 border-b pb-1">システム設定</h4>
+                    <div class="space-y-2">
+                        <button onclick="toggleDarkMode()" class="w-full text-left px-3 py-2 text-sm bg-slate-50 hover:bg-slate-100 rounded-lg font-bold text-slate-700 flex justify-between items-center">
+                            <span><i class="fa-solid fa-moon mr-2 text-indigo-500"></i>ダークモード切替</span>
+                            <span id="dark-mode-status" class="text-xs text-slate-500">オフ</span>
+                        </button>
+                        <button onclick="openBaseSettingsModal()" class="w-full text-left px-3 py-2 text-sm bg-slate-50 hover:bg-slate-100 rounded-lg font-bold text-slate-700">
+                            <i class="fa-solid fa-calendar-days mr-2 text-blue-500"></i>基本時間割の設定
+                        </button>
+                        <button onclick="exportCSV()" class="w-full text-left px-3 py-2 text-sm bg-slate-50 hover:bg-slate-100 rounded-lg font-bold text-slate-700">
+                            <i class="fa-solid fa-file-csv mr-2 text-green-500"></i>CSVエクスポート
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 端末間同期 -->
+                <div>
+                    <h4 class="text-sm font-bold text-slate-800 mb-2 border-b pb-1">端末間同期（バックアップ）</h4>
+                    <p class="text-[10px] text-slate-500 mb-2">設定をファイルに書き出して、別の端末で読み込むことができます。</p>
                     <div class="flex gap-2">
-                        <button onclick="exportDataFile()" class="flex-1 bg-slate-800 text-white text-xs font-bold py-2 rounded-lg">設定を書き出す</button>
-                        <label class="flex-1 bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded-lg text-center cursor-pointer">
-                            読み込む
-                            <input type="file" onchange="importDataFile(event)" accept=".json" class="hidden">
+                        <button onclick="exportSettingsFile()" class="flex-1 bg-slate-800 text-white text-xs font-bold py-2 rounded-lg hover:bg-slate-700">
+                            <i class="fa-solid fa-download mr-1"></i>設定を書き出し
+                        </button>
+                        <label class="flex-1 bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded-lg hover:bg-slate-300 text-center cursor-pointer">
+                            <i class="fa-solid fa-upload mr-1"></i>設定を読み込み
+                            <input type="file" accept=".json" class="hidden" onchange="importSettingsFile(event)">
                         </label>
+                    </div>
+                </div>
+
+                <!-- Google 連携 -->
+                <div>
+                    <h4 class="text-sm font-bold text-slate-800 mb-2 border-b pb-1">Google ToDo 連携</h4>
+                    <div class="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                        <div id="sync-status-display" class="text-xs font-bold text-blue-800 mb-2 flex items-center gap-1">
+                            <i class="fa-solid fa-circle-xmark text-slate-400"></i> 未接続
+                        </div>
+                        <input type="text" id="client-id-input" placeholder="Google Client ID" class="w-full border border-blue-200 rounded px-2 py-1.5 text-xs mb-2 bg-white">
+                        <button onclick="authenticateGoogle()" class="w-full bg-blue-600 text-white px-3 py-2 rounded-lg font-bold text-xs shadow-sm">
+                            <i class="fa-brands fa-google mr-1"></i>サインインして接続
+                        </button>
+                        <button onclick="syncTasks()" class="w-full bg-white border border-slate-300 text-slate-700 px-3 py-2 rounded-lg font-bold text-xs mt-2 hidden" id="btn-sync">
+                            <i class="fa-solid fa-rotate mr-1"></i>手動同期を実行
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 授業詳細モーダル -->
+    <!-- 授業詳細・変更モーダル -->
     <div id="class-detail-modal" class="hidden fixed inset-0 bg-slate-950/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div class="bg-white w-full max-w-md rounded-2xl shadow-xl flex flex-col max-h-[80vh]">
             <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-start">
-                <div>
-                    <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded" id="modal-period"></span>
-                    <h3 class="font-black text-slate-900 text-xl mt-1" id="modal-title"></h3>
+                <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-1">
+                        <!-- 幅広バッジに統一したデザインを使用 -->
+                        <span class="text-[10px] font-black text-center w-6 py-0.5 rounded-sm bg-slate-200 text-slate-700" id="modal-period"></span>
+                        <button onclick="toggleTempChangeMode()" class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded hover:bg-slate-200"><i class="fa-solid fa-pen-to-square"></i> 今週だけ変更</button>
+                    </div>
+                    <h3 class="font-black text-slate-900 text-xl leading-tight mt-1" id="modal-title"></h3>
                 </div>
-                <button onclick="closeModal()" class="p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <button onclick="closeModal()" class="p-1 -mt-1 -mr-1 text-slate-400 hover:bg-slate-100 rounded-lg"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
+            
+            <!-- 今週だけの変更フォーム -->
+            <div id="temp-change-form" class="hidden px-5 py-3 bg-amber-50 border-b border-amber-100 space-y-2">
+                <p class="text-[10px] font-bold text-amber-800"><i class="fa-solid fa-circle-info mr-1"></i>今週のこのコマのみ授業内容を変更します</p>
+                <div class="flex gap-2">
+                    <select id="tc-type" class="text-xs border border-amber-200 rounded p-1.5 bg-white">
+                        <option value="class">授業</option>
+                        <option value="empty">空き</option>
+                        <option value="afterschool">放課後等</option>
+                    </select>
+                    <input type="text" id="tc-subject" placeholder="科目名" class="flex-1 text-xs border border-amber-200 rounded p-1.5 bg-white">
+                    <input type="text" id="tc-class" placeholder="クラス" class="w-20 text-xs border border-amber-200 rounded p-1.5 bg-white">
+                </div>
+                <div class="flex gap-2 justify-end pt-1">
+                    <button onclick="resetTempChange()" class="text-[10px] font-bold px-2 py-1 text-slate-600 bg-slate-200 rounded hover:bg-slate-300">基本に戻す</button>
+                    <button onclick="saveTempChange()" class="text-[10px] font-bold px-3 py-1 text-white bg-amber-600 rounded shadow-sm hover:bg-amber-700">変更を保存</button>
+                </div>
+            </div>
+
             <div class="p-5 overflow-y-auto flex-1 space-y-4">
                 <div>
                     <label class="text-xs font-bold text-slate-800 mb-1 block">連絡事項</label>
                     <div class="flex gap-1 mb-2">
-                        <input type="text" id="new-announcement-input" class="flex-1 border rounded px-2 py-1 text-xs">
-                        <button onclick="addAnnouncement()" class="bg-emerald-600 text-white px-3 py-1 rounded text-xs font-bold">追加</button>
+                        <input type="text" id="new-announcement-input" class="flex-1 border rounded px-2 py-1.5 text-xs focus:ring-1 focus:ring-emerald-500">
+                        <button onclick="addAnnouncement()" class="bg-emerald-600 text-white px-3 py-1.5 rounded text-xs font-bold"><i class="fa-solid fa-plus"></i></button>
                     </div>
-                    <ul id="modal-announcement-list" class="space-y-1"></ul>
+                    <ul id="modal-announcements" class="space-y-1"></ul>
                 </div>
-                <hr>
+                <hr class="border-slate-100">
                 <div>
                     <label class="text-xs font-bold text-slate-800 mb-1 block">この時間のタスク</label>
                     <div id="modal-assigned-tasks" class="space-y-1"></div>
@@ -218,163 +214,201 @@
         </div>
     </div>
 
-    <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-xl flex items-center gap-2 translate-y-20 opacity-0 transition-all z-50">
-        <i class="fa-solid fa-check text-emerald-400"></i><p class="text-sm font-bold" id="toast-message"></p>
+    <!-- 基本時間割設定モーダル -->
+    <div id="base-settings-modal" class="hidden fixed inset-0 bg-slate-950/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div class="bg-white w-full max-w-4xl rounded-2xl shadow-xl flex flex-col max-h-[90vh]">
+            <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="font-black text-slate-800 text-lg"><i class="fa-solid fa-calendar-days text-slate-500 mr-2"></i>基本時間割の設定</h3>
+                <button onclick="closeBaseSettingsModal()" class="text-slate-400 hover:bg-slate-100 p-2 rounded-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-5 overflow-y-auto flex-1 bg-slate-50">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-3" id="base-settings-grid">
+                    <!-- ここに設定グリッドを生成 -->
+                </div>
+            </div>
+            <div class="px-5 py-3 border-t border-slate-100 bg-white flex justify-end gap-2">
+                <button onclick="closeBaseSettingsModal()" class="px-4 py-2 text-sm font-bold text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200">キャンセル</button>
+                <button onclick="saveBaseSettings()" class="px-4 py-2 text-sm font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 shadow-sm">設定を保存</button>
+            </div>
+        </div>
     </div>
 
+    <div id="toast-container"></div>
+
     <script>
+        const dayNames = { 'Mon':'月曜日', 'Tue':'火曜日', 'Wed':'水曜日', 'Thu':'木曜日', 'Fri':'金曜日' };
         let currentDay = 'Mon'; 
         let currentWeek = 1;   
         let selectedFilter = 'all'; 
         let activeModalPeriodId = null; 
         let viewMode = 'daily'; 
+        let activeMovingTaskId = null; // タスク移動用の状態変数
         
         let isDarkMode = localStorage.getItem('tn_dark_mode') === 'true';
-        if (isDarkMode) document.documentElement.classList.add('dark');
+        if(isDarkMode) document.documentElement.classList.add('dark');
 
-        let googleClientId = localStorage.getItem('tn_google_client_id') || '';
-        let googleToken = localStorage.getItem('tn_google_token') || null;
-        let googleTargetListId = localStorage.getItem('tn_google_target_list_id') || 'all';
-        let isGoogleConnected = (googleToken !== null);
-        let tokenExpiry = localStorage.getItem('tn_token_expiry') || 0;
-        let googleTaskLists = [];
-        let isGsiLoaded = false;
-        let tokenClient;
-
-        const dayNames = { 'Mon':'月曜日', 'Tue':'火曜日', 'Wed':'水曜日', 'Thu':'木曜日', 'Fri':'金曜日' };
-        const baseDate = new Date(2026, 3, 6);
-
-        function getFormattedDate(weekNum, dayCode) {
-            const offsets = { 'Mon':0, 'Tue':1, 'Wed':2, 'Thu':3, 'Fri':4 };
-            const days = (weekNum - 1) * 7 + offsets[dayCode];
-            const d = new Date(baseDate.getTime() + days * 86400000);
-            return (d.getMonth() + 1) + '月' + d.getDate() + '日(' + dayNames[dayCode].charAt(0) + ')';
-        }
-
-        function createDefaultDay(dayCode) {
-            return [
-                { id: dayCode+'-period-1', num: '1', type: 'class', subject: '国語総合', class: '1年A組' },
-                { id: dayCode+'-period-2', num: '2', type: 'class', subject: '数学I', class: '1年B組' },
-                { id: dayCode+'-period-3', num: '3', type: 'empty', subject: '空きコマ', class: '' },
-                { id: dayCode+'-period-4', num: '4', type: 'class', subject: '英語表現', class: '2年C組' },
-                { id: dayCode+'-period-lunch', num: '昼', type: 'empty', subject: '昼休み', class: '' },
-                { id: dayCode+'-period-5', num: '5', type: 'class', subject: '数学A', class: '1年A組' },
-                { id: dayCode+'-period-6', num: '6', type: 'class', subject: '総合', class: '1年A組' },
-                { id: dayCode+'-period-7', num: '7', type: 'empty', subject: '空きコマ', class: '' },
-                { id: dayCode+'-period-after', num: '放', type: 'afterschool', subject: '部活動・校務', class: '職員室' }
-            ];
-        }
-
-        let timetableData = {
-            'Mon': createDefaultDay('Mon'), 'Tue': createDefaultDay('Tue'),
-            'Wed': createDefaultDay('Wed'), 'Thu': createDefaultDay('Thu'), 'Fri': createDefaultDay('Fri')
-        };
-        timetableData['Mon'][1].subject = '数学II';
-
+        let defaultTimetable = {};
+        let timetableData = {};
         let tasks = [];
-        let weeklyDetails = {};
         let temporaryChanges = {};
+        let announcements = {};
+        let lists = ['その他'];
+        
+        // 起動時に現在の日付から曜日と週を計算する
+        function jumpToToday() {
+            const now = new Date();
+            const startOfYear = new Date(now.getFullYear(), 3, 1); // 4月始まりを想定
+            const diff = now - startOfYear;
+            const weekNum = Math.floor(diff / (1000 * 60 * 60 * 24 * 7)) + 1;
+            
+            let dayIndex = now.getDay(); // 0:Sun - 6:Sat
+            let targetDayStr = 'Mon';
+            
+            if (dayIndex >= 1 && dayIndex <= 5) {
+                const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                targetDayStr = days[dayIndex];
+                currentWeek = Math.max(1, weekNum);
+            } else {
+                // 土日は翌週の月曜日
+                targetDayStr = 'Mon';
+                currentWeek = Math.max(1, weekNum + 1);
+            }
+            
+            currentDay = targetDayStr;
+        }
+
+        // 基本の枠組み（全曜日1〜7限＋昼＋放）
+        function generateDefaultTimetable() {
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+            const tt = {};
+            days.forEach(d => {
+                tt[d] = [];
+                for(let i=1; i<=7; i++) {
+                    tt[d].push({ id: `p${i}`, num: `${i}`, type: 'empty', subject: '空き', class: '' });
+                    if(i === 4) tt[d].push({ id: `p_noon`, num: `昼`, type: 'empty', subject: '昼休み', class: '' });
+                }
+                tt[d].push({ id: `p_after`, num: `放`, type: 'afterschool', subject: '放課後', class: '' });
+            });
+            return tt;
+        }
+
+        function getSubjectColors(subject, type) {
+            if (type === 'empty') return { bg: 'bg-transparent border-dashed', borderL: 'border-slate-300', badge: 'bg-slate-200 text-slate-700' };
+            if (type === 'afterschool') return { bg: 'bg-indigo-50 border-solid', borderL: 'border-indigo-200', badge: 'bg-indigo-200 text-indigo-800' };
+            
+            // 色のバリエーション（10種類）
+            const palettes = [
+                { bg: 'bg-red-50', borderL: 'border-red-400 border-l-4', badge: 'bg-red-200 text-red-800' },
+                { bg: 'bg-blue-50', borderL: 'border-blue-400 border-l-4', badge: 'bg-blue-200 text-blue-800' },
+                { bg: 'bg-emerald-50', borderL: 'border-emerald-400 border-l-4', badge: 'bg-emerald-200 text-emerald-800' },
+                { bg: 'bg-purple-50', borderL: 'border-purple-400 border-l-4', badge: 'bg-purple-200 text-purple-800' },
+                { bg: 'bg-amber-50', borderL: 'border-amber-400 border-l-4', badge: 'bg-amber-200 text-amber-800' },
+                { bg: 'bg-pink-50', borderL: 'border-pink-400 border-l-4', badge: 'bg-pink-200 text-pink-800' },
+                { bg: 'bg-cyan-50', borderL: 'border-cyan-400 border-l-4', badge: 'bg-cyan-200 text-cyan-800' },
+                { bg: 'bg-rose-50', borderL: 'border-rose-400 border-l-4', badge: 'bg-rose-200 text-rose-800' },
+                { bg: 'bg-lime-50', borderL: 'border-lime-400 border-l-4', badge: 'bg-lime-200 text-lime-800' },
+                { bg: 'bg-indigo-50', borderL: 'border-indigo-400 border-l-4', badge: 'bg-indigo-200 text-indigo-800' }
+            ];
+            
+            // 科目名からハッシュを計算して色を決定
+            let hash = 0;
+            for (let i = 0; i < subject.length; i++) {
+                hash = subject.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const index = Math.abs(hash) % palettes.length;
+            return palettes[index];
+        }
 
         function loadAllData() {
             try {
-                const sd = localStorage.getItem('tn_data');
-                if (sd) {
-                    const d = JSON.parse(sd);
-                    tasks = d.tasks || [];
-                    weeklyDetails = d.weeklyDetails || {};
-                    temporaryChanges = d.temporaryChanges || {};
-                    timetableData = d.timetableData || timetableData;
+                const svd = localStorage.getItem('tn_data');
+                if(svd) {
+                    const parsed = JSON.parse(svd);
+                    timetableData = parsed.timetableData || generateDefaultTimetable();
+                    
+                    // 古いデータ形式（6限まで）の場合、7限目を強制追加する
+                    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+                    days.forEach(d => {
+                        if (timetableData[d] && !timetableData[d].find(p => p.id === 'p7')) {
+                            // 7限目を探して、無ければ放課後の前に追加
+                            const p7 = { id: `p7`, num: `7`, type: 'empty', subject: '空き', class: '' };
+                            const afterIndex = timetableData[d].findIndex(p => p.id === 'p_after');
+                            if (afterIndex > -1) {
+                                timetableData[d].splice(afterIndex, 0, p7);
+                            } else {
+                                timetableData[d].push(p7);
+                            }
+                        }
+                    });
+                    
+                    tasks = parsed.tasks || [];
+                    lists = parsed.lists || ['その他'];
+                    temporaryChanges = parsed.temporaryChanges || {};
+                    announcements = parsed.announcements || {};
+                } else {
+                    timetableData = generateDefaultTimetable();
+                    tasks = [{ id: 't1', title: '【例】数学小テスト印刷', list: 'その他', completed: false, assignedPeriodId: null }];
                 }
-            } catch(e) {}
+            } catch(e) {
+                console.error("Data load error", e);
+                timetableData = generateDefaultTimetable();
+            }
         }
 
         function saveAllData() {
-            localStorage.setItem('tn_data', JSON.stringify({tasks, weeklyDetails, temporaryChanges, timetableData}));
+            localStorage.setItem('tn_data', JSON.stringify({
+                timetableData, tasks, lists, temporaryChanges, announcements
+            }));
         }
 
-        function getSubjectColors(subjectName, type) {
-            if (type === 'empty') return { bg: 'bg-amber-50/20 border-dashed border-amber-200', borderL: 'border-l-4 border-l-amber-400', badge: 'bg-amber-100 text-amber-800 border-amber-200' };
-            if (type === 'afterschool') return { bg: 'bg-indigo-50/10 border-indigo-100', borderL: 'border-l-4 border-l-indigo-500', badge: 'bg-indigo-600 text-white' };
-
-            const palettes = [
-                { bg: 'bg-blue-50/40 border-blue-100', borderL: 'border-l-4 border-l-blue-500', badge: 'bg-blue-600 text-white' },
-                { bg: 'bg-rose-50/40 border-rose-100', borderL: 'border-l-4 border-l-rose-500', badge: 'bg-rose-600 text-white' },
-                { bg: 'bg-emerald-50/40 border-emerald-100', borderL: 'border-l-4 border-l-emerald-500', badge: 'bg-emerald-600 text-white' },
-                { bg: 'bg-purple-50/40 border-purple-100', borderL: 'border-l-4 border-l-purple-500', badge: 'bg-purple-600 text-white' },
-                { bg: 'bg-orange-50/40 border-orange-100', borderL: 'border-l-4 border-l-orange-500', badge: 'bg-orange-600 text-white' },
-                { bg: 'bg-cyan-50/40 border-cyan-100', borderL: 'border-l-4 border-l-cyan-500', badge: 'bg-cyan-600 text-white' },
-                { bg: 'bg-pink-50/40 border-pink-100', borderL: 'border-l-4 border-l-pink-500', badge: 'bg-pink-600 text-white' },
-                { bg: 'bg-teal-50/40 border-teal-100', borderL: 'border-l-4 border-l-teal-500', badge: 'bg-teal-600 text-white' }
-            ];
-
-            const name = subjectName || "";
-            let h = 0;
-            for (let i = 0; i < name.length; i++) { h = h * 31 + name.charCodeAt(i); }
-            return palettes[Math.abs(h) % palettes.length];
-        }
-
-        function jumpToToday() {
-            const now = new Date();
-            let dayCode = 'Mon';
-            const dw = now.getDay();
-            if (dw === 1) dayCode = 'Mon'; else if (dw === 2) dayCode = 'Tue';
-            else if (dw === 3) dayCode = 'Wed'; else if (dw === 4) dayCode = 'Thu';
-            else if (dw === 5) dayCode = 'Fri';
-
-            const diff = now.getTime() - baseDate.getTime();
-            let week = Math.floor(diff / 86400000 / 7) + 1;
-            if (week < 1) week = 1; if (week > 45) week = 45;
-            currentWeek = week;
-            currentDay = dayCode;
-        }
-
-        window.onload = function() {
+        function init() {
             loadAllData();
             jumpToToday();
-            
-            const sel = document.getElementById('week-selector');
-            for(let i=1; i<=45; i++) {
-                sel.innerHTML += '<option value="' + i + '">第 ' + i + ' 週</option>';
-            }
-            sel.value = currentWeek;
-
-            if (window.isGsiLoadedEarly) initGoogleIdentity();
-            else setTimeout(() => { if(!isGsiLoaded) initGoogleIdentity(); }, 2000);
-            
-            updateDarkModeButton();
+            updateDarkModeUI();
+            renderLists();
             renderDashboard();
-        };
+        }
 
-        function setViewMode(mode) {
-            viewMode = mode;
-            document.querySelectorAll('#btn-view-daily, #btn-view-three-day, #btn-view-weekly').forEach(b => {
-                b.className = "px-3 py-1.5 text-xs md:text-sm font-semibold rounded-lg transition-all text-slate-600";
+        function getFormattedDate(week, dayStr) {
+            // 仮の計算（実際にはカレンダーロジックを使用）
+            return '第' + week + '週 ' + dayNames[dayStr];
+        }
+
+        function changeView(v) {
+            viewMode = v;
+            document.getElementById('btn-view-daily').className = "px-3 py-1.5 rounded-md text-slate-500 hover:text-slate-700";
+            document.getElementById('btn-view-three-day').className = "px-3 py-1.5 rounded-md text-slate-500 hover:text-slate-700";
+            document.getElementById('btn-view-weekly').className = "px-3 py-1.5 rounded-md text-slate-500 hover:text-slate-700";
+            
+            if(v==='daily') document.getElementById('btn-view-daily').className = "px-3 py-1.5 rounded-md bg-white shadow-sm text-blue-600";
+            if(v==='three-day') document.getElementById('btn-view-three-day').className = "px-3 py-1.5 rounded-md bg-white shadow-sm text-blue-600";
+            if(v==='weekly') document.getElementById('btn-view-weekly').className = "px-3 py-1.5 rounded-md bg-white shadow-sm text-blue-600";
+            
+            const nav = document.getElementById('day-nav-buttons');
+            // 高さを変えずに隠すため invisible を使用
+            nav.className = v === 'weekly' ? 'flex gap-1 invisible' : 'flex gap-1';
+            
+            renderDashboard();
+        }
+
+        function changeDay(d) {
+            currentDay = d;
+            ['Mon','Tue','Wed','Thu','Fri'].forEach(x => {
+                const btn = document.getElementById('btn-day-'+x);
+                if(x===d) {
+                    btn.className = "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold bg-blue-600 text-white shadow-sm";
+                } else {
+                    btn.className = "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-slate-500 hover:bg-slate-100";
+                }
             });
-            document.getElementById('btn-view-' + mode).className = "px-3 py-1.5 text-xs md:text-sm font-bold rounded-lg transition-all bg-white text-slate-900 shadow-sm";
-            
-            const nav = document.getElementById('day-nav-container');
-            if (mode === 'weekly') nav.classList.add('invisible');
-            else nav.classList.remove('invisible');
-            
             renderDashboard();
         }
 
-        function changeDay(dc) {
-            currentDay = dc;
-            document.querySelectorAll('.day-btn').forEach(b => b.className = "day-btn px-3 py-1.5 text-xs md:text-sm font-semibold rounded-lg transition-all text-slate-600");
-            document.getElementById('btn-'+dc).className = "day-btn px-3 py-1.5 text-xs md:text-sm font-bold rounded-lg transition-all bg-white text-emerald-700 shadow-sm";
-            renderDashboard();
-        }
-
-        function navigateWeek(dir) {
-            let w = currentWeek + dir;
-            if (w >= 1 && w <= 45) selectWeek(w);
-        }
-
-        function selectWeek(w) {
-            currentWeek = parseInt(w);
-            document.getElementById('week-selector').value = currentWeek;
-            renderDashboard();
+        function get3Days() {
+            const days = ['Mon','Tue','Wed','Thu','Fri'];
+            let idx = days.indexOf(currentDay);
+            if(idx > 2) idx = 2; // 木・金が選ばれたら水木金
+            return [days[idx], days[idx+1], days[idx+2]];
         }
 
         function renderDashboard() {
@@ -401,14 +435,16 @@
                 tc.className = "flex flex-col space-y-3 max-w-2xl mx-auto";
                 renderPeriods(timetableData[currentDay], tc, currentDay, false);
             } else {
-                tc.className = viewMode === 'three-day' ? "grid grid-cols-3 gap-3 min-w-[700px]" : "grid grid-cols-5 gap-3 min-w-[1000px]";
+                // gridの幅指定を削除し、横スクロールをなくす
+                tc.className = viewMode === 'three-day' ? "grid grid-cols-3 gap-1 md:gap-3" : "grid grid-cols-5 gap-1 md:gap-2";
                 const days = viewMode === 'three-day' ? get3Days() : ['Mon','Tue','Wed','Thu','Fri'];
                 days.forEach(dc => {
                     const col = document.createElement('div');
-                    col.className = "bg-white border border-slate-200 rounded-xl p-3 shadow-sm";
-                    col.innerHTML = '<h3 class="font-bold text-center mb-2 text-slate-800">' + dayNames[dc].charAt(0) + '</h3>';
+                    // paddingを少し小さくして画面に収める
+                    col.className = "bg-white border border-slate-200 rounded-lg md:rounded-xl p-0.5 md:p-1.5 shadow-sm min-w-0";
+                    col.innerHTML = '<h3 class="font-bold text-center mb-1 text-slate-800 text-[11px] md:text-sm">' + dayNames[dc].charAt(0) + '</h3>';
                     const wrap = document.createElement('div');
-                    wrap.className = "space-y-2";
+                    wrap.className = "space-y-1 md:space-y-1.5";
                     renderPeriods(timetableData[dc], wrap, dc, true);
                     col.appendChild(wrap);
                     tc.appendChild(col);
@@ -416,227 +452,389 @@
             }
         }
 
-        function get3Days() {
-            if(currentDay==='Mon') return ['Mon','Tue','Wed'];
-            if(currentDay==='Tue') return ['Tue','Wed','Thu'];
-            return ['Wed','Thu','Fri'];
-        }
-
         function renderPeriods(periods, container, dc, isCompact) {
             periods.forEach(p => {
-                const key = 'w' + currentWeek + '-' + p.id;
+                const key = 'w' + currentWeek + '-' + dc + '-' + p.id;
                 const d = (temporaryChanges[key]) ? {...p, ...temporaryChanges[key]} : p;
                 const colors = getSubjectColors(d.subject, d.type);
                 
+                // コマの高さは固定
                 let hClass = "min-h-[88px]";
-                if(d.num==='昼') hClass = "min-h-[32px] py-1";
+                if(d.num==='昼') hClass = "min-h-[32px] py-0.5";
                 else if(d.num==='放') hClass = "min-h-[65px]";
 
                 const el = document.createElement('div');
-                el.className = colors.bg + " border " + colors.borderL + " rounded-lg px-2.5 py-2 flex flex-col justify-between cursor-pointer " + hClass + " shadow-sm relative group";
-                el.onclick = () => openClassDetail(p.id);
+                
+                // 移動モード中のハイライト効果
+                if (activeMovingTaskId) {
+                    el.className = colors.bg + " border " + colors.borderL + " rounded-lg p-1 md:px-2 md:py-1.5 flex flex-col justify-between cursor-pointer " + hClass + " shadow-sm relative ring-2 ring-blue-500 ring-offset-1 animate-pulse hover:bg-blue-100 transition-colors";
+                } else {
+                    el.className = colors.bg + " border " + colors.borderL + " rounded-lg p-1 md:px-2 md:py-1.5 flex flex-col justify-between cursor-pointer " + hClass + " shadow-sm relative group hover:brightness-95 transition-all";
+                }
+                
+                // クリック時の挙動分岐
+                el.onclick = () => {
+                    if (activeMovingTaskId) {
+                        assignTaskToPeriod(key);
+                    } else {
+                        openClassDetail(p.id, dc);
+                    }
+                };
 
-                let badge = '<span class="inline-block w-6 text-center text-[10px] font-black rounded-sm ' + colors.badge + '">' + d.num + '</span>';
+                // 時限バッジのデザイン統一（幅広の四角形）
+                let badge = '<span class="inline-block px-1 w-6 py-0.5 text-center text-[10px] font-black rounded-sm ' + colors.badge + '">' + d.num + '</span>';
                 
                 let tHtml = '';
                 const ts = tasks.filter(t => t.assignedPeriodId === key && !t.completed);
                 if(ts.length > 0) {
-                    tHtml = '<div class="mt-1 space-y-0.5">' + ts.map(t => '<div class="text-[10px] bg-white/80 px-1 rounded truncate border border-slate-100 font-bold">' + escapeHTML(t.title) + '</div>').join('') + '</div>';
+                    tHtml = '<div class="mt-1 space-y-0.5">' + ts.map(t => '<div class="text-[10px] bg-white/80 px-1 py-0.5 rounded truncate border border-slate-100 font-bold">' + escapeHTML(t.title) + '</div>').join('') + '</div>';
                 }
 
                 if(d.type==='empty') {
-                    el.innerHTML = '<div class="flex gap-2">' + badge + '<span class="text-xs font-bold opacity-60 text-amber-900">' + d.subject + '</span></div>' + tHtml;
+                    el.innerHTML = '<div class="flex gap-1 md:gap-1.5">' + badge + '<span class="text-[12px] md:text-[14px] font-extrabold opacity-60 text-slate-500 truncate mt-0.5">' + d.subject + '</span></div>' + tHtml;
                 } else if(d.type==='afterschool') {
-                    el.innerHTML = '<div class="flex gap-2">' + badge + '<span class="text-[11px] font-bold text-indigo-900">' + d.subject + '</span></div>' + tHtml;
+                    el.innerHTML = '<div class="flex gap-1 md:gap-1.5">' + badge + '<span class="text-[12px] md:text-[14px] font-extrabold text-indigo-900 truncate mt-0.5">' + d.subject + '</span></div>' + tHtml;
                 } else {
                     el.innerHTML = [
-                        '<div class="flex items-start gap-1.5">',
+                        '<div class="flex flex-col gap-0.5">',
+                        '  <div class="flex gap-1 md:gap-1.5">',
                         badge,
-                        '<div class="flex-1 min-w-0 leading-tight">',
-                        '   <div class="text-[13px] md:text-[14px] font-black text-slate-900 truncate">' + escapeHTML(d.subject) + '</div>',
-                        d.class ? '   <div class="text-[10px] font-bold text-emerald-800">' + escapeHTML(d.class) + '</div>' : '',
-                        '</div></div>', tHtml
+                        '    <span class="text-[13px] md:text-[14px] font-extrabold text-slate-900 truncate mt-0.5">' + escapeHTML(d.subject) + '</span>',
+                        '  </div>',
+                        d.class ? '  <div class="text-[10px] font-bold text-slate-600 truncate ml-7">' + escapeHTML(d.class) + '</div>' : '',
+                        '</div>', tHtml
                     ].join('');
                 }
                 container.appendChild(el);
             });
         }
 
-        function filterTasks(cat) { selectedFilter = cat; renderUnplannedTasks(); }
+        function renderLists() {
+            const lc = document.getElementById('list-tabs-container');
+            lc.innerHTML = '';
+            
+            const btnAll = document.createElement('button');
+            btnAll.className = "px-3 py-1 rounded-full text-[10px] font-bold shrink-0 " + (selectedFilter==='all' ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-600');
+            btnAll.innerText = "すべて";
+            btnAll.onclick = () => filterTasks('all');
+            lc.appendChild(btnAll);
+
+            lists.forEach(l => {
+                const btn = document.createElement('button');
+                btn.className = "px-3 py-1 rounded-full text-[10px] font-bold shrink-0 " + (selectedFilter===l ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-600');
+                btn.innerText = l;
+                btn.onclick = () => filterTasks(l);
+                lc.appendChild(btn);
+            });
+        }
+        
+        function filterTasks(cat) { selectedFilter = cat; renderLists(); renderUnplannedTasks(); }
         
         function renderUnplannedTasks() {
             const lc = document.getElementById('unplanned-task-list');
             lc.innerHTML = '';
             document.getElementById('unplanned-count').innerText = tasks.filter(t=>!t.assignedPeriodId && !t.completed).length + '件';
 
+            const movingMsg = document.getElementById('moving-task-message');
+            if(activeMovingTaskId) {
+                const mt = tasks.find(x=>x.id===activeMovingTaskId);
+                movingMsg.innerHTML = '<div class="bg-blue-600 text-white p-2.5 rounded-xl text-xs font-bold shadow-md flex justify-between items-center animate-pulse cursor-pointer" onclick="cancelMoveTask()"><span class="truncate pr-2">配置先コマをタップ...</span><button class="bg-blue-800 px-3 py-1 rounded-lg shrink-0 text-[10px]">キャンセル</button></div>';
+            } else {
+                movingMsg.innerHTML = '';
+            }
+
             const ft = tasks.filter(t => (!t.assignedPeriodId && !t.completed && (selectedFilter==='all' || t.list===selectedFilter)));
             ft.forEach(t => {
+                const isMoving = t.id === activeMovingTaskId;
                 const d = document.createElement('div');
-                d.className = "bg-white border border-slate-200 p-2.5 rounded-lg shadow-sm text-xs flex gap-2 items-start";
-                d.innerHTML = '<input type="checkbox" onchange="toggleTask(\''+t.id+'\')" class="mt-0.5"><div class="font-bold flex-1">' + escapeHTML(t.title) + '</div><button onclick="quickAssign(\''+t.id+'\')" class="text-blue-500"><i class="fa-solid fa-arrow-right"></i></button>';
+                // 移動モードをキャンセルできるように、タスク全体をクリック可能にする
+                d.onclick = (e) => {
+                    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON' && !e.target.closest('button')) {
+                        if (activeMovingTaskId) cancelMoveTask();
+                    }
+                };
+                
+                d.className = isMoving ? "bg-blue-50 border-2 border-blue-400 p-2.5 rounded-lg shadow-sm text-xs flex gap-2 items-start" : "bg-white border border-slate-200 p-2.5 rounded-lg shadow-sm text-xs flex gap-2 items-start hover:border-blue-300 transition-colors cursor-pointer";
+                d.innerHTML = '<input type="checkbox" onchange="toggleTask(\''+t.id+'\')" class="mt-0.5"><div class="font-bold flex-1 text-slate-700 leading-tight pt-0.5">' + escapeHTML(t.title) + '</div><button onclick="startMoveTask(\''+t.id+'\')" class="text-blue-500 hover:bg-blue-100 p-1.5 rounded-lg transition-colors shrink-0" title="配置・移動"><i class="fa-solid fa-arrow-right-to-bracket text-sm"></i></button>';
                 lc.appendChild(d);
             });
         }
         
+        function startMoveTask(id) { activeMovingTaskId = id; renderDashboard(); showToast('配置したいコマをタップしてください'); }
+        function cancelMoveTask() { activeMovingTaskId = null; renderDashboard(); }
+        
+        function assignTaskToPeriod(periodKey) {
+            const t = tasks.find(x=>x.id===activeMovingTaskId);
+            if(t) { t.assignedPeriodId = periodKey; }
+            activeMovingTaskId = null;
+            saveAllData(); renderDashboard(); showToast('タスクを配置しました');
+        }
+        
+        function returnTaskToUnplanned(id) {
+            const t = tasks.find(x=>x.id===id);
+            if(t) { 
+                t.assignedPeriodId = null; 
+                if (activeMovingTaskId === id) activeMovingTaskId = null; // 移動モード解除
+                saveAllData(); renderDashboard(); 
+                if (!document.getElementById('class-detail-modal').classList.contains('hidden')) {
+                    renderModalTasks();
+                }
+                showToast('未計画に戻しました'); 
+            }
+        }
+
         function handleAddTask(e) {
             e.preventDefault();
             const val = document.getElementById('new-task-title').value.trim();
-            if(val) { tasks.unshift({ id:'t_'+Date.now(), title:val, list:'その他', completed:false, assignedPeriodId:null }); saveAllData(); renderDashboard(); document.getElementById('new-task-title').value=''; }
+            const list = selectedFilter === 'all' ? (lists[0] || 'その他') : selectedFilter;
+            if(val) { tasks.unshift({ id:'t_'+Date.now(), title:val, list:list, completed:false, assignedPeriodId:null }); saveAllData(); renderDashboard(); document.getElementById('new-task-title').value=''; }
         }
 
         function toggleTask(id) {
             const t = tasks.find(x=>x.id===id);
-            if(t) { t.completed = true; saveAllData(); renderDashboard(); showToast('タスク完了！'); }
-        }
-
-        function quickAssign(id) {
-            const p = timetableData[currentDay].find(x=>x.type==='empty' || x.type==='afterschool');
-            if(p) {
-                const t = tasks.find(x=>x.id===id);
-                t.assignedPeriodId = 'w'+currentWeek+'-'+p.id;
-                saveAllData(); renderDashboard(); showToast('配置しました');
-            } else { showToast('本日に空きコマがありません'); }
-        }
-
-        function openSettingsModal() { 
-            document.getElementById('settings-client-id').value = googleClientId;
-            document.getElementById('settings-modal').classList.remove('hidden'); 
-            updateGoogleStatusUI(isGoogleConnected);
-        }
-        function closeSettingsModal() { document.getElementById('settings-modal').classList.add('hidden'); }
-
-        function openClassDetail(id) {
-            activeModalPeriodId = id;
-            document.getElementById('class-detail-modal').classList.remove('hidden');
-            const p = timetableData[currentDay].find(x=>x.id===id);
-            document.getElementById('modal-period').innerText = p.num;
-            document.getElementById('modal-title').innerText = p.subject;
-            renderAnnouncements();
-        }
-        function closeModal() { document.getElementById('class-detail-modal').classList.add('hidden'); }
-
-        function renderAnnouncements() {
-            const key = 'w'+currentWeek+'-'+activeModalPeriodId;
-            const det = weeklyDetails[key] || {announcements:[]};
-            const ul = document.getElementById('modal-announcement-list');
-            ul.innerHTML = det.announcements.map((a,i) => '<li class="text-xs bg-slate-50 p-2 rounded flex justify-between"><span>'+escapeHTML(a)+'</span><button onclick="delAnn('+i+')" class="text-red-500"><i class="fa-solid fa-xmark"></i></button></li>').join('');
-        }
-        function addAnnouncement() {
-            const v = document.getElementById('new-announcement-input').value.trim();
-            if(v) {
-                const k = 'w'+currentWeek+'-'+activeModalPeriodId;
-                if(!weeklyDetails[k]) weeklyDetails[k] = {announcements:[]};
-                weeklyDetails[k].announcements.push(v);
-                document.getElementById('new-announcement-input').value = '';
-                saveAllData(); renderAnnouncements(); renderDashboard();
+            if(t) { 
+                t.completed = true; 
+                saveAllData(); 
+                renderDashboard(); 
+                if (!document.getElementById('class-detail-modal').classList.contains('hidden')) {
+                    renderModalTasks(); // モーダル内でも再描画
+                }
+                showToast('タスク完了！'); 
             }
         }
-        function delAnn(i) {
-            weeklyDetails['w'+currentWeek+'-'+activeModalPeriodId].announcements.splice(i,1);
-            saveAllData(); renderAnnouncements(); renderDashboard();
+
+        let activeModalDayStr = null; // モーダルで開いている曜日を記憶
+
+        function openClassDetail(id, dayStr) {
+            activeModalPeriodId = id;
+            activeModalDayStr = dayStr;
+            
+            document.getElementById('class-detail-modal').classList.remove('hidden');
+            document.getElementById('temp-change-form').classList.add('hidden');
+            
+            const key = 'w' + currentWeek + '-' + dayStr + '-' + id;
+            const p = timetableData[dayStr].find(x=>x.id===id);
+            const d = temporaryChanges[key] ? {...p, ...temporaryChanges[key]} : p;
+            
+            document.getElementById('modal-period').innerText = d.num;
+            document.getElementById('modal-title').innerText = d.subject + (d.class ? ' ('+d.class+')' : '');
+            
+            document.getElementById('tc-type').value = d.type;
+            document.getElementById('tc-subject').value = d.subject;
+            document.getElementById('tc-class').value = d.class || '';
+
+            renderAnnouncements();
+            renderModalTasks();
+        }
+        function closeModal() { 
+            document.getElementById('class-detail-modal').classList.add('hidden'); 
+            activeModalPeriodId = null;
+            activeModalDayStr = null;
+        }
+        
+        function renderModalTasks() {
+            const key = 'w'+currentWeek+'-'+activeModalDayStr+'-'+activeModalPeriodId;
+            const ts = tasks.filter(t => t.assignedPeriodId === key && !t.completed);
+            const container = document.getElementById('modal-assigned-tasks');
+            if(ts.length === 0) {
+                container.innerHTML = '<p class="text-[10px] text-slate-400 bg-slate-50 p-2 rounded border border-dashed border-slate-200">この時間のタスクはありません</p>';
+                return;
+            }
+            container.innerHTML = ts.map(t => `
+                <div class="flex items-start gap-2 bg-slate-50 p-2.5 rounded-lg border border-slate-200 shadow-sm">
+                    <input type="checkbox" onchange="toggleTask('${t.id}')" class="mt-0.5 cursor-pointer">
+                    <span class="flex-1 text-xs font-bold text-slate-800 leading-tight">${escapeHTML(t.title)}</span>
+                    <div class="flex gap-1 shrink-0">
+                        <button onclick="startMoveTask('${t.id}'); closeModal()" class="text-blue-600 bg-blue-100 p-1.5 rounded-lg hover:bg-blue-200" title="別のコマへ移動"><i class="fa-solid fa-arrow-right-to-bracket"></i></button>
+                        <button onclick="returnTaskToUnplanned('${t.id}')" class="text-slate-600 bg-slate-200 p-1.5 rounded-lg hover:bg-slate-300" title="未計画に戻す"><i class="fa-solid fa-rotate-left"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function toggleTempChangeMode() {
+            document.getElementById('temp-change-form').classList.toggle('hidden');
+        }
+        
+        function saveTempChange() {
+            const key = 'w' + currentWeek + '-' + activeModalDayStr + '-' + activeModalPeriodId;
+            temporaryChanges[key] = {
+                type: document.getElementById('tc-type').value,
+                subject: document.getElementById('tc-subject').value,
+                class: document.getElementById('tc-class').value
+            };
+            saveAllData(); toggleTempChangeMode(); openClassDetail(activeModalPeriodId, activeModalDayStr); renderDashboard(); showToast('今週の変更を保存しました');
+        }
+        
+        function resetTempChange() {
+            const key = 'w' + currentWeek + '-' + activeModalDayStr + '-' + activeModalPeriodId;
+            delete temporaryChanges[key];
+            saveAllData(); toggleTempChangeMode(); openClassDetail(activeModalPeriodId, activeModalDayStr); renderDashboard(); showToast('基本の時間割に戻しました');
         }
 
-        function exportDataFile() {
-            const data = { tasks, weeklyDetails, temporaryChanges, timetableData };
-            const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+        function renderAnnouncements() {
+            const key = 'w' + currentWeek + '-' + activeModalDayStr + '-' + activeModalPeriodId;
+            const al = announcements[key] || [];
+            const ul = document.getElementById('modal-announcements');
+            ul.innerHTML = al.map((a, i) => `
+                <li class="text-xs bg-slate-50 border border-slate-200 rounded p-2 flex justify-between items-center group">
+                    <span class="text-slate-700">${escapeHTML(a)}</span>
+                    <button onclick="deleteAnnouncement(${i})" class="text-red-500 opacity-0 group-hover:opacity-100 p-1"><i class="fa-solid fa-trash"></i></button>
+                </li>
+            `).join('');
+        }
+
+        function addAnnouncement() {
+            const val = document.getElementById('new-announcement-input').value.trim();
+            if(!val) return;
+            const key = 'w' + currentWeek + '-' + activeModalDayStr + '-' + activeModalPeriodId;
+            if(!announcements[key]) announcements[key] = [];
+            announcements[key].push(val);
+            saveAllData(); renderAnnouncements(); document.getElementById('new-announcement-input').value='';
+        }
+        function deleteAnnouncement(idx) {
+            const key = 'w' + currentWeek + '-' + activeModalDayStr + '-' + activeModalPeriodId;
+            announcements[key].splice(idx, 1);
+            saveAllData(); renderAnnouncements();
+        }
+
+        function openSettingsModal() { document.getElementById('settings-modal').classList.remove('hidden'); }
+        function closeSettingsModal() { document.getElementById('settings-modal').classList.add('hidden'); }
+
+        function toggleDarkMode() {
+            isDarkMode = !isDarkMode;
+            if(isDarkMode) {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('tn_dark_mode', 'true');
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('tn_dark_mode', 'false');
+            }
+            updateDarkModeUI();
+        }
+
+        function updateDarkModeUI() {
+            const st = document.getElementById('dark-mode-status');
+            if(st) st.innerText = isDarkMode ? 'オン' : 'オフ';
+        }
+
+        function openBaseSettingsModal() {
+            closeSettingsModal();
+            const g = document.getElementById('base-settings-grid');
+            g.innerHTML = '';
+            ['Mon','Tue','Wed','Thu','Fri'].forEach(d => {
+                const col = document.createElement('div');
+                col.className = 'border border-slate-200 rounded-lg p-2 bg-white';
+                col.innerHTML = `<h4 class="font-bold text-center text-sm mb-2">${dayNames[d]}</h4>`;
+                timetableData[d].forEach(p => {
+                    col.innerHTML += `
+                        <div class="mb-2 p-1 border border-slate-100 rounded bg-slate-50" data-id="${p.id}" data-day="${d}">
+                            <div class="text-[10px] font-bold text-slate-500 mb-1">${p.num}限</div>
+                            <select class="w-full text-xs border rounded p-1 mb-1 bs-type bg-white">
+                                <option value="class" ${p.type==='class'?'selected':''}>授業</option>
+                                <option value="empty" ${p.type==='empty'?'selected':''}>空き</option>
+                                <option value="afterschool" ${p.type==='afterschool'?'selected':''}>放課後</option>
+                            </select>
+                            <input type="text" class="w-full text-xs border rounded p-1 mb-1 bs-subject" placeholder="科目" value="${escapeHTML(p.subject)}">
+                            <input type="text" class="w-full text-xs border rounded p-1 bs-class" placeholder="クラス" value="${escapeHTML(p.class||'')}">
+                        </div>
+                    `;
+                });
+                g.appendChild(col);
+            });
+            document.getElementById('base-settings-modal').classList.remove('hidden');
+        }
+
+        function closeBaseSettingsModal() { document.getElementById('base-settings-modal').classList.add('hidden'); }
+
+        function saveBaseSettings() {
+            ['Mon','Tue','Wed','Thu','Fri'].forEach(d => {
+                const divs = document.querySelectorAll(`#base-settings-grid div[data-day="${d}"]`);
+                divs.forEach((div, i) => {
+                    timetableData[d][i].type = div.querySelector('.bs-type').value;
+                    timetableData[d][i].subject = div.querySelector('.bs-subject').value;
+                    timetableData[d][i].class = div.querySelector('.bs-class').value;
+                });
+            });
+            saveAllData(); closeBaseSettingsModal(); renderDashboard(); showToast('基本時間割を保存しました');
+        }
+
+        function exportCSV() {
+            let csv = "曜日,時限,種類,科目,クラス\n";
+            ['Mon','Tue','Wed','Thu','Fri'].forEach(d => {
+                timetableData[d].forEach(p => {
+                    csv += `${dayNames[d]},${p.num},${p.type},${p.subject},${p.class||''}\n`;
+                });
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", "timetable.csv");
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            closeSettingsModal();
+        }
+
+        function exportSettingsFile() {
+            const dataStr = JSON.stringify({
+                timetableData, tasks, lists, temporaryChanges, announcements
+            });
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
+            a.href = url;
             a.download = 'teachers-nexus-backup.json';
             a.click();
-            showToast('設定を書き出しました');
+            URL.revokeObjectURL(url);
+            showToast('設定ファイルをダウンロードしました');
         }
-        function importDataFile(e) {
-            const file = e.target.files[0];
-            if(!file) return;
+
+        function importSettingsFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
             const reader = new FileReader();
-            reader.onload = (ev) => {
+            reader.onload = function(e) {
                 try {
-                    const d = JSON.parse(ev.target.result);
-                    if(d.tasks) tasks = d.tasks;
-                    if(d.weeklyDetails) weeklyDetails = d.weeklyDetails;
-                    if(d.timetableData) timetableData = d.timetableData;
-                    saveAllData(); renderDashboard(); closeSettingsModal(); showToast('復元成功！');
-                } catch(e) { showToast('ファイル形式エラー'); }
+                    const parsed = JSON.parse(e.target.result);
+                    if(parsed.timetableData) {
+                        localStorage.setItem('tn_data', JSON.stringify(parsed));
+                        showToast('設定を読み込みました。リロードします...');
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        alert('無効なファイル形式です');
+                    }
+                } catch(err) {
+                    alert('ファイルの読み込みに失敗しました');
+                }
             };
             reader.readAsText(file);
         }
 
-        function toggleDarkMode() {
-            isDarkMode = !isDarkMode;
-            if(isDarkMode) document.documentElement.classList.add('dark');
-            else document.documentElement.classList.remove('dark');
-            localStorage.setItem('tn_dark_mode', isDarkMode);
-            updateDarkModeButton();
+        // Google認証ダミー（UIのみ）
+        function authenticateGoogle() {
+            const display = document.getElementById('sync-status-display');
+            display.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i> 同期済み';
+            document.getElementById('btn-sync').classList.remove('hidden');
+            showToast('Google ToDoと接続しました');
         }
-        function updateDarkModeButton() {
-            const btn = document.getElementById('btn-dark-mode');
-            if(btn) btn.innerHTML = isDarkMode ? '<i class="fa-solid fa-sun text-amber-400"></i> ライトモード切替' : '<i class="fa-solid fa-moon text-indigo-600"></i> ダークモード切替';
+        function syncTasks() { showToast('タスクを同期しました'); }
+
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, tag => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[tag]));
         }
         
-        function toggleViewState(v) {
-            if(v==='basic-settings') {
-                document.getElementById('dashboard-view').classList.add('hidden');
-                document.getElementById('basic-settings-view').classList.remove('hidden');
-                renderBasicSettings();
-            } else {
-                document.getElementById('dashboard-view').classList.remove('hidden');
-                document.getElementById('basic-settings-view').classList.add('hidden');
-                renderDashboard();
-            }
-        }
-        
-        function renderBasicSettings() {
-            const c = document.getElementById('basic-timetable-editor-container');
-            c.innerHTML = '';
-            ['Mon','Tue','Wed','Thu','Fri'].forEach(dc => {
-                let html = '<div class="w-64 bg-white p-3 rounded-xl border border-slate-200"><h4 class="font-bold mb-2">' + dayNames[dc] + '</h4><div class="space-y-2">';
-                timetableData[dc].forEach(p => {
-                    html += '<div class="flex flex-col gap-1.5 border border-slate-100 p-2 rounded bg-slate-50">';
-                    html += '<div class="flex justify-between items-center"><span class="text-xs font-bold text-slate-600">'+p.num+'</span>';
-                    html += '<select id="b-'+p.id+'-t" class="text-[10px] border border-slate-300 rounded px-1 py-0.5 bg-white">';
-                    html += '<option value="class" '+(p.type==='class'?'selected':'')+'>授業</option>';
-                    html += '<option value="empty" '+(p.type==='empty'?'selected':'')+'>空きコマ</option>';
-                    html += '<option value="afterschool" '+(p.type==='afterschool'?'selected':'')+'>放課後等</option>';
-                    html += '</select></div>';
-                    html += '<input type="text" id="b-'+p.id+'-s" value="'+escapeHTML(p.subject)+'" placeholder="科目名" class="border border-slate-300 rounded px-2 py-1 text-xs bg-white">';
-                    html += '<input type="text" id="b-'+p.id+'-c" value="'+escapeHTML(p.class)+'" placeholder="対象クラス" class="border border-slate-300 rounded px-2 py-1 text-[10px] bg-white">';
-                    html += '</div>';
-                });
-                html += '</div></div>';
-                c.innerHTML += html;
-            });
+        function showToast(msg) {
+            const c = document.getElementById('toast-container');
+            const d = document.createElement('div');
+            d.className = 'toast'; d.innerText = msg;
+            c.appendChild(d);
+            setTimeout(() => { if(c.contains(d)) c.removeChild(d); }, 3000);
         }
 
-        function saveBasicTimetable() {
-            ['Mon','Tue','Wed','Thu','Fri'].forEach(dc => {
-                timetableData[dc].forEach(p => {
-                    p.type = document.getElementById('b-'+p.id+'-t').value;
-                    p.subject = document.getElementById('b-'+p.id+'-s').value;
-                    p.class = document.getElementById('b-'+p.id+'-c').value;
-                });
-            });
-            saveAllData(); toggleViewState('dashboard'); showToast('基本設定を保存しました');
-        }
-
-        function showToast(m) {
-            const t = document.getElementById('toast');
-            document.getElementById('toast-message').innerText = m;
-            t.classList.remove('translate-y-20', 'opacity-0');
-            setTimeout(() => t.classList.add('translate-y-20', 'opacity-0'), 3000);
-        }
-
-        function escapeHTML(s) { return (s||'').replace(/[&<>'"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]||c)); }
-        
-        function initGoogleIdentity() {}
-        function startGoogleAuth() { showToast('デモ: Googleログイン画面を開きます'); }
-        function disconnectGoogle() { isGoogleConnected=false; updateGoogleStatusUI(false); showToast('解除しました'); }
-        function manualSyncTrigger() { showToast('同期完了'); }
-        function updateGoogleStatusUI(conn) {
-            const ind = document.getElementById('sync-status-indicator');
-            if(conn) ind.innerHTML = '<span class="relative flex h-2.5 w-2.5"><span class="absolute inline-flex h-full w-full rounded-full bg-emerald-400 animate-ping"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span></span><span class="text-[10px] font-bold text-emerald-600">同期済</span>';
-            else ind.innerHTML = '<span class="relative flex h-2.5 w-2.5"><span class="absolute inline-flex h-full w-full rounded-full bg-slate-400"></span></span><span class="text-[10px] font-bold text-slate-500">未接続</span>';
-        }
-        function exportToCSV() { showToast('CSV書き出し（ダミー）'); }
+        window.onload = init;
     </script>
 </body>
 </html>
