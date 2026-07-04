@@ -84,13 +84,6 @@
 
         <!-- コントロールメニュー (統合ボタン) -->
         <div class="flex items-center gap-3">
-            <div id="sync-status-indicator" class="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg hidden md:flex">
-                <div class="relative flex h-2.5 w-2.5">
-                    <span id="sync-ping" class="absolute inline-flex h-full w-full rounded-full bg-slate-400 opacity-75"></span>
-                    <span id="sync-dot" class="relative inline-flex rounded-full h-2.5 w-2.5 bg-slate-400"></span>
-                </div>
-                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider" id="sync-status-label">デモモード</span>
-            </div>
             <button onclick="openControlMenu()" class="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center gap-2 shadow-md transition-all">
                 <i class="fa-solid fa-sliders"></i> メニュー設定
             </button>
@@ -158,7 +151,7 @@
                 <button onclick="closeControlMenu()" class="text-slate-400 hover:text-slate-700 p-1 rounded-lg"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             
-            <div class="p-6 space-y-6">
+            <div class="p-6 space-y-6 max-h-[80vh] overflow-y-auto">
                 <!-- 機能ボタン群 -->
                 <div class="grid grid-cols-2 gap-3">
                     <button onclick="exportToCSV()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 p-3 rounded-xl text-sm font-bold flex flex-col items-center justify-center gap-2 transition-all">
@@ -171,9 +164,35 @@
 
                 <hr class="border-slate-100">
 
+                <!-- 端末間同期エリア -->
+                <div class="space-y-3">
+                    <h4 class="font-bold text-sm text-slate-800 flex items-center gap-1.5"><i class="fa-solid fa-cloud-arrow-down text-blue-600"></i> 端末間データ同期（バックアップ）</h4>
+                    <p class="text-[11px] text-slate-500">iPadやPCなど、他の端末にデータを引き継ぐことができます。</p>
+                    <div class="flex gap-2">
+                        <button onclick="exportData()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 p-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-download"></i> 設定を書き出し
+                        </button>
+                        <label class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 p-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer">
+                            <i class="fa-solid fa-upload"></i> 設定を読み込み
+                            <input type="file" accept=".json" onchange="importData(event)" class="hidden">
+                        </label>
+                    </div>
+                </div>
+
+                <hr class="border-slate-100">
+
                 <!-- Google 連携エリア -->
                 <div class="space-y-3">
-                    <h4 class="font-bold text-sm text-slate-800 flex items-center gap-1.5"><i class="fa-brands fa-google text-blue-600"></i> Google ToDo 連携設定</h4>
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-bold text-sm text-slate-800 flex items-center gap-1.5"><i class="fa-brands fa-google text-blue-600"></i> Google ToDo 連携設定</h4>
+                        <div id="sync-status-indicator" class="flex items-center gap-1.5 bg-slate-50 border border-slate-200 px-2 py-1 rounded-md">
+                            <div class="relative flex h-2 w-2">
+                                <span id="sync-ping" class="absolute inline-flex h-full w-full rounded-full bg-slate-400 opacity-75"></span>
+                                <span id="sync-dot" class="relative inline-flex rounded-full h-2 w-2 bg-slate-400"></span>
+                            </div>
+                            <span class="text-[9px] font-bold text-slate-500 uppercase tracking-wider" id="sync-status-label">デモモード</span>
+                        </div>
+                    </div>
                     <div>
                         <input type="text" id="settings-client-id" placeholder="Google Client ID を入力..." class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-xs focus:outline-none focus:border-blue-400">
                     </div>
@@ -656,6 +675,46 @@
             }
         }
 
+        function exportData() {
+            const data = {
+                tasks: tasks,
+                weeklyDetails: weeklyDetails,
+                temporaryChanges: temporaryChanges,
+                timetableData: timetableData
+            };
+            const jsonStr = JSON.stringify(data);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'teachers-nexus-backup.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast("✅ 設定をバックアップファイルに書き出しました。");
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.tasks) tasks = data.tasks;
+                    if (data.weeklyDetails) weeklyDetails = data.weeklyDetails;
+                    if (data.temporaryChanges) temporaryChanges = data.temporaryChanges;
+                    if (data.timetableData) timetableData = data.timetableData;
+                    saveAllData();
+                    renderDashboard();
+                    closeControlMenu();
+                    showToast("🔄 端末間同期：設定ファイルを読み込みました。");
+                } catch (err) {
+                    showToast("⚠️ ファイルの読み込みに失敗しました。");
+                }
+            };
+            reader.readAsText(file);
+        }
+
         // --- 画面描画コア (時間割グリッドの生成) ---
         function renderDashboard() {
             renderUnplannedTasks();
@@ -685,7 +744,14 @@
                 btn.className = "px-4 py-2 text-xs md:text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900";
             });
             document.getElementById('btn-view-' + mode).className = "px-4 py-2 text-xs md:text-sm font-bold rounded-lg transition-all duration-200 bg-white text-slate-800 shadow-sm";
-            document.getElementById('day-nav-container').style.display = mode === 'weekly' ? 'none' : 'flex';
+            
+            // invisibleクラスを使って高さを維持したまま非表示にする
+            const dayNav = document.getElementById('day-nav-container');
+            if (mode === 'weekly') {
+                dayNav.classList.add('invisible');
+            } else {
+                dayNav.classList.remove('invisible');
+            }
             renderDashboard();
         }
 
