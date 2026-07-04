@@ -90,7 +90,7 @@
             <!-- 移動中メッセージ領域 -->
             <div id="moving-task-message" class="px-3 pt-2 empty:hidden"></div>
             
-            <div class="px-3 py-2 border-b border-slate-100 flex gap-1 overflow-x-auto shrink-0" id="list-tabs-container">
+            <div class="px-3 py-2 border-b border-slate-100 flex flex-wrap gap-1 shrink-0" id="list-tabs-container">
                 <!-- タブがここに生成されます -->
             </div>
             <div class="flex-1 overflow-y-auto p-3 space-y-2" id="unplanned-task-list">
@@ -217,8 +217,10 @@
                         <option value="empty">空き</option>
                         <option value="afterschool">放課後等</option>
                     </select>
-                    <!-- list属性で登録科目のサジェストを実現 -->
-                    <input type="text" id="tc-subject" list="registered-subjects" placeholder="科目名" class="flex-1 text-xs border border-amber-200 rounded p-1.5 bg-white">
+                    <!-- プルダウンで科目を選択 -->
+                    <select id="tc-subject" class="flex-1 text-xs border border-amber-200 rounded p-1.5 bg-white">
+                        <!-- 動的生成 -->
+                    </select>
                     <input type="text" id="tc-class" placeholder="クラス" class="w-20 text-xs border border-amber-200 rounded p-1.5 bg-white">
                 </div>
                 <div class="flex gap-2 justify-end pt-1">
@@ -686,7 +688,16 @@
             document.getElementById('modal-title').innerText = d.subject + (d.class ? ' ('+d.class+')' : '');
             
             document.getElementById('tc-type').value = d.type;
-            document.getElementById('tc-subject').value = d.subject;
+            
+            // 科目プルダウンの選択肢を動的に生成
+            const subjectSelect = document.getElementById('tc-subject');
+            subjectSelect.innerHTML = '<option value="">(未設定)</option>' + 
+                subjectsList.map(s => `<option value="${escapeHTML(s.name)}" ${s.name === d.subject ? 'selected' : ''}>${escapeHTML(s.name)}</option>`).join('');
+            // リストにない科目がすでに設定されている場合は、それも選択肢に追加して選ばれた状態にする
+            if (d.subject && !subjectsList.find(s => s.name === d.subject)) {
+                subjectSelect.innerHTML += `<option value="${escapeHTML(d.subject)}" selected>${escapeHTML(d.subject)}</option>`;
+            }
+
             document.getElementById('tc-class').value = d.class || '';
 
             renderAnnouncements();
@@ -864,7 +875,11 @@
                                 <option value="empty" ${p.type==='empty'?'selected':''}>空き</option>
                                 <option value="afterschool" ${p.type==='afterschool'?'selected':''}>放課後</option>
                             </select>
-                            <input type="text" class="w-full text-xs border rounded p-1 mb-1 bs-subject bg-white" list="registered-subjects" placeholder="科目" value="${escapeHTML(p.subject)}">
+                            <select class="w-full text-xs border rounded p-1 mb-1 bs-subject bg-white">
+                                <option value="">(未設定)</option>
+                                ${subjectsList.map(s => `<option value="${escapeHTML(s.name)}" ${s.name === p.subject ? 'selected' : ''}>${escapeHTML(s.name)}</option>`).join('')}
+                                ${p.subject && !subjectsList.find(s => s.name === p.subject) ? `<option value="${escapeHTML(p.subject)}" selected>${escapeHTML(p.subject)}</option>` : ''}
+                            </select>
                             <input type="text" class="w-full text-xs border rounded p-1 bs-class bg-white" placeholder="クラス" value="${escapeHTML(p.class||'')}">
                         </div>
                     `;
