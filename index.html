@@ -10,8 +10,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
     <!-- Google Fonts Inter & Noto Sans JP -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <!-- Google Identity Services (GSI) 認証ライブラリ -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Google Identity Services (GSI) 認証ライブラリ - ロード完了時にコールバックを呼ぶ形式に変更して安全化 -->
+    <script src="https://accounts.google.com/gsi/client" onload="onGsiLoad()" async defer></script>
     
     <style>
         body {
@@ -445,6 +445,7 @@
         let isGoogleConnected = (googleToken !== null);
         let tokenExpiry = localStorage.getItem('tn_token_expiry') || 0;
         let googleTaskLists = []; // 読み込んだ本物のタスクリスト
+        let isGsiLoaded = false; // GSIライブラリのロード状態
 
         // 曜日の日本語マップ
         const dayNames = {
@@ -721,16 +722,33 @@
             }
         }
 
-        // アプリ起動
+        // ページロード時処理
         window.onload = function() {
             loadAllData();
             generateWeekSelectorOptions();
             
-            // ページロード時に以前の認証状態があれば、Google APIの初期化を試みる
-            initGoogleIdentity();
+            // GSIライブラリが既にロードされていれば初期化
+            if (typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {
+                onGsiLoad();
+            } else {
+                // 3秒経ってもロードされなければフォールバック
+                setTimeout(() => {
+                    if (!isGsiLoaded) {
+                        console.warn("GSIライブラリの自動検出がタイムアウトしました。手動で初期化を試みます。");
+                        onGsiLoad();
+                    }
+                }, 3000);
+            }
             
             renderDashboard();
         };
+
+        // --- Google Identity Services ライブラリ読み込み完了時のハンドラ ---
+        function onGsiLoad() {
+            isGsiLoaded = true;
+            console.log("Google Identity Services SDK ロード完了");
+            initGoogleIdentity();
+        }
 
         // --- Google Identity Services 連携の実装 ---
         let tokenClient;
@@ -744,6 +762,11 @@
             
             if (!googleClientId) {
                 updateGoogleStatusUI(false);
+                return;
+            }
+
+            if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
+                console.warn("Google API SDK が未ロードです。処理を待機します。");
                 return;
             }
 
@@ -766,13 +789,18 @@
                     disconnectGoogle(true);
                 }
             } catch (err) {
-                console.warn("Google API の初期化に失敗しました。クライアントIDが正しいか確認してください。", err);
+                console.error("Google API の初期化に失敗しました。クライアントIDが正しいか確認してください。", err);
                 updateGoogleStatusUI(false);
             }
         }
 
         // ログイン処理開始
         function startGoogleAuth() {
+            if (!isGsiLoaded || typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
+                showToast("⚠️ Google 接続ライブラリをロード中です。数秒待ってからやり直してください。");
+                return;
+            }
+
             const inputId = document.getElementById('settings-client-id').value.trim();
             if (!inputId) {
                 showToast("⚠️ クライアントIDを先に入力してください。");
@@ -811,7 +839,6 @@
             localStorage.setItem('tn_google_token', googleToken);
             localStorage.setItem('tn_token_expiry', expiryTime);
             
-            // ユーザー情報を大まかに補完 (メールアドレスはTasks API等から直接取得するかプレースホルダー)
             googleUserEmail = "先生のアカウント (接続中)";
             localStorage.setItem('tn_google_email', googleUserEmail);
             
@@ -899,7 +926,6 @@
                 });
                 
                 if (response.status === 401) {
-                    // トークン切れ
                     disconnectGoogle(true);
                     return;
                 }
@@ -907,7 +933,6 @@
                 const data = await response.json();
                 googleTaskLists = data.items || [];
                 
-                // 本物のタスクリストに対応するタブを自動生成 or マッピング
                 setupTaskTabsAndSync();
             } catch (err) {
                 console.error("Task lists の取得に失敗しました", err);
@@ -919,20 +944,15 @@
         async function setupTaskTabsAndSync() {
             if (googleTaskLists.length === 0) return;
             
-            // 既存のTasks配列をクリア（Google同期中はGoogleのタスクに総入れ替えします）
-            // ただし、時間割にアサイン済みのタスク情報(assignedPeriodId)は保持したいのでマッピングテーブルを作ります
             const prevAssignedMap = {};
             tasks.forEach(t => {
                 if (t.assignedPeriodId) {
-                    // タイトルをキーにして、アサイン情報を引き継ぎできるようにする
                     prevAssignedMap[t.title] = t.assignedPeriodId;
                 }
             });
 
             const newTasks = [];
             
-            // 先生が使いやすいように、タスクリストを順次巡回してタスクを取得
-            // デモと親和性を保つため、「授業準備」「校務分掌」などの名前のリストがあればそれから優先取得
             for (let list of googleTaskLists) {
                 try {
                     const res = await fetch('https://tasks.googleapis.com/tasks/v1/lists/' + list.id + '/tasks?showCompleted=true', {
@@ -944,25 +964,21 @@
                     const googleItems = data.items || [];
                     
                     googleItems.forEach(item => {
-                        // アサイン情報の復元、または引き継ぎ
                         const assignedId = prevAssignedMap[item.title] || null;
-                        
-                        // Google Tasksのステータスが 'completed' かどうか
                         const isCompleted = item.status === 'completed';
                         
-                        // デモ用カテゴリへのマッピング (リスト名がそのままカテゴリになります)
                         let listCategory = "その他";
                         if (list.title.includes("授業準備") || list.title.includes("教材")) listCategory = "授業準備";
                         else if (list.title.includes("校務") || list.title.includes("仕事") || list.title.includes("会議")) listCategory = "校務分掌";
-                        else listCategory = list.title; // 先生の独自のリスト名をそのままカテゴリにする！
+                        else listCategory = list.title;
 
                         newTasks.push({
-                            id: item.id, // Google Tasksの実IDを使用！
+                            id: item.id,
                             title: item.title,
                             list: listCategory,
                             completed: isCompleted,
                             assignedPeriodId: assignedId,
-                            googleListId: list.id // 同期書き込み用に保持
+                            googleListId: list.id
                         });
                     });
                 } catch (e) {
@@ -970,12 +986,8 @@
                 }
             }
 
-            // Googleから読み込んだ本物のタスクに総入れ替え
             tasks = newTasks;
-            
-            // 新しいタスクカテゴリに基づいて左タブを再構築
             rebuildListTabs();
-            
             saveAllData();
             renderDashboard();
             showToast("🔄 本物の Google Tasks と完全に同期しました！");
@@ -986,7 +998,6 @@
             const container = document.getElementById('list-tabs-container');
             if (!container) return;
 
-            // ユニークなリストカテゴリ（タブ）を抽出
             const uniqueLists = ['all'];
             tasks.forEach(t => {
                 if (!uniqueLists.includes(t.list) && t.list) {
@@ -994,7 +1005,6 @@
                 }
             });
 
-            // デフォルトの固定リストも担保
             ['授業準備', '校務分掌', 'その他'].forEach(def => {
                 if (!uniqueLists.includes(def)) uniqueLists.push(def);
             });
@@ -1020,10 +1030,8 @@
         async function createGoogleTask(title, category) {
             if (!googleToken) return null;
 
-            // ターゲットのタスクリストを決定 (なければデフォルトの最初のリストに入れる)
             let targetListId = googleTaskLists[0]?.id;
             
-            // カテゴリ名と部分一致するリストがあれば優先する
             const matchedList = googleTaskLists.find(l => l.title.includes(category));
             if (matchedList) {
                 targetListId = matchedList.id;
@@ -1171,6 +1179,7 @@
             renderDashboard();
         }
 
+        // 曜日選択のトリガー
         function changeDay(dayCode) {
             currentDay = dayCode;
             
@@ -1238,7 +1247,7 @@
                 if (task.list === '授業準備') listColorClass = 'bg-emerald-50 text-emerald-700 border-emerald-100';
                 else if (task.list === '校務分掌') listColorClass = 'bg-purple-50 text-purple-700 border-purple-100';
                 else if (task.list === 'その他') listColorClass = 'bg-amber-50 text-amber-700 border-amber-100';
-                else listColorClass = 'bg-blue-50 text-blue-700 border-blue-100'; // 動的リスト
+                else listColorClass = 'bg-blue-50 text-blue-700 border-blue-100';
 
                 const card = document.createElement('div');
                 card.className = "bg-white border border-slate-200 p-4 rounded-xl shadow-sm hover:shadow-md hover:border-blue-400 transition-all cursor-grab active:cursor-grabbing flex flex-col gap-2 relative group";
@@ -1864,7 +1873,7 @@
             };
         }
 
-        // 連絡メモを他週へ「コピー」または「移動」するモーダル (安全にインデックスで処理)
+        // 連絡メモを他週へ「コピー」または「移動」するモーダル
         function openTransferAnnouncementModal(idx) {
             const originalKey = 'w' + currentWeek + '-' + activeModalPeriodId;
             const annText = weeklyDetails[originalKey].announcements[idx];
