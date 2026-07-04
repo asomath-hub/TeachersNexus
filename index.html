@@ -44,67 +44,67 @@
 <body class="h-full overflow-hidden flex flex-col text-slate-800">
 
     <!-- アプリヘッダー -->
-    <header class="bg-white border-b border-slate-200 px-6 py-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between shrink-0 shadow-sm z-10">
+    <header class="bg-white border-b border-slate-200 px-4 py-2.5 flex flex-col gap-2 md:flex-row md:items-center md:justify-between shrink-0 shadow-sm z-10">
         <div class="flex items-center gap-3">
-            <div class="bg-emerald-600 text-white p-3 rounded-xl shadow-md shadow-emerald-100 flex items-center justify-center">
-                <i class="fa-solid fa-graduation-cap text-2xl"></i>
+            <div class="bg-emerald-600 text-white p-2.5 rounded-xl shadow-md shadow-emerald-100 flex items-center justify-center">
+                <i class="fa-solid fa-graduation-cap text-xl"></i>
             </div>
             <div>
-                <h1 class="font-bold text-xl text-slate-900 tracking-tight">Teacher's Nexus</h1>
-                <p class="text-xs md:text-sm text-slate-500 font-semibold">教員用時間割 ＆ Google ToDo 連携ダッシュボード</p>
+                <h1 class="font-bold text-lg text-slate-900 tracking-tight leading-tight">Teacher's Nexus</h1>
+                <p class="text-[10px] md:text-xs text-slate-500 font-semibold">教員用時間割 ＆ Google ToDo 連携ダッシュボード</p>
             </div>
         </div>
 
         <!-- 表示モード & 曜日ナビゲーション -->
-        <div class="flex items-center gap-4 flex-wrap">
+        <div class="flex items-center gap-3 flex-wrap">
             <!-- 日表示 / 3日表示 / 週表示 のタブトグル -->
             <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
-                <button onclick="setViewMode('daily')" id="btn-view-daily" class="px-4 py-2.5 text-xs md:text-sm font-bold rounded-lg transition-all duration-200 bg-white text-slate-800 shadow-sm">
+                <button onclick="setViewMode('daily')" id="btn-view-daily" class="px-3 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 bg-white text-slate-800 shadow-sm">
                     日表示
                 </button>
-                <button onclick="setViewMode('three-day')" id="btn-view-three-day" class="px-4 py-2.5 text-xs md:text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900">
+                <button onclick="setViewMode('three-day')" id="btn-view-three-day" class="px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900">
                     3日表示
                 </button>
-                <button onclick="setViewMode('weekly')" id="btn-view-weekly" class="px-4 py-2.5 text-xs md:text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900">
+                <button onclick="setViewMode('weekly')" id="btn-view-weekly" class="px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900">
                     週表示
                 </button>
             </div>
 
             <!-- 曜日ナビゲーション（日表示・3日表示の時のみ有効） -->
             <div id="day-nav-container" class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
-                <button onclick="changeDay('Mon')" id="btn-Mon" class="day-btn px-4 py-2 text-xs md:text-sm font-bold rounded-lg transition-all duration-200 bg-white text-emerald-700 shadow-sm">月</button>
-                <button onclick="changeDay('Tue')" id="btn-Tue" class="day-btn px-4 py-2 text-xs md:text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900">火</button>
-                <button onclick="changeDay('Wed')" id="btn-Wed" class="day-btn px-4 py-2 text-xs md:text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900">水</button>
-                <button onclick="changeDay('Thu')" id="btn-Thu" class="day-btn px-4 py-2 text-xs md:text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900">木</button>
-                <button onclick="changeDay('Fri')" id="btn-Fri" class="day-btn px-4 py-2 text-xs md:text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900">金</button>
+                <button onclick="changeDay('Mon')" id="btn-Mon" class="day-btn px-3 py-1 text-xs font-bold rounded-lg transition-all duration-200 bg-white text-emerald-700 shadow-sm">月</button>
+                <button onclick="changeDay('Tue')" id="btn-Tue" class="day-btn px-3 py-1 text-xs font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900">火</button>
+                <button onclick="changeDay('Wed')" id="btn-Wed" class="day-btn px-3 py-1 text-xs font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900">水</button>
+                <button onclick="changeDay('Thu')" id="btn-Thu" class="day-btn px-3 py-1 text-xs font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900">木</button>
+                <button onclick="changeDay('Fri')" id="btn-Fri" class="day-btn px-3 py-1 text-xs font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900">金</button>
             </div>
         </div>
 
         <!-- アクション & Googleアカウント連携 -->
-        <div class="flex items-center gap-2">
-            <button onclick="exportToCSV()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center gap-1.5 transition-all" title="スプレッドシート（CSV）に出力">
+        <div class="flex items-center gap-2 flex-wrap">
+            <button onclick="exportToCSV()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 transition-all" title="スプレッドシート（CSV）に出力">
                 <i class="fa-solid fa-file-excel"></i> CSV出力
             </button>
             
-            <button onclick="toggleViewState('basic-settings')" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2.5 rounded-xl text-xs md:text-sm font-semibold flex items-center gap-1.5 shadow-md shadow-slate-200 transition-all">
+            <button onclick="toggleViewState('basic-settings')" class="bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1 shadow-md shadow-slate-200 transition-all">
                 <i class="fa-solid fa-gears"></i> 基本時間割
             </button>
 
-            <button onclick="resetToDefault()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold flex items-center gap-1.5 transition-all" title="デモデータを初期化">
-                <i class="fa-solid fa-trash-arrow-up"></i> リセット
+            <button onclick="resetToDefault()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 transition-all" title="デモデータを初期化">
+                <i class="fa-solid fa-trash-arrow-up"></i>
             </button>
 
-            <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl">
-                <div class="relative flex h-3 w-3">
+            <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-xl">
+                <div class="relative flex h-2 w-2">
                     <span id="sync-ping" class="absolute inline-flex h-full w-full rounded-full bg-slate-400 opacity-75"></span>
-                    <span id="sync-dot" class="relative inline-flex rounded-full h-3 w-3 bg-slate-400"></span>
+                    <span id="sync-dot" class="relative inline-flex rounded-full h-2 w-2 bg-slate-400"></span>
                 </div>
                 <div class="text-left cursor-pointer" onclick="openSyncSettings()">
-                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Google Task Link</p>
-                    <p class="text-xs md:text-sm font-bold text-slate-700" id="google-account-text">アカウント未接続 (デモモード)</p>
+                    <p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider leading-none">Google Link</p>
+                    <p class="text-xs font-bold text-slate-700 leading-tight" id="google-account-text">アカウント未接続</p>
                 </div>
-                <button onclick="openSyncSettings()" class="text-slate-400 hover:text-slate-600 p-1" title="API接続設定">
-                    <i class="fa-solid fa-gear text-sm"></i>
+                <button onclick="openSyncSettings()" class="text-slate-400 hover:text-slate-600 p-0.5" title="API接続設定">
+                    <i class="fa-solid fa-gear text-xs"></i>
                 </button>
             </div>
         </div>
@@ -114,54 +114,54 @@
     <main class="flex-1 flex overflow-hidden bg-slate-50" id="dashboard-view">
 
         <!-- 左カラム：Google ToDoリスト (未定タスク保管庫) -->
-        <section class="w-72 border-r border-slate-200 bg-white flex flex-col shrink-0">
-            <div class="p-4 border-b border-slate-100 bg-slate-50/50">
-                <div class="flex items-center justify-between mb-3">
-                    <div class="flex items-center gap-2">
-                        <i class="fa-solid fa-list-check text-blue-600 text-xl"></i>
-                        <h2 class="font-bold text-slate-800 text-lg">Google ToDo (未定)</h2>
+        <section class="w-64 border-r border-slate-200 bg-white flex flex-col shrink-0">
+            <div class="p-3 border-b border-slate-100 bg-slate-50/50">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center gap-1.5">
+                        <i class="fa-solid fa-list-check text-blue-600 text-base"></i>
+                        <h2 class="font-bold text-slate-800 text-base">Google ToDo (未定)</h2>
                     </div>
-                    <span id="unplanned-count" class="bg-blue-50 text-blue-700 text-sm font-bold px-3 py-1 rounded-full border border-blue-100">0件</span>
+                    <span id="unplanned-count" class="bg-blue-50 text-blue-700 text-xs font-bold px-2 py-0.5 rounded-full border border-blue-100">0件</span>
                 </div>
                 
                 <!-- デモ＆接続ガイド -->
-                <div id="demo-guide-box" class="mb-3 p-3.5 bg-gradient-to-r from-emerald-50 to-blue-50 border border-emerald-100 rounded-xl text-xs leading-relaxed">
-                    <p class="font-bold text-slate-900 mb-1">
-                        <i class="fa-solid fa-link text-blue-600 mr-1"></i>アカウント接続方法
+                <div id="demo-guide-box" class="mb-2 p-2.5 bg-gradient-to-r from-emerald-50 to-blue-50 border border-emerald-100 rounded-xl text-[11px] leading-relaxed">
+                    <p class="font-bold text-slate-900 mb-0.5">
+                        <i class="fa-solid fa-link text-blue-600 mr-0.5"></i>アカウント接続方法
                     </p>
-                    <p class="text-xs text-slate-600 mb-2">
-                        右上の「アカウント未接続」をタップして、ご自身のGoogleアカウントでログインすると本物のToDoリストと同期できます。
+                    <p class="text-slate-600 mb-1.5 leading-snug">
+                        右上の「未接続」をタップしてサインインすると本物のToDoリストと同期できます。
                     </p>
-                    <button onclick="openSyncSettings()" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-1.5 rounded-lg transition-all shadow-sm">
+                    <button onclick="openSyncSettings()" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold py-1 rounded-lg transition-all shadow-sm">
                         接続を設定する
                     </button>
                 </div>
 
                 <!-- 新規タスク追加フォーム -->
-                <form id="new-task-form" onsubmit="handleAddTask(event)" class="flex gap-2">
+                <form id="new-task-form" onsubmit="handleAddTask(event)" class="flex gap-1.5">
                     <input type="text" id="new-task-title" required placeholder="新しいタスクを入力..." 
-                           class="flex-1 bg-white border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl font-bold text-base transition-all flex items-center justify-center shadow-md shadow-blue-100">
+                           class="flex-1 bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-xl font-bold text-sm transition-all flex items-center justify-center shadow-md shadow-blue-100">
                         <i class="fa-solid fa-plus"></i>
                     </button>
                 </form>
             </div>
 
             <!-- リストセレクタ -->
-            <div class="px-4 py-3 border-b border-slate-100 flex gap-1 overflow-x-auto shrink-0" id="list-tabs-container">
-                <button onclick="filterTasks('all')" id="list-tab-all" class="list-tab shrink-0 px-4 py-1.5 text-xs font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-100">すべて</button>
-                <button onclick="filterTasks('授業準備')" id="list-tab-授業準備" class="list-tab shrink-0 px-4 py-1.5 text-xs font-semibold rounded-full text-slate-600 hover:bg-slate-100">授業準備</button>
-                <button onclick="filterTasks('校務分掌')" id="list-tab-校務分掌" class="list-tab shrink-0 px-4 py-1.5 text-xs font-semibold rounded-full text-slate-600 hover:bg-slate-100">校務分掌</button>
-                <button onclick="filterTasks('その他')" id="list-tab-その他" class="list-tab shrink-0 px-4 py-1.5 text-xs font-semibold rounded-full text-slate-600 hover:bg-slate-100">その他</button>
+            <div class="px-3 py-2 border-b border-slate-100 flex gap-1 overflow-x-auto shrink-0" id="list-tabs-container">
+                <button onclick="filterTasks('all')" id="list-tab-all" class="list-tab shrink-0 px-3 py-1 text-[11px] font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-100">すべて</button>
+                <button onclick="filterTasks('授業準備')" id="list-tab-授業準備" class="list-tab shrink-0 px-3 py-1 text-[11px] font-semibold rounded-full text-slate-600 hover:bg-slate-100">授業準備</button>
+                <button onclick="filterTasks('校務分掌')" id="list-tab-校務分掌" class="list-tab shrink-0 px-3 py-1 text-[11px] font-semibold rounded-full text-slate-600 hover:bg-slate-100">校務分掌</button>
+                <button onclick="filterTasks('その他')" id="list-tab-その他" class="list-tab shrink-0 px-3 py-1 text-[11px] font-semibold rounded-full text-slate-600 hover:bg-slate-100">その他</button>
             </div>
 
             <!-- タスク一覧 -->
-            <div class="flex-1 overflow-y-auto p-4 space-y-3.5" id="unplanned-task-list">
+            <div class="flex-1 overflow-y-auto p-3 space-y-2.5" id="unplanned-task-list">
                 <!-- JavaScriptで動的生成 -->
             </div>
 
             <!-- 同期デモ・リアルインフォ -->
-            <div class="p-3.5 bg-blue-50/50 border-t border-slate-100 text-xs text-blue-800 flex items-center justify-between font-medium">
+            <div class="p-2.5 bg-blue-50/50 border-t border-slate-100 text-[11px] text-blue-800 flex items-center justify-between font-medium shrink-0">
                 <span id="sync-status-text"><i class="fa-solid fa-circle-play mr-1"></i> ローカル保存で動作中</span>
                 <span class="font-bold text-slate-500 hover:text-slate-800 cursor-pointer" onclick="manualSyncTrigger()">今すぐ同期 <i class="fa-solid fa-arrows-rotate"></i></span>
             </div>
@@ -170,40 +170,40 @@
         <!-- 右カラム：時間割 -->
         <section class="flex-1 flex flex-col overflow-hidden">
             <!-- 本日のサマリーバー ＆ 45週切り替えスマートコントロール -->
-            <div class="bg-white border-b border-slate-200 px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 shrink-0 shadow-sm">
-                <div class="flex items-center flex-wrap gap-4">
+            <div class="bg-white border-b border-slate-200 px-4 py-2.5 flex flex-col md:flex-row md:items-center justify-between gap-3 shrink-0 shadow-sm">
+                <div class="flex items-center flex-wrap gap-3">
                     <!-- 週（Week 1 - 45）のスマートセレクター -->
-                    <div class="flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-xl shadow-inner shrink-0">
-                        <button onclick="navigateWeek(-1)" class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-white text-slate-600 transition-all active:scale-95" title="前の週へ">
-                            <i class="fa-solid fa-chevron-left text-sm"></i>
+                    <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl shadow-inner shrink-0">
+                        <button onclick="navigateWeek(-1)" class="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white text-slate-600 transition-all active:scale-95" title="前の週へ">
+                            <i class="fa-solid fa-chevron-left text-xs"></i>
                         </button>
-                        <div class="flex items-center gap-1 px-2.5">
-                            <select id="week-selector" onchange="selectWeek(this.value)" class="bg-transparent text-sm md:text-base font-extrabold text-slate-900 outline-none cursor-pointer pr-1">
+                        <div class="flex items-center gap-1 px-1.5">
+                            <select id="week-selector" onchange="selectWeek(this.value)" class="bg-transparent text-xs md:text-sm font-extrabold text-slate-900 outline-none cursor-pointer">
                                 <!-- JSで1〜45週を動的生成 -->
                             </select>
                         </div>
-                        <button onclick="navigateWeek(1)" class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-white text-slate-600 transition-all active:scale-95" title="次の週へ">
-                            <i class="fa-solid fa-chevron-right text-sm"></i>
+                        <button onclick="navigateWeek(1)" class="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white text-slate-600 transition-all active:scale-95" title="次の週へ">
+                            <i class="fa-solid fa-chevron-right text-xs"></i>
                         </button>
                     </div>
 
                     <span class="text-slate-300 hidden sm:inline">|</span>
 
                     <div class="flex flex-col">
-                        <span class="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight" id="current-day-label">月曜日</span>
-                        <span class="text-sm md:text-xl font-extrabold text-slate-500 mt-1" id="day-date-label">4月6日(月)</span>
+                        <span class="text-xl md:text-2xl font-extrabold text-slate-900 tracking-tight leading-none" id="current-day-label">月曜日</span>
+                        <span class="text-xs md:text-sm font-bold text-slate-500 mt-0.5 leading-none" id="day-date-label">4月6日(月)</span>
                     </div>
                 </div>
                 
-                <div class="flex items-center gap-3 text-xs text-slate-500 font-semibold">
-                    <span class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 bg-emerald-100 rounded"></span> 授業</span>
-                    <span class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 bg-amber-50 rounded border border-dashed border-amber-300"></span> 空き</span>
-                    <span class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 bg-indigo-50 rounded"></span> 放課後</span>
+                <div class="flex items-center gap-2.5 text-[10px] text-slate-400 font-semibold">
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 bg-emerald-100 rounded"></span> 授業</span>
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 bg-amber-50 rounded border border-dashed border-amber-300"></span> 空き</span>
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 bg-indigo-50 rounded"></span> 放課後</span>
                 </div>
             </div>
 
             <!-- 统一時間割：全体縦スクロール領域 -->
-            <div class="flex-1 overflow-y-auto overflow-x-auto p-6" id="timetable-scroll-wrapper">
+            <div class="flex-1 overflow-y-auto overflow-x-auto p-4" id="timetable-scroll-wrapper">
                 <div id="timetable-container" class="w-full">
                     <!-- JavaScriptで曜日カラムを動的生成 -->
                 </div>
@@ -365,6 +365,15 @@
                         <p class="text-[10px] md:text-xs text-slate-400 mt-1">※クライアントIDはブラウザ（ローカル）にのみ安全に保存されます。</p>
                     </div>
 
+                    <!-- 同期するToDoリストの選択（接続中のみ表示） -->
+                    <div id="settings-list-select-container" class="hidden">
+                        <label class="block text-xs md:text-sm font-bold text-slate-700 mb-1.5">同期するGoogle ToDoリスト</label>
+                        <select id="settings-target-list" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="all">すべてのリストを統合して同期</option>
+                        </select>
+                        <p class="text-[10px] md:text-xs text-slate-400 mt-1">※特定のToDoリストだけをこの時間割アプリに連携させたい場合に選択してください。</p>
+                    </div>
+
                     <!-- 接続・同期ボタングループ -->
                     <div class="flex flex-col sm:flex-row gap-3 pt-2">
                         <button onclick="startGoogleAuth()" id="btn-google-login" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs md:text-sm font-bold py-3 rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
@@ -388,7 +397,7 @@
                         <li>プロジェクトを新規作成し、「APIとサービス」から「OAuth同意画面」を設定します。</li>
                         <li>「資格情報」を選択し、<strong>「OAuth 2.0 クライアント ID」</strong>をウェブアプリケーションとして作成します。</li>
                         <li>
-                            <strong>承認済みの JavaScript 生成元</strong> に、このアプリのURL（GitHub PagesのURLや、`http://localhost` など）を正確に追加します。
+                            <strong>承認済みの JavaScript 生成元</strong> に、このアプリのURL（GitHub Pages of URLや、`http://localhost` など）を正確に追加します。
                         </li>
                         <li>発行されたクライアントIDを上記にペーストして、サインインを実行します！</li>
                     </ol>
@@ -442,6 +451,7 @@
         let googleClientId = localStorage.getItem('tn_google_client_id') || '';
         let googleToken = localStorage.getItem('tn_google_token') || null;
         let googleUserEmail = localStorage.getItem('tn_google_email') || '';
+        let googleTargetListId = localStorage.getItem('tn_google_target_list_id') || 'all'; // 同期対象の指定リストID
         let isGoogleConnected = (googleToken !== null);
         let tokenExpiry = localStorage.getItem('tn_token_expiry') || 0;
         let googleTaskLists = []; // 読み込んだ本物のタスクリスト
@@ -550,7 +560,7 @@
         // デモ用の初期タスク
         const defaultTasks = [
             { id: 't1', title: '1年A組 数学小テストの印刷', list: '授業準備', completed: false, assignedPeriodId: null },
-            { id: 't2', title: '中間試験の作成（〜2/15）', list: '授業準備', completed: false, assignedPeriodId: null },
+            { id: 't2', title: '中間試験 of 作成（〜2/15）', list: '授業準備', completed: false, assignedPeriodId: null },
             { id: 't3', title: '職員会議用の資料読み込み', list: '校務分掌', completed: false, assignedPeriodId: null },
             { id: 't4', title: '修学旅行のしおり原稿提出', list: '校務分掌', completed: false, assignedPeriodId: null },
             { id: 't5', title: '野球部 遠征バスの手配確認', list: 'その他', completed: false, assignedPeriodId: null },
@@ -591,7 +601,7 @@
             }
         };
 
-        // --- LocalStorageによる自動永続化システム (サンドボックスセキュリティ対策付き) ---
+        // --- LocalStorageによる自動永続化システム ---
         function loadAllData() {
             try {
                 const storedTasks = localStorage.getItem('tn_tasks');
@@ -676,7 +686,7 @@
                             "時間割スケジュール",
                             "第" + w + "週",
                             dateStr,
-                            displayPeriod.num + "限(" + displayPeriod.time + ")",
+                            displayPeriod.num + "限",
                             displayPeriod.subject || "なし",
                             displayPeriod.class || "なし",
                             typeName,
@@ -731,11 +741,11 @@
             if (typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {
                 onGsiLoad();
             } else {
-                // 3秒経ってもロードされなければフォールバック
+                // 自動検出タイムアウト時もローカルの接続情報を最優先で初期表示するために即時1回呼び出す
+                initGoogleIdentity();
                 setTimeout(() => {
                     if (!isGsiLoaded) {
-                        console.warn("GSIライブラリの自動検出がタイムアウトしました。手動で初期化を試みます。");
-                        onGsiLoad();
+                        console.warn("GSIライブラリの自動検出がタイムアウトしました。");
                     }
                 }, 3000);
             }
@@ -760,44 +770,45 @@
                 settingsInput.value = googleClientId;
             }
             
+            // 【バグ修正最優先】GoogleのSDKのロードを待たずに、すでにLocalStorageに有効なトークンがあれば
+            // 即座にUIを「連動中」に切り替え、データの引き込みを開始する
+            const now = Date.now();
+            if (googleToken && tokenExpiry && now < parseInt(tokenExpiry, 10)) {
+                isGoogleConnected = true;
+                updateGoogleStatusUI(true);
+                fetchGoogleTaskLists();
+            } else {
+                // 期限切れ
+                if (googleToken) {
+                    disconnectGoogle(true);
+                }
+            }
+
             if (!googleClientId) {
-                updateGoogleStatusUI(false);
                 return;
             }
 
             if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
-                console.warn("Google API SDK が未ロードです。処理を待機します。");
+                console.warn("Google API SDK が未ロードです。認証クライアントのポップアップ初期化を保留します。");
                 return;
             }
 
             try {
-                // GIS Token Client の初期化 (Tasks APIをフル操作できるScopeを指定)
+                // GIS Token Client の初期化 (ログイン用のポップアップをトリガーする際に使用)
                 tokenClient = google.accounts.oauth2.initTokenClient({
                     client_id: googleClientId,
                     scope: 'https://www.googleapis.com/auth/tasks',
                     callback: handleTokenResponse,
                 });
-                
-                // トークンが保存されており、まだ有効期限内であれば自動適用
-                const now = Date.now();
-                if (googleToken && tokenExpiry && now < parseInt(tokenExpiry, 10)) {
-                    isGoogleConnected = true;
-                    updateGoogleStatusUI(true);
-                    fetchGoogleTaskLists();
-                } else {
-                    // 期限切れ
-                    disconnectGoogle(true);
-                }
             } catch (err) {
-                console.error("Google API の初期化に失敗しました。クライアントIDが正しいか確認してください。", err);
-                updateGoogleStatusUI(false);
+                console.error("Google 認証クライアントの初期化に失敗しました:", err);
             }
         }
 
         // ログイン処理開始
         function startGoogleAuth() {
             if (!isGsiLoaded || typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
-                showToast("⚠️ Google 接続ライブラリをロード中です。数秒待ってからやり直してください。");
+                showToast("⚠️ Google 接続ライブラリをロード中です。数秒待ってからやり真似してください。");
                 return;
             }
 
@@ -856,10 +867,12 @@
             googleUserEmail = '';
             isGoogleConnected = false;
             tokenExpiry = 0;
+            googleTargetListId = 'all';
             
             localStorage.removeItem('tn_google_token');
             localStorage.removeItem('tn_token_expiry');
             localStorage.removeItem('tn_google_email');
+            localStorage.removeItem('tn_google_target_list_id');
             
             updateGoogleStatusUI(false);
             
@@ -879,35 +892,38 @@
             const loginBtn = document.getElementById('btn-google-login');
             const logoutBtn = document.getElementById('btn-google-logout');
             const demoGuide = document.getElementById('demo-guide-box');
+            const listSelectContainer = document.getElementById('settings-list-select-container');
             
             const ping = document.getElementById('sync-ping');
             const dot = document.getElementById('sync-dot');
 
             if (connected) {
                 if (statusText) statusText.innerText = "同期完了: 連動中";
-                if (syncStatus) syncStatus.innerHTML = '<i class="fa-solid fa-cloud-arrow-up text-emerald-500 mr-1 animate-pulse"></i> Googleアカウント同期中';
+                if (syncStatus) syncStatus.innerHTML = '<i class="fa-solid fa-cloud-arrow-up text-emerald-500 mr-1 animate-pulse text-[11px]"></i> Google同期中';
                 if (loginBtn) loginBtn.classList.add('hidden');
                 if (logoutBtn) logoutBtn.classList.remove('hidden');
                 if (demoGuide) demoGuide.classList.add('hidden');
+                if (listSelectContainer) listSelectContainer.classList.remove('hidden');
                 
                 if (ping) {
                     ping.className = "absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping";
                 }
                 if (dot) {
-                    dot.className = "relative inline-flex rounded-full h-3 w-3 bg-emerald-500";
+                    dot.className = "relative inline-flex rounded-full h-2 w-2 bg-emerald-500";
                 }
             } else {
-                if (statusText) statusText.innerText = "アカウント未接続 (デモモード)";
-                if (syncStatus) syncStatus.innerHTML = '<i class="fa-solid fa-circle-play mr-1"></i> ローカル保存で動作中';
+                if (statusText) statusText.innerText = "アカウント未接続";
+                if (syncStatus) syncStatus.innerHTML = '<i class="fa-solid fa-circle-play mr-1"></i> ローカル動作中';
                 if (loginBtn) loginBtn.classList.remove('hidden');
                 if (logoutBtn) logoutBtn.classList.add('hidden');
                 if (demoGuide) demoGuide.classList.remove('hidden');
+                if (listSelectContainer) listSelectContainer.classList.add('hidden');
                 
                 if (ping) {
                     ping.className = "";
                 }
                 if (dot) {
-                    dot.className = "relative inline-flex rounded-full h-3 w-3 bg-slate-400";
+                    dot.className = "relative inline-flex rounded-full h-2 w-2 bg-slate-400";
                 }
             }
         }
@@ -933,11 +949,33 @@
                 const data = await response.json();
                 googleTaskLists = data.items || [];
                 
+                // 設定画面内のToDoリストプルダウン選択肢を更新
+                updateSettingsListDropdown();
+                
                 setupTaskTabsAndSync();
             } catch (err) {
                 console.error("Task lists の取得に失敗しました", err);
                 showToast("⚠️ Google TaskLists の取得に失敗しました。");
             }
+        }
+
+        // 設定画面のタスクリスト選択プルダウンメニューを動的に構築
+        function updateSettingsListDropdown() {
+            const select = document.getElementById('settings-target-list');
+            if (!select) return;
+
+            // 初期状態をセット
+            select.innerHTML = '<option value="all">すべてのリストを統合して同期</option>';
+
+            googleTaskLists.forEach(list => {
+                const opt = document.createElement('option');
+                opt.value = list.id;
+                opt.text = list.title;
+                if (list.id === googleTargetListId) {
+                    opt.selected = true;
+                }
+                select.appendChild(opt);
+            });
         }
 
         // 2. GoogleのToDoタスクを読み込んでローカルデータにマッピングする
@@ -953,7 +991,12 @@
 
             const newTasks = [];
             
-            for (let list of googleTaskLists) {
+            // 先生が選択した同期対象のリストのみにフィルタリング
+            const targetLists = (googleTargetListId === 'all') 
+                ? googleTaskLists 
+                : googleTaskLists.filter(l => l.id === googleTargetListId);
+
+            for (let list of targetLists) {
                 try {
                     const res = await fetch('https://tasks.googleapis.com/tasks/v1/lists/' + list.id + '/tasks?showCompleted=true', {
                         headers: {
@@ -967,10 +1010,25 @@
                         const assignedId = prevAssignedMap[item.title] || null;
                         const isCompleted = item.status === 'completed';
                         
+                        // 【指定リスト同期時の対策】1つのリストしか同期していない時でも、
+                        // タスク名（タイトル）から自動で教員向けに「授業準備」「校務分掌」「その他」にタグ分類する
                         let listCategory = "その他";
-                        if (list.title.includes("授業準備") || list.title.includes("教材")) listCategory = "授業準備";
-                        else if (list.title.includes("校務") || list.title.includes("仕事") || list.title.includes("会議")) listCategory = "校務分掌";
-                        else listCategory = list.title;
+                        const title = item.title || "";
+                        
+                        if (list.title.includes("授業準備") || list.title.includes("教材")) {
+                            listCategory = "授業準備";
+                        } else if (list.title.includes("校務") || list.title.includes("仕事") || list.title.includes("会議")) {
+                            listCategory = "校務分掌";
+                        } else {
+                            // キーワードマッチングによるインテリジェント分類
+                            if (title.match(/(授業|教材|テスト|プリント|小テスト|印刷|授業準備|ワーク|宿題|回収|検印)/)) {
+                                listCategory = "授業準備";
+                            } else if (title.match(/(校務|分掌|会議|提出|事務|報告|学年|職員|出張|委員会|会議資料)/)) {
+                                listCategory = "校務分掌";
+                            } else {
+                                listCategory = list.title;
+                            }
+                        }
 
                         newTasks.push({
                             id: item.id,
@@ -990,7 +1048,7 @@
             rebuildListTabs();
             saveAllData();
             renderDashboard();
-            showToast("🔄 本物の Google Tasks と完全に同期しました！");
+            showToast("🔄 Google Tasks との同期が完了しました！");
         }
 
         // Google のリスト名に合わせて左のタブボタンを動的に増やす
@@ -1014,8 +1072,8 @@
                 const isAll = category === 'all';
                 const label = isAll ? 'すべて' : category;
                 const activeClass = (selectedFilter === category) 
-                    ? "list-tab shrink-0 px-4 py-1.5 text-xs font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-100"
-                    : "list-tab shrink-0 px-4 py-1.5 text-xs font-semibold rounded-full text-slate-600 hover:bg-slate-100";
+                    ? "list-tab shrink-0 px-3 py-1 text-[11px] font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-100"
+                    : "list-tab shrink-0 px-3 py-1 text-[11px] font-semibold rounded-full text-slate-600 hover:bg-slate-100";
 
                 const btn = document.createElement('button');
                 btn.onclick = function() { filterTasks(category); };
@@ -1030,11 +1088,15 @@
         async function createGoogleTask(title, category) {
             if (!googleToken) return null;
 
-            let targetListId = googleTaskLists[0]?.id;
+            // デフォルトの追加先リストを決定
+            // 指定のリスト同期が有効な場合はそのリストに強制し、'all' の場合はカテゴリにマッチしたリストへ追加する
+            let targetListId = (googleTargetListId !== 'all') ? googleTargetListId : googleTaskLists[0]?.id;
             
-            const matchedList = googleTaskLists.find(l => l.title.includes(category));
-            if (matchedList) {
-                targetListId = matchedList.id;
+            if (googleTargetListId === 'all') {
+                const matchedList = googleTaskLists.find(l => l.title.includes(category));
+                if (matchedList) {
+                    targetListId = matchedList.id;
+                }
             }
 
             if (!targetListId) return null;
@@ -1159,8 +1221,8 @@
             const btnWeekly = document.getElementById('btn-view-weekly');
             const dayNav = document.getElementById('day-nav-container');
 
-            const baseBtnStyle = "px-4 py-2.5 text-xs md:text-sm font-semibold rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-950";
-            const activeBtnStyle = "px-4 py-2.5 text-xs md:text-sm font-bold rounded-lg transition-all duration-200 bg-white text-slate-900 shadow-sm";
+            const baseBtnStyle = "px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-950";
+            const activeBtnStyle = "px-3 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 bg-white text-slate-900 shadow-sm";
 
             btnDaily.className = baseBtnStyle;
             btnThree.className = baseBtnStyle;
@@ -1184,11 +1246,11 @@
             currentDay = dayCode;
             
             document.querySelectorAll('.day-btn').forEach(btn => {
-                btn.className = "day-btn px-4 py-2 text-xs md:text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900";
+                btn.className = "day-btn px-3 py-1 text-xs font-medium rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-950";
             });
             const activeBtn = document.getElementById('btn-' + dayCode);
             if (activeBtn) {
-                activeBtn.className = "day-btn px-4 py-2 text-xs md:text-sm font-bold rounded-lg transition-all duration-200 bg-white text-emerald-700 shadow-sm";
+                activeBtn.className = "day-btn px-3 py-1 text-xs font-bold rounded-lg transition-all duration-200 bg-white text-emerald-700 shadow-sm";
             }
 
             renderDashboard();
@@ -1211,11 +1273,11 @@
         function filterTasks(listCategory) {
             selectedFilter = listCategory;
             document.querySelectorAll('.list-tab').forEach(tab => {
-                tab.className = "list-tab shrink-0 px-4 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-full";
+                tab.className = "list-tab shrink-0 px-3 py-1 text-[11px] font-semibold text-slate-600 hover:bg-slate-100 rounded-full";
             });
             const activeTab = document.getElementById('list-tab-' + listCategory);
             if (activeTab) {
-                activeTab.className = "list-tab shrink-0 px-4 py-1.5 text-xs md:text-sm font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-100";
+                activeTab.className = "list-tab shrink-0 px-3 py-1 text-[11px] font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-100";
             }
             renderUnplannedTasks();
         }
@@ -1233,10 +1295,10 @@
 
             if (filtered.length === 0) {
                 listContainer.innerHTML = [
-                    '<div class="flex flex-col items-center justify-center py-10 text-slate-400 text-center">',
-                    '    <i class="fa-solid fa-circle-check text-slate-200 text-5xl mb-3"></i>',
-                    '    <p class="text-sm font-bold">未定タスクはありません</p>',
-                    '    <p class="text-xs">新しいタスクを入力するか、すでに割り当てたタスクに取り組みましょう。</p>',
+                    '<div class="flex flex-col items-center justify-center py-6 text-slate-400 text-center">',
+                    '    <i class="fa-solid fa-circle-check text-slate-200 text-3xl mb-1.5"></i>',
+                    '    <p class="text-xs font-bold">未定タスクはありません</p>',
+                    '    <p class="text-[10px] text-slate-400">新しいタスクを上から追加しましょう。</p>',
                     '</div>'
                 ].join('\n');
                 return;
@@ -1250,7 +1312,7 @@
                 else listColorClass = 'bg-blue-50 text-blue-700 border-blue-100';
 
                 const card = document.createElement('div');
-                card.className = "bg-white border border-slate-200 p-4 rounded-xl shadow-sm hover:shadow-md hover:border-blue-400 transition-all cursor-grab active:cursor-grabbing flex flex-col gap-2 relative group";
+                card.className = "bg-white border border-slate-200 p-2.5 rounded-xl shadow-sm hover:shadow-md hover:border-blue-400 transition-all cursor-grab active:cursor-grabbing flex flex-col gap-1.5 relative group";
                 card.draggable = true;
                 
                 card.addEventListener('dragstart', function(e) {
@@ -1262,19 +1324,18 @@
                 });
 
                 card.innerHTML = [
-                    '<div class="flex items-start gap-2.5">',
-                    '    <input type="checkbox" onchange="toggleTaskComplete(\'' + task.id + '\')" class="mt-1 w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-slate-300 shrink-0">',
+                    '<div class="flex items-start gap-2">',
+                    '    <input type="checkbox" onchange="toggleTaskComplete(\'' + task.id + '\')" class="mt-0.5 w-4 h-4 text-blue-600 rounded focus:ring-blue-500 border-slate-300 shrink-0">',
                     '    <div class="flex-1 min-w-0">',
-                    '        <p class="text-sm md:text-base font-bold text-slate-800 break-words leading-relaxed">' + escapeHTML(task.title) + '</p>',
-                    '        <div class="flex items-center gap-1.5 mt-2">',
-                    '            <span class="text-xs font-bold px-2.5 py-0.5 rounded-full border ' + listColorClass + '">' + task.list + '</span>',
-                    '            <span class="text-[10px] md:text-xs text-slate-400 font-medium"><i class="fa-solid fa-cloud-arrow-up"></i> ' + (isGoogleConnected ? 'リアル同期中' : 'Google同期デモ') + '</span>',
+                    '        <p class="text-xs font-bold text-slate-800 break-words leading-tight">' + escapeHTML(task.title) + '</p>',
+                    '        <div class="flex items-center gap-1.5 mt-1">',
+                    '            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full border ' + listColorClass + '">' + task.list + '</span>',
                     '        </div>',
                     '    </div>',
                     '</div>',
-                    '<div class="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">',
-                    '    <button onclick="quickAssign(\'' + task.id + '\')" class="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg text-xs font-bold transition-all">',
-                    '        配置 <i class="fa-solid fa-chevron-right"></i>',
+                    '<div class="absolute right-1 top-1 opacity-0 group-hover:opacity-100 transition-opacity flex gap-0.5">',
+                    '    <button onclick="quickAssign(\'' + task.id + '\')" class="px-1.5 py-0.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded text-[10px] font-bold transition-all">',
+                    '        配置',
                     '    </button>',
                     '</div>'
                 ].join('\n');
@@ -1293,19 +1354,19 @@
             container.innerHTML = '';
 
             if (viewMode === 'daily') {
-                container.className = "flex flex-col space-y-4 w-full max-w-3xl mx-auto";
+                container.className = "flex flex-col space-y-3.5 w-full max-w-3xl mx-auto";
                 
                 const dayCol = document.createElement('div');
-                dayCol.className = "bg-white border border-slate-200 rounded-2xl p-6 shadow-sm";
+                dayCol.className = "bg-white border border-slate-200 rounded-2xl p-4 shadow-sm";
                 
                 const header = document.createElement('div');
-                header.className = "flex items-center justify-between mb-5 pb-3 border-b border-slate-100";
+                header.className = "flex items-center justify-between mb-4 pb-2 border-b border-slate-100";
                 
-                header.innerHTML = '<span class="font-black text-slate-900 text-3xl">' + dayNames[currentDay] + ' の時間割</span><span class="text-lg md:text-xl text-slate-600 font-extrabold">' + getFormattedDate(currentWeek, currentDay) + '</span>';
+                header.innerHTML = '<span class="font-black text-slate-900 text-2xl">' + dayNames[currentDay] + ' の時間割</span><span class="text-base text-slate-600 font-extrabold">' + getFormattedDate(currentWeek, currentDay) + '</span>';
                 dayCol.appendChild(header);
 
                 const listWrapper = document.createElement('div');
-                listWrapper.className = "space-y-4";
+                listWrapper.className = "space-y-3";
                 renderPeriodsList(timetableData[currentDay] || [], listWrapper, false, currentDay);
                 dayCol.appendChild(listWrapper);
 
@@ -1315,9 +1376,9 @@
                 const isThreeDay = (viewMode === 'three-day');
                 
                 if (isThreeDay) {
-                    container.className = "grid grid-cols-1 md:grid-cols-3 gap-4 items-start w-full";
+                    container.className = "grid grid-cols-1 md:grid-cols-3 gap-3 items-start w-full";
                 } else {
-                    container.className = "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 items-start w-full";
+                    container.className = "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-2.5 items-start w-full";
                 }
 
                 const targetDays = isThreeDay ? get3DaysList() : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
@@ -1326,22 +1387,22 @@
                     const dayCol = document.createElement('div');
                     const isToday = (dayCode === 'Fri');
                     
-                    dayCol.className = "bg-white border border-slate-200/60 rounded-2xl p-4 flex flex-col shadow-sm relative";
+                    dayCol.className = "bg-white border border-slate-200/60 rounded-2xl p-3 flex flex-col shadow-sm relative";
                     
                     const header = document.createElement('div');
-                    header.className = "sticky top-0 bg-white pb-3 mb-2 border-b border-slate-100 z-10 flex items-center justify-between";
+                    header.className = "sticky top-0 bg-white pb-2 mb-1.5 border-b border-slate-100 z-10 flex items-center justify-between";
                     
                     header.innerHTML = [
-                        '<div class="flex items-center gap-2">',
-                        '    <span class="font-bold text-slate-900 text-xl md:text-2xl">' + dayNames[dayCode].replace('曜日', '') + '</span>',
-                        isToday ? '    <span class="bg-emerald-600 text-white text-xs font-bold px-2 py-0.5 rounded shadow-sm">今日</span>' : '',
+                        '<div class="flex items-center gap-1.5">',
+                        '    <span class="font-bold text-slate-900 text-lg">' + dayNames[dayCode].replace('曜日', '') + '</span>',
+                        isToday ? '    <span class="bg-emerald-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded shadow-sm">今日</span>' : '',
                         '</div>',
-                        '<span class="text-sm md:text-base text-slate-500 font-extrabold">' + getFormattedDate(currentWeek, dayCode).split('(')[0] + '</span>'
+                        '<span class="text-xs text-slate-400 font-extrabold">' + getFormattedDate(currentWeek, dayCode).split('(')[0] + '</span>'
                     ].join('\n');
                     dayCol.appendChild(header);
 
                     const listWrapper = document.createElement('div');
-                    listWrapper.className = "space-y-3";
+                    listWrapper.className = "space-y-2";
                     
                     renderPeriodsList(timetableData[dayCode] || [], listWrapper, true, dayCode);
                     dayCol.appendChild(listWrapper);
@@ -1386,13 +1447,14 @@
 
                 const item = document.createElement('div');
 
+                // iPad Pro用に極限まで余白をスリムに：時間表示を削除したことで、コンパクト表示を「135px」へ縮小
                 if (isCompact) {
-                    let compactHeight = "h-[190px]";
-                    if (period.num === '昼') compactHeight = "h-[75px]";
-                    if (period.num === '放') compactHeight = "h-[145px]";
-                    item.className = bgClass + " border " + mainAccent + " rounded-xl p-3.5 flex flex-col justify-between " + compactHeight + " transition-all duration-200 relative group shadow-sm text-left overflow-hidden";
+                    let compactHeight = "h-[135px]";
+                    if (period.num === '昼') compactHeight = "h-[50px]";
+                    if (period.num === '放') compactHeight = "h-[95px]";
+                    item.className = bgClass + " border " + mainAccent + " rounded-xl p-2 flex flex-col justify-between " + compactHeight + " transition-all duration-200 relative group shadow-sm text-left overflow-hidden";
                 } else {
-                    item.className = bgClass + " border " + mainAccent + " rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-5 transition-all duration-200 relative group shadow-sm";
+                    item.className = bgClass + " border " + mainAccent + " rounded-xl p-3.5 flex flex-col md:flex-row md:items-center justify-between gap-3.5 transition-all duration-200 relative group shadow-sm";
                 }
                 item.id = period.id;
 
@@ -1418,14 +1480,14 @@
                     for (let i = 0; i < details.announcements.length; i++) {
                         const ann = details.announcements[i];
                         if (isCompact) {
-                            items += '<span class="inline-flex items-center gap-1 text-xs bg-white border border-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded shadow-sm max-w-full" title="' + escapeHTML(ann) + '"><i class="fa-solid fa-bullhorn text-[10px] text-emerald-500 shrink-0"></i><span class="truncate max-w-[120px]">' + escapeHTML(ann) + '</span></span>';
+                            items += '<span class="inline-flex items-center gap-0.5 text-[9px] bg-white border border-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded shadow-sm max-w-full" title="' + escapeHTML(ann) + '"><i class="fa-solid fa-bullhorn text-[8px] text-emerald-500 shrink-0"></i><span class="truncate max-w-[120px]">' + escapeHTML(ann) + '</span></span>';
                         } else {
-                            items += '<span class="inline-flex items-center gap-1.5 text-sm bg-white border border-emerald-100 text-emerald-800 font-bold px-3 py-1 rounded-lg"><i class="fa-solid fa-bullhorn text-xs text-emerald-500"></i>' + escapeHTML(ann) + '</span>';
+                            items += '<span class="inline-flex items-center gap-1 text-xs bg-white border border-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-lg"><i class="fa-solid fa-bullhorn text-[10px] text-emerald-500"></i>' + escapeHTML(ann) + '</span>';
                         }
                     }
-                    announcementsHTML = isCompact ? '<div class="flex flex-wrap gap-1">' + items + '</div>' : '<div class="mt-3 flex flex-wrap gap-1.5">' + items + '</div>';
+                    announcementsHTML = isCompact ? '<div class="flex flex-wrap gap-0.5">' + items + '</div>' : '<div class="mt-2 flex flex-wrap gap-1">' + items + '</div>';
                 } else if (isClass && !isCompact) {
-                    announcementsHTML = '<p class="text-sm text-slate-400 italic mt-3 font-semibold"><i class="fa-solid fa-pen"></i> タップして生徒への連絡事項を追加</p>';
+                    announcementsHTML = '<p class="text-xs text-slate-400 italic mt-2 font-semibold"><i class="fa-solid fa-pen text-[10px]"></i> タップして生徒への連絡を追加</p>';
                 }
 
                 let tasksHTML = '';
@@ -1434,61 +1496,60 @@
                     for (let i = 0; i < assignedTasks.length; i++) {
                         const t = assignedTasks[i];
                         if (isCompact) {
-                            items += '<div class="flex items-center justify-between bg-white border border-slate-100 rounded-lg px-2 py-1 text-[11px] shadow-sm"><div class="flex items-center gap-1.5 min-w-0"><input type="checkbox" onchange="toggleTaskComplete(\'' + t.id + '\')" class="w-3.5 h-3.5 text-blue-600 rounded border-slate-300 shrink-0"><span class="font-bold text-slate-700 truncate max-w-[110px]" title="' + escapeHTML(t.title) + '">' + escapeHTML(t.title) + '</span></div></div>';
+                            items += '<div class="flex items-center justify-between bg-white border border-slate-100 rounded px-1.5 py-0.5 text-[9px] shadow-sm"><div class="flex items-center gap-1 min-w-0"><input type="checkbox" onchange="toggleTaskComplete(\'' + t.id + '\')" class="w-3 h-3 text-blue-600 rounded border-slate-300 shrink-0"><span class="font-bold text-slate-700 truncate max-w-[110px]" title="' + escapeHTML(t.title) + '">' + escapeHTML(t.title) + '</span></div></div>';
                         } else {
-                            items += '<div class="flex items-center justify-between bg-white border border-slate-100 rounded-xl px-4 py-2.5 text-sm shadow-sm hover:border-slate-300 transition-all"><div class="flex items-center gap-2.5 min-w-0"><input type="checkbox" onchange="toggleTaskComplete(\'' + t.id + '\')" class="w-4 h-4 text-blue-600 rounded border-slate-300"><span class="font-bold text-slate-700 truncate">' + escapeHTML(t.title) + '</span></div><div class="flex items-center gap-1.5 shrink-0"><button onclick="openMoveTaskModal(event, \'' + t.id + '\')" class="text-slate-400 hover:text-blue-600 p-1 rounded hover:bg-slate-50 transition-all" title="他の週にタスクを移動"><i class="fa-solid fa-angles-right text-xs"></i></button><button onclick="unassignTask(event, \'' + t.id + '\')" class="text-slate-400 hover:text-red-500 p-1 rounded hover:bg-slate-50 transition-all" title="予定を未定に戻す"><i class="fa-solid fa-arrow-rotate-left text-xs"></i></button></div></div>';
+                            items += '<div class="flex items-center justify-between bg-white border border-slate-100 rounded-lg px-3 py-1.5 text-xs shadow-sm hover:border-slate-300 transition-all"><div class="flex items-center gap-2 min-w-0"><input type="checkbox" onchange="toggleTaskComplete(\'' + t.id + '\')" class="w-3.5 h-3.5 text-blue-600 rounded border-slate-300"><span class="font-bold text-slate-700 truncate">' + escapeHTML(t.title) + '</span></div><div class="flex items-center gap-1 shrink-0"><button onclick="openMoveTaskModal(event, \'' + t.id + '\')" class="text-slate-400 hover:text-blue-600 p-0.5 rounded hover:bg-slate-50 transition-all" title="他の週にタスクを移動"><i class="fa-solid fa-angles-right text-[10px]"></i></button><button onclick="unassignTask(event, \'' + t.id + '\')" class="text-slate-400 hover:text-red-500 p-0.5 rounded hover:bg-slate-50 transition-all" title="予定を未定に戻す"><i class="fa-solid fa-arrow-rotate-left text-[10px]"></i></button></div></div>';
                         }
                     }
-                    tasksHTML = isCompact ? '<div class="mt-2.5 space-y-1 pt-2 border-t border-slate-100">' + items + '</div>' : '<div class="mt-4 space-y-2 pt-4 border-t border-slate-100"><p class="text-xs font-black text-slate-400 uppercase tracking-wider"><i class="fa-solid fa-circle-check text-blue-500"></i> この時間にやること：</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-2">' + items + '</div></div>';
+                    tasksHTML = isCompact ? '<div class="mt-1.5 space-y-0.5 pt-1.5 border-t border-slate-100">' + items + '</div>' : '<div class="mt-2.5 space-y-1.5 pt-2 border-t border-slate-100"><p class="text-[10px] font-black text-slate-400 uppercase tracking-wider"><i class="fa-solid fa-circle-check text-blue-500"></i> この時間にやること：</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">' + items + '</div></div>';
                 } else if (isEmpty && !isCompact) {
-                    tasksHTML = '<div class="mt-3 text-center py-4 bg-amber-50/20 border border-dashed border-amber-200/50 rounded-xl"><p class="text-sm text-amber-800 font-bold">空きコマです。やるべきタスクをここに配置しましょう！</p></div>';
+                    tasksHTML = '<div class="mt-2 text-center py-2 bg-amber-50/20 border border-dashed border-amber-200/50 rounded-lg"><p class="text-xs text-amber-800 font-bold">空きコマです。タスクを配置しましょう。</p></div>';
                 }
 
+                // iPadでも最も重要な「日付・曜日・授業科目」を見やすくキープしつつ、不要な時計・時間を徹底排除
                 if (isCompact) {
                     item.innerHTML = [
-                        '<div class="flex-1 flex flex-col min-w-0 h-full cursor-pointer overflow-hidden" onclick="openClassDetail(\'' + period.id + '\')">',
-                        '    <div class="flex items-start gap-2.5 shrink-0">',
-                        '        <span class="text-sm font-black w-7 h-7 flex items-center justify-center shrink-0 rounded shadow-sm ' + badgeClass + '">' + displayedPeriod.num + '</span>',
+                        '<div class="flex-1 flex flex-col min-w-0 h-full cursor-pointer overflow-hidden justify-between" onclick="openClassDetail(\'' + period.id + '\')">',
+                        '    <div class="flex items-start gap-1.5 shrink-0 leading-tight">',
+                        '        <span class="text-xs font-black w-5 h-5 flex items-center justify-center shrink-0 rounded shadow-sm ' + badgeClass + '">' + displayedPeriod.num + '</span>',
                         '        <div class="min-w-0 flex-1">',
-                        '            <div class="flex flex-col gap-1.5">',
-                        '                <h4 class="font-black text-slate-900 text-lg md:text-xl leading-snug truncate max-w-[150px]" title="' + escapeHTML(displayedPeriod.subject) + '">' + escapeHTML(displayedPeriod.subject) + '</h4>',
-                                         displayedPeriod.class ? '            <span class="text-xs md:text-sm font-black text-emerald-900 bg-emerald-100 px-2.5 py-1 rounded-md truncate shrink-0 w-max">' + escapeHTML(displayedPeriod.class) + '</span>' : '',
+                        '            <div class="flex flex-col gap-0.5">',
+                        '                <h4 class="font-black text-slate-900 text-sm md:text-base leading-tight truncate max-w-[155px]" title="' + escapeHTML(displayedPeriod.subject) + '">' + escapeHTML(displayedPeriod.subject) + '</h4>',
+                                         displayedPeriod.class ? '            <span class="text-[9px] md:text-[10px] font-black text-emerald-900 bg-emerald-100 px-1.5 py-0.5 rounded truncate shrink-0 w-max">' + escapeHTML(displayedPeriod.class) + '</span>' : '',
                         '            </div>',
-                        '            <p class="text-[10px] md:text-xs text-slate-400 font-semibold mt-1"><i class="fa-solid fa-clock"></i> ' + displayedPeriod.time + '</p>',
                         '        </div>',
                         '    </div>',
-                        isChanged ? '    <div class="mt-1 inline-flex items-center gap-1 bg-amber-50 text-amber-800 border border-amber-200 rounded px-1.5 py-0.5 text-[10px] font-black shrink-0 w-max animate-pulse"><i class="fa-solid fa-triangle-exclamation"></i> 授業変更</div>' : '',
-                        '    <div class="flex-1 overflow-y-auto mt-2 space-y-1 pr-0.5 scrollbar-thin">',
+                        isChanged ? '    <div class="mt-0.5 inline-flex items-center gap-0.5 bg-amber-50 text-amber-800 border border-amber-200 rounded px-1 py-0.5 text-[8px] font-black shrink-0 w-max animate-pulse"><i class="fa-solid fa-triangle-exclamation"></i> 変更あり</div>' : '',
+                        '    <div class="flex-1 overflow-y-auto mt-1 space-y-0.5 pr-0.5 scrollbar-thin">',
                                  announcementsHTML,
                                  tasksHTML,
                         '    </div>',
                         '</div>',
-                        '<div class="absolute right-1 top-1 opacity-0 group-hover:opacity-100 transition-opacity flex gap-0.5 z-10">',
-                             (isEmpty || isAfter) ? '    <button onclick="openAssignPicker(\'' + currentPeriodKey + '\')" class="p-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-xs" title="タスクを割当"><i class="fa-solid fa-plus"></i></button>' : '',
+                        '<div class="absolute right-0.5 top-0.5 opacity-0 group-hover:opacity-100 transition-opacity flex gap-0.5 z-10">',
+                             (isEmpty || isAfter) ? '    <button onclick="openAssignPicker(\'' + currentPeriodKey + '\')" class="p-0.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded text-[9px]" title="タスクを割当"><i class="fa-solid fa-plus text-[8px]"></i></button>' : '',
                         '</div>'
                     ].join('\n');
                 } else {
                     item.innerHTML = [
                         '<div class="flex-1 min-w-0 cursor-pointer" onclick="openClassDetail(\'' + period.id + '\')">',
-                        '    <div class="flex items-center gap-4">',
-                        '        <span class="text-lg font-black w-14 text-center py-2.5 rounded-xl shadow-md ' + badgeClass + '">' + displayedPeriod.num + '</span>',
+                        '    <div class="flex items-center gap-3">',
+                        '        <span class="text-base font-black w-10 text-center py-1 rounded-lg shadow-md ' + badgeClass + '">' + displayedPeriod.num + '</span>',
                         '        <div>',
-                        '            <div class="flex flex-col md:flex-row md:items-center gap-2.5 md:gap-4">',
-                        '                <h3 class="font-black text-slate-900 text-2xl md:text-3xl flex items-center gap-2">',
+                        '            <div class="flex flex-col md:flex-row md:items-center gap-2">',
+                        '                <h3 class="font-black text-slate-900 text-xl md:text-2xl flex items-center gap-1.5">',
                                              escapeHTML(displayedPeriod.subject),
-                                             isChanged ? '            <span class="bg-amber-100 text-amber-850 border border-amber-200 text-xs font-black px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm"><i class="fa-solid fa-triangle-exclamation animate-bounce"></i> 授業変更</span>' : '',
+                                             isChanged ? '            <span class="bg-amber-100 text-amber-850 border border-amber-200 text-[10px] font-black px-1.5 py-0.5 rounded-full flex items-center gap-1 shadow-sm"><i class="fa-solid fa-triangle-exclamation animate-bounce"></i> 変更</span>' : '',
                         '                </h3>',
-                                         displayedPeriod.class ? '            <span class="text-lg md:text-xl font-black text-emerald-900 bg-emerald-100 px-4 py-1.5 rounded-lg shrink-0 w-max">' + escapeHTML(displayedPeriod.class) + '</span>' : '',
+                                         displayedPeriod.class ? '            <span class="text-base md:text-lg font-black text-emerald-900 bg-emerald-100 px-3 py-0.5 rounded-lg shrink-0 w-max">' + escapeHTML(displayedPeriod.class) + '</span>' : '',
                         '            </div>',
-                        '            <p class="text-xs md:text-sm text-slate-400 font-bold mt-1.5"><i class="fa-solid fa-clock"></i> ' + displayedPeriod.time + '</p>',
                         '        </div>',
                         '    </div>',
                              announcementsHTML,
                              tasksHTML,
                         '</div>',
-                        '<div class="flex items-center gap-2.5 shrink-0 justify-end md:border-l md:border-slate-100 md:pl-5">',
-                             isClass ? '    <button onclick="openClassDetail(\'' + period.id + '\')" class="text-xs md:text-sm font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-4 py-2.5 rounded-xl border border-emerald-100 transition-all flex items-center gap-1.5"><i class="fa-solid fa-bullhorn"></i> 連絡編集</button>' : '',
-                             (isEmpty || isAfter) ? '    <button onclick="openAssignPicker(\'' + currentPeriodKey + '\')" class="text-xs md:text-sm font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 px-4 py-2.5 rounded-xl border border-blue-100 transition-all flex items-center gap-1.5"><i class="fa-solid fa-plus"></i> タスクを割当</button>' : '',
+                        '<div class="flex items-center gap-2 shrink-0 justify-end md:border-l md:border-slate-100 md:pl-4">',
+                             isClass ? '    <button onclick="openClassDetail(\'' + period.id + '\')" class="text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg border border-emerald-100 transition-all flex items-center gap-1"><i class="fa-solid fa-bullhorn text-[10px]"></i> 連絡</button>' : '',
+                             (isEmpty || isAfter) ? '    <button onclick="openAssignPicker(\'' + currentPeriodKey + '\')" class="text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg border border-blue-100 transition-all flex items-center gap-1"><i class="fa-solid fa-plus text-[10px]"></i> タスク追加</button>' : '',
                         '</div>'
                     ].join('\n');
                 }
@@ -1623,7 +1684,7 @@
                     row.className = "bg-white p-3.5 rounded-xl border border-slate-200/60 space-y-2.5 shadow-sm";
                     row.innerHTML = [
                         '<div class="flex items-center justify-between">',
-                        '    <span class="text-xs font-bold text-slate-400">' + period.num + '限 (' + period.time + ')</span>',
+                        '    <span class="text-xs font-bold text-slate-400">' + period.num + '限</span>',
                         '    <select id="basic-' + period.id + '-type" class="text-xs bg-slate-50 border border-slate-200 rounded px-2 py-1 font-semibold">',
                         '        <option value="class" ' + (period.type === 'class' ? 'selected' : '') + '>授業</option>',
                         '        <option value="empty" ' + (period.type === 'empty' ? 'selected' : '') + '>空き</option>',
@@ -1698,6 +1759,7 @@
             document.getElementById('class-detail-modal').classList.remove('hidden');
         }
 
+        // 授業カード詳細を閉じる
         function closeModal() {
             document.getElementById('class-detail-modal').classList.add('hidden');
             activeModalPeriodId = null;
@@ -1846,7 +1908,7 @@
                 '            <select id="move-target-day" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm">' + dayOptionsHTML + '</select>',
                 '        </div>',
                 '        <div>',
-                '            <label class="block text-xs font-bold text-slate-500 mb-1">時間枠 (コマ)</label>',
+                '            <label class="block text-xs font-bold text-slate-500 mb-1">時間枠</label>',
                 '            <select id="move-target-period" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm">' + periodOptionsHTML + '</select>',
                 '        </div>',
                 '    </div>',
@@ -1999,7 +2061,7 @@
                     completed: false,
                     assignedPeriodId: null
                 });
-                showToast("ローカルに保存しました (接続するとGoogle Tasksと同期可能になります)");
+                showToast("ローカルに保存しました");
             }
 
             input.value = '';
@@ -2040,9 +2102,21 @@
             googleClientId = inputId;
             localStorage.setItem('tn_google_client_id', googleClientId);
             
+            // 選択されたToDoリストのIDを保存
+            const selectList = document.getElementById('settings-target-list');
+            if (selectList) {
+                googleTargetListId = selectList.value;
+                localStorage.setItem('tn_google_target_list_id', googleTargetListId);
+            }
+            
             initGoogleIdentity();
             closeSettingsModal();
             showToast("⚙️ 設定情報を更新しました。");
+
+            // 同期済みの場合は新しいリスト設定で即時ロードを走らせる
+            if (isGoogleConnected) {
+                fetchGoogleTaskLists();
+            }
         }
 
         function simulateSync() {
