@@ -367,7 +367,7 @@
                         <div>
                             <label class="block text-[9px] font-bold text-slate-700 mb-0.5">Google OAuth2 クライアントID</label>
                             <input type="text" id="settings-client-id" placeholder="例: 12345678-abcde.apps.googleusercontent.com" 
-                                   class="w-full bg-white border border-slate-350 rounded px-2.5 py-1.5 text-xs font-bold shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-550">
+                                   class="w-full bg-white border border-slate-350 rounded px-2.5 py-1.5 text-xs font-bold shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-555">
                         </div>
 
                         <!-- 同期するToDoリストの選択 -->
@@ -628,7 +628,7 @@
             if (sub.includes('英') || sub.includes('l') || sub.includes('r') || sub.includes('eng')) { // 英語
                 return {
                     bg: "bg-amber-50/45 border-amber-150 hover:bg-amber-50/60 hover:border-amber-300",
-                    badge: "bg-amber-550 text-slate-900 font-bold shadow-xs border border-amber-200",
+                    badge: "bg-amber-500 text-slate-900 font-bold shadow-xs border border-amber-200",
                     border: "border-l-4 border-l-amber-500"
                 };
             }
@@ -668,7 +668,7 @@
                 };
             }
 
-            // その他（未知の科目）はハッシュ値から動的決定
+            // その他はハッシュ値から動的決定
             let hash = 0;
             for (let i = 0; i < subject.length; i++) {
                 hash = subject.charCodeAt(i) + ((hash << 5) - hash);
@@ -677,7 +677,7 @@
                 { bg: "bg-teal-50/45 border-teal-150 hover:bg-teal-50/60 hover:border-teal-300", badge: "bg-teal-600 text-white shadow-xs", border: "border-l-4 border-l-teal-500" },
                 { bg: "bg-cyan-50/45 border-cyan-150 hover:bg-cyan-50/60 hover:border-cyan-300", badge: "bg-cyan-600 text-white shadow-xs", border: "border-l-4 border-l-cyan-500" },
                 { bg: "bg-violet-50/45 border-violet-150 hover:bg-violet-50/60 hover:border-violet-300", badge: "bg-violet-600 text-white shadow-xs", border: "border-l-4 border-l-violet-500" },
-                { bg: "bg-yellow-50/45 border-yellow-150 hover:bg-yellow-50/60 hover:border-yellow-300", badge: "bg-yellow-550 text-slate-900 shadow-xs", border: "border-l-4 border-l-yellow-550" }
+                { bg: "bg-yellow-50/45 border-yellow-150 hover:bg-yellow-50/60 hover:border-yellow-300", badge: "bg-yellow-500 text-slate-900 shadow-xs", border: "border-l-4 border-l-yellow-500" }
             ];
             return colors[Math.abs(hash) % colors.length];
         }
@@ -895,7 +895,7 @@
                 if (listSelectContainer) listSelectContainer.classList.remove('hidden');
                 
                 if (ping) ping.className = "absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping";
-                if (dot) dot.className = "relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500";
+                if (dot) dot.className = "relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-505";
             } else {
                 if (statusText) statusText.innerText = "ローカル保存中";
                 if (syncStatus) syncStatus.innerHTML = '<i class="fa-solid fa-circle-play mr-1"></i> ローカル保存';
@@ -1391,7 +1391,7 @@
                 item.addEventListener('drop', function(e) {
                     e.preventDefault();
                     item.classList.remove('drag-over');
-                    const taskId = e.dataTransfer.setData ? e.dataTransfer.getData('text/plain') : null;
+                    const taskId = e.dataTransfer.getData ? e.dataTransfer.getData('text/plain') : null;
                     if (taskId) {
                         assignTaskToPeriod(taskId, currentPeriodKey);
                     }
@@ -1404,7 +1404,7 @@
                     for (let i = 0; i < details.announcements.length; i++) {
                         const ann = details.announcements[i];
                         if (isCompact) {
-                            items += '<span class="inline-flex items-center gap-0.5 text-[8px] bg-emerald-50 text-emerald-800 font-bold px-1 rounded border border-emerald-100 max-w-full"><i class="fa-solid fa-bullhorn text-[7px] text-emerald-500 shrink-0"></i><span class="truncate max-w-[80px]">' + escapeHTML(ann) + '</span></span>';
+                            items += '<span class="inline-flex items-center gap-0.5 text-[8px] bg-emerald-50/90 text-emerald-800 font-bold px-1 rounded border border-emerald-100 max-w-full"><i class="fa-solid fa-bullhorn text-[7px] text-emerald-500 shrink-0"></i><span class="truncate max-w-[80px]">' + escapeHTML(ann) + '</span></span>';
                         } else {
                             items += '<span class="inline-flex items-center gap-1 text-[10px] bg-emerald-50 border border-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded-md"><i class="fa-solid fa-bullhorn text-[8px] text-emerald-500"></i>' + escapeHTML(ann) + '</span>';
                         }
@@ -1419,7 +1419,7 @@
                     for (let i = 0; i < assignedTasks.length; i++) {
                         const t = assignedTasks[i];
                         if (isCompact) {
-                            items += '<div class="flex items-center gap-0.5 bg-white border border-slate-150 rounded px-1 text-[8px] h-3.5"><input type="checkbox" onchange="toggleTaskComplete(\'' + t.id + '\')" class="w-2.5 h-2.5 text-blue-650 rounded border-slate-300 shrink-0"><span class="font-bold text-slate-700 truncate max-w-[75px] leading-none" title="' + escapeHTML(t.title) + '">' + escapeHTML(t.title) + '</span></div>';
+                            items += '<div class="flex items-center gap-0.5 bg-white border border-slate-150 rounded px-1 text-[8px] h-3.5"><input type="checkbox" onchange="toggleTaskComplete(\'' + t.id + '\')" class="w-2.5 h-2.5 text-blue-600 rounded border-slate-300 shrink-0"><span class="font-bold text-slate-700 truncate max-w-[75px] leading-none" title="' + escapeHTML(t.title) + '">' + escapeHTML(t.title) + '</span></div>';
                         } else {
                             items += '<div class="flex items-center justify-between bg-white border border-slate-100 rounded px-1.5 py-0.5 text-[10px]"><div class="flex items-center gap-1 min-w-0"><input type="checkbox" onchange="toggleTaskComplete(\'' + t.id + '\')" class="w-3 h-3 text-blue-600 rounded border-slate-300"><span class="font-bold text-slate-700 truncate">' + escapeHTML(t.title) + '</span></div></div>';
                         }
@@ -1431,56 +1431,56 @@
                 if (isCompact) {
                     if (period.num === '昼') {
                         // 昼休みは文字のみの超ショートカット
-                        item.innerHTML = [
-                            '<div class="flex-1 flex items-center justify-between cursor-pointer w-full" onclick="openClassDetail(\'' + period.id + '\')">',
-                            '    <span class="text-[9px] font-black text-slate-500">昼休み</span>',
-                            '    <span class="text-[8px] font-bold text-slate-400">12:20〜</span>',
-                            '</div>'
-                        ].join('\n');
+                        item.innerHTML = `
+                            <div class="flex-1 flex items-center justify-between cursor-pointer w-full" onclick="openClassDetail('${period.id}')">
+                                <span class="text-[9px] font-black text-slate-500">昼休み</span>
+                                <span class="text-[8px] font-bold text-slate-400">12:20〜</span>
+                            </div>
+                        `;
                     } else {
                         // 3日表示・週表示（isCompact = true）での「科目」と「学級」を大幅に大きく、コマの高さは維持
-                        item.innerHTML = [
-                            '<div class="flex-1 flex flex-col min-w-0 h-full cursor-pointer justify-between overflow-hidden" onclick="openClassDetail(\'' + period.id + '\')">',
-                            '    <div class="flex items-start gap-1 shrink-0 leading-none">',
-                            '        <span class="text-[10px] font-black w-4.5 h-4.5 flex items-center justify-center shrink-0 rounded ' + badgeClass + '">' + displayedPeriod.num + '</span>',
-                            '        <div class="min-w-0 flex-1">',
-                            '            <div class="flex flex-col gap-0.5">',
-                            '                <h4 class="font-extrabold text-slate-950 text-[13px] md:text-[14px] leading-tight truncate" title="' + escapeHTML(displayedPeriod.subject) + '">' + escapeHTML(displayedPeriod.subject) + '</h4>',
-                                             displayedPeriod.class ? '            <span class="text-[10px] font-black text-emerald-950 bg-emerald-100/90 px-1.5 py-0.2 rounded shrink-0 w-max leading-none mt-0.5">' + escapeHTML(displayedPeriod.class) + '</span>' : '',
-                            '            </div>',
-                            '        </div>',
-                            '    </div>',
-                                 announcementsHTML,
-                                 tasksHTML,
-                            '</div>',
-                            '<div class="absolute right-0.5 top-0.5 opacity-0 group-hover:opacity-100 transition-opacity flex gap-0.5 z-10">',
-                                 (isEmpty || isAfter) ? '    <button onclick="openAssignPicker(\'' + currentPeriodKey + '\')" class="p-0.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded text-[8px]" title="タスクを割当"><i class="fa-solid fa-plus text-[7px]"></i></button>' : '',
-                            '</div>'
-                        ].join('\n');
+                        item.innerHTML = `
+                            <div class="flex-1 flex flex-col min-w-0 h-full cursor-pointer justify-between overflow-hidden" onclick="openClassDetail('${period.id}')">
+                                <div class="flex items-start gap-1 shrink-0 leading-none">
+                                    <span class="text-[10px] font-black w-4.5 h-4.5 flex items-center justify-center shrink-0 rounded ${badgeClass}">${displayedPeriod.num}</span>
+                                    <div class="min-w-0 flex-1">
+                                        <div class="flex flex-col gap-0.5">
+                                            <h4 class="font-black text-slate-900 text-[13px] md:text-[14px] leading-tight truncate" title="${escapeHTML(displayedPeriod.subject)}">${escapeHTML(displayedPeriod.subject)}</h4>
+                                            ${displayedPeriod.class ? `<span class="text-[10px] font-bold text-emerald-950 bg-emerald-100/90 px-1 py-0.2 rounded shrink-0 w-max leading-none mt-0.5">${escapeHTML(displayedPeriod.class)}</span>` : ''}
+                                        </div>
+                                    </div>
+                                </div>
+                                ${announcementsHTML}
+                                ${tasksHTML}
+                            </div>
+                            <div class="absolute right-0.5 top-0.5 opacity-0 group-hover:opacity-100 transition-opacity flex gap-0.5 z-10">
+                                ${(isEmpty || isAfter) ? `<button onclick="openAssignPicker('${currentPeriodKey}')" class="p-0.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded text-[8px]" title="タスクを割当"><i class="fa-solid fa-plus text-[7px]"></i></button>` : ''}
+                            </div>
+                        `;
                     }
                 } else {
-                    item.innerHTML = [
-                        '<div class="flex-1 min-w-0 cursor-pointer" onclick="openClassDetail(\'' + period.id + '\')">',
-                        '    <div class="flex items-center gap-1.5">',
-                        '        <span class="text-xs font-black w-6 text-center py-0.5 rounded ' + badgeClass + '">' + displayedPeriod.num + '</span>',
-                        '        <div>',
-                        '            <div class="flex items-center gap-1.5">',
-                        '                <h3 class="font-black text-slate-900 text-sm md:text-base flex items-center gap-1">',
-                                             escapeHTML(displayedPeriod.subject),
-                                             isChanged ? '            <span class="bg-amber-100 text-amber-850 border border-amber-200 text-[8px] font-bold px-1 rounded-full"><i class="fa-solid fa-triangle-exclamation"></i> 変更</span>' : '',
-                        '                </h3>',
-                                         displayedPeriod.class ? '            <span class="text-[11px] font-black text-emerald-950 bg-emerald-100 px-1.5 rounded shrink-0 w-max">' + escapeHTML(displayedPeriod.class) + '</span>' : '',
-                        '            </div>',
-                        '        </div>',
-                        '    </div>',
-                             announcementsHTML,
-                             tasksHTML,
-                        '</div>',
-                        '<div class="flex items-center gap-1 shrink-0 justify-end md:border-l md:border-slate-100 md:pl-2">',
-                             isClass ? '    <button onclick="openClassDetail(\'' + period.id + '\')" class="text-[9px] font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-1.5 py-0.5 rounded border border-emerald-100 transition-all flex items-center gap-0.5">連絡</button>' : '',
-                             (isEmpty || isAfter) ? '    <button onclick="openAssignPicker(\'' + currentPeriodKey + '\')" class="text-[9px] font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 px-1.5 py-0.5 rounded border border-blue-100 transition-all flex items-center gap-0.5">+ ToDo</button>' : '',
-                        '</div>'
-                    ].join('\n');
+                    item.innerHTML = `
+                        <div class="flex-1 min-w-0 cursor-pointer" onclick="openClassDetail('${period.id}')">
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-xs font-black w-6 text-center py-0.5 rounded ${badgeClass}">${displayedPeriod.num}</span>
+                                <div>
+                                    <div class="flex items-center gap-1.5">
+                                        <h3 class="font-black text-slate-900 text-sm md:text-base flex items-center gap-1">
+                                            ${escapeHTML(displayedPeriod.subject)}
+                                            ${isChanged ? `<span class="bg-amber-100 text-amber-850 border border-amber-200 text-[8px] font-bold px-1 rounded-full"><i class="fa-solid fa-triangle-exclamation"></i> 変更</span>` : ''}
+                                        </h3>
+                                        ${displayedPeriod.class ? `<span class="text-[11px] font-black text-emerald-950 bg-emerald-100 px-1.5 rounded shrink-0 w-max">${escapeHTML(displayedPeriod.class)}</span>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                            ${announcementsHTML}
+                            ${tasksHTML}
+                        </div>
+                        <div class="flex items-center gap-1 shrink-0 justify-end md:border-l md:border-slate-100 md:pl-2">
+                            ${isClass ? `<button onclick="openClassDetail('${period.id}')" class="text-[9px] font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-1.5 py-0.5 rounded border border-emerald-100 transition-all flex items-center gap-0.5">連絡</button>` : ''}
+                            ${(isEmpty || isAfter) ? `<button onclick="openAssignPicker('${currentPeriodKey}')" class="text-[9px] font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 px-1.5 py-0.5 rounded border border-blue-100 transition-all flex items-center gap-0.5">+ ToDo</button>` : ''}
+                        </div>
+                    `;
                 }
                 targetContainer.appendChild(item);
             });
