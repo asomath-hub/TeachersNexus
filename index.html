@@ -11,6 +11,7 @@
         function onGsiLoad() { window.isGsiLoadedEarly = true; }
     </script>
     <script src="https://accounts.google.com/gsi/client" onload="onGsiLoad()" async defer></script>
+    
     <style>
         body { font-family: 'Inter', 'Noto Sans JP', sans-serif; -webkit-tap-highlight-color: transparent; }
         .drag-over { border: 2px dashed #3b82f6 !important; background-color: #eff6ff !important; transform: scale(1.01); }
@@ -19,7 +20,6 @@
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        /* ダークモード時の安全なカラーオーバーライド */
         html.dark { background-color: #0f172a; color: #f8fafc; }
         html.dark body { background-color: #0f172a; color: #f8fafc; }
         html.dark .bg-slate-50 { background-color: #0f172a !important; border-color: #1e293b !important; }
@@ -33,7 +33,6 @@
         html.dark .border-slate-100 { border-color: #1e293b !important; }
         html.dark .bg-slate-950\/40 { background-color: rgba(0, 0, 0, 0.7) !important; }
         
-        /* ダークモード用科目パレットトーン調整 */
         html.dark .bg-blue-50\/40 { background-color: rgba(59,130,246,0.15)!important; border-color: rgba(59,130,246,0.3)!important; }
         html.dark .bg-rose-50\/40 { background-color: rgba(244,63,94,0.15)!important; border-color: rgba(244,63,94,0.3)!important; }
         html.dark .bg-emerald-50\/40 { background-color: rgba(16,185,129,0.15)!important; border-color: rgba(16,185,129,0.3)!important; }
@@ -50,9 +49,7 @@
 </head>
 <body class="h-full overflow-hidden flex flex-col text-slate-800 transition-colors duration-300">
 
-    <!-- 高さ固定の安定ヘッダー -->
     <header class="bg-white border-b border-slate-200 px-4 md:px-6 py-3 flex flex-col shrink-0 shadow-sm z-10 h-[105px] md:h-[100px] justify-between">
-        <!-- 上段：ロゴとメニューボタン -->
         <div class="flex items-center justify-between w-full">
             <div class="flex items-center gap-2 md:gap-3">
                 <div class="bg-emerald-600 text-white p-2 md:p-2.5 rounded-xl shadow-md flex items-center justify-center">
@@ -63,13 +60,11 @@
                     <p class="text-[10px] md:text-xs text-slate-500 font-semibold">教員用時間割＆タスク管理</p>
                 </div>
             </div>
-            <!-- コントロールメニュー呼び出し -->
             <button onclick="openSettingsModal()" class="bg-slate-900 hover:bg-slate-800 text-white px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm font-semibold flex items-center gap-1.5 shadow-md transition-all">
                 <i class="fa-solid fa-sliders"></i> メニュー設定
             </button>
         </div>
 
-        <!-- 下段：表示切り替えナビゲーション -->
         <div class="flex items-center gap-2 md:gap-4 w-full mt-1.5">
             <div class="flex items-center bg-slate-100 p-1 rounded-xl shrink-0">
                 <button onclick="setViewMode('daily')" id="btn-view-daily" class="px-3 py-1.5 text-xs md:text-sm font-bold rounded-lg transition-all bg-white text-slate-900 shadow-sm">日表示</button>
@@ -86,7 +81,6 @@
         </div>
     </header>
 
-    <!-- メイン領域 -->
     <main class="flex-1 flex overflow-hidden bg-slate-50" id="dashboard-view">
         <!-- 左カラム：ToDoリスト -->
         <section class="w-64 md:w-72 border-r border-slate-200 bg-white flex flex-col shrink-0">
@@ -101,14 +95,11 @@
                 </form>
             </div>
             <div class="px-3 py-2 border-b border-slate-100 flex gap-1 overflow-x-auto shrink-0" id="list-tabs-container">
-                <!-- JSで生成 -->
             </div>
             <div class="flex-1 overflow-y-auto p-3 space-y-2" id="unplanned-task-list">
-                <!-- JSで生成 -->
             </div>
         </section>
 
-        <!-- 右カラム：時間割 -->
         <section class="flex-1 flex flex-col overflow-hidden">
             <div class="bg-white border-b border-slate-200 px-4 md:px-6 py-2 md:py-3 flex items-center justify-between shrink-0 shadow-sm">
                 <div class="flex items-center gap-3">
@@ -129,7 +120,6 @@
         </section>
     </main>
 
-    <!-- 基本時間割設定ビュー -->
     <section id="basic-settings-view" class="hidden flex-1 overflow-hidden flex flex-col bg-slate-50">
         <div class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
             <h2 class="font-bold text-lg text-slate-900"><i class="fa-solid fa-gears text-emerald-600 mr-2"></i>基本時間割の設定</h2>
@@ -143,7 +133,7 @@
         </div>
     </section>
 
-    <!-- 総合コントロールメニュー（モーダル） -->
+    <!-- 設定モーダル -->
     <div id="settings-modal" class="hidden fixed inset-0 bg-slate-950/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div class="bg-white w-full max-w-md rounded-2xl shadow-xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
             <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50 shrink-0">
@@ -152,7 +142,6 @@
             </div>
             
             <div class="p-5 overflow-y-auto space-y-5">
-                <!-- 同期ステータスとAPI設定 -->
                 <div class="bg-blue-50/50 border border-blue-100 p-4 rounded-xl space-y-3">
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-bold text-slate-700">Google ToDo 連携状況</span>
@@ -174,7 +163,6 @@
                     </div>
                 </div>
 
-                <!-- 機能ボタン群 -->
                 <div class="grid grid-cols-2 gap-3">
                     <button onclick="exportToCSV()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 p-3 rounded-xl text-sm font-bold flex flex-col items-center justify-center gap-2 transition-all">
                         <i class="fa-solid fa-file-excel text-xl"></i> CSVエクスポート
@@ -189,7 +177,6 @@
 
                 <hr class="border-slate-100">
 
-                <!-- 端末間バックアップ -->
                 <div>
                     <h4 class="text-xs font-bold text-slate-700 mb-2"><i class="fa-solid fa-cloud-arrow-down mr-1"></i>端末間データ同期（バックアップ）</h4>
                     <p class="text-[10px] text-slate-500 mb-2">iPadとPC等で設定を同期するためのファイルを入出力します。</p>
@@ -216,7 +203,6 @@
                 <button onclick="closeModal()" class="p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <div class="p-5 overflow-y-auto flex-1 space-y-4">
-                <!-- 連絡事項 -->
                 <div>
                     <label class="text-xs font-bold text-slate-800 mb-1 block">連絡事項</label>
                     <div class="flex gap-1 mb-2">
@@ -226,7 +212,6 @@
                     <ul id="modal-announcement-list" class="space-y-1"></ul>
                 </div>
                 <hr>
-                <!-- タスク -->
                 <div>
                     <label class="text-xs font-bold text-slate-800 mb-1 block">この時間のタスク</label>
                     <div id="modal-assigned-tasks" class="space-y-1"></div>
@@ -240,7 +225,6 @@
     </div>
 
     <script>
-        // --- 状態管理 ---
         let currentDay = 'Mon'; 
         let currentWeek = 1;   
         let selectedFilter = 'all'; 
@@ -269,7 +253,6 @@
             return (d.getMonth() + 1) + '月' + d.getDate() + '日(' + dayNames[dayCode].charAt(0) + ')';
         }
 
-        // --- データ構造 (毎日1〜7限＋放課後) ---
         function createDefaultDay(dayCode) {
             return [
                 { id: dayCode+'-period-1', num: '1', type: 'class', subject: '国語総合', class: '1年A組' },
@@ -311,7 +294,6 @@
             localStorage.setItem('tn_data', JSON.stringify({tasks, weeklyDetails, temporaryChanges, timetableData}));
         }
 
-        // --- カラーパレットシステム ---
         function getSubjectColors(subjectName, type) {
             if (type === 'empty') return { bg: 'bg-amber-50/20 border-dashed border-amber-200', borderL: 'border-l-4 border-l-amber-400', badge: 'bg-amber-100 text-amber-800 border-amber-200' };
             if (type === 'afterschool') return { bg: 'bg-indigo-50/10 border-indigo-100', borderL: 'border-l-4 border-l-indigo-500', badge: 'bg-indigo-600 text-white' };
@@ -333,7 +315,6 @@
             return palettes[Math.abs(h) % palettes.length];
         }
 
-        // --- カレンダー自動追従 ---
         function jumpToToday() {
             const now = new Date();
             let dayCode = 'Mon';
@@ -349,7 +330,6 @@
             currentDay = dayCode;
         }
 
-        // --- 初期化 ---
         window.onload = function() {
             loadAllData();
             jumpToToday();
@@ -367,7 +347,6 @@
             renderDashboard();
         };
 
-        // --- 表示切り替え ---
         function setViewMode(mode) {
             viewMode = mode;
             document.querySelectorAll('#btn-view-daily, #btn-view-three-day, #btn-view-weekly').forEach(b => {
@@ -400,9 +379,7 @@
             renderDashboard();
         }
 
-        // --- レンダリングコア ---
         function renderDashboard() {
-            // Header text
             const lblDay = document.getElementById('current-day-label');
             const lblDate = document.getElementById('day-date-label');
             if (viewMode === 'daily') {
@@ -487,7 +464,6 @@
             });
         }
 
-        // --- ToDo周り ---
         function filterTasks(cat) { selectedFilter = cat; renderUnplannedTasks(); }
         
         function renderUnplannedTasks() {
@@ -524,7 +500,6 @@
             } else { showToast('本日に空きコマがありません'); }
         }
 
-        // --- モーダル・設定 ---
         function openSettingsModal() { 
             document.getElementById('settings-client-id').value = googleClientId;
             document.getElementById('settings-modal').classList.remove('hidden'); 
@@ -563,7 +538,6 @@
             saveAllData(); renderAnnouncements(); renderDashboard();
         }
 
-        // --- 端末間同期 ---
         function exportDataFile() {
             const data = { tasks, weeklyDetails, temporaryChanges, timetableData };
             const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
@@ -589,7 +563,6 @@
             reader.readAsText(file);
         }
 
-        // --- その他UI ---
         function toggleDarkMode() {
             isDarkMode = !isDarkMode;
             if(isDarkMode) document.documentElement.classList.add('dark');
@@ -646,7 +619,6 @@
 
         function escapeHTML(s) { return (s||'').replace(/[&<>'"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]||c)); }
         
-        // Google Auth Dummies/Stubs to prevent errors
         function initGoogleIdentity() {}
         function startGoogleAuth() { showToast('デモ: Googleログイン画面を開きます'); }
         function disconnectGoogle() { isGoogleConnected=false; updateGoogleStatusUI(false); showToast('解除しました'); }
