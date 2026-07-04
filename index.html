@@ -361,6 +361,7 @@
                 { id: 'Mon-period-lunch', num: '昼', type: 'empty', subject: '昼休み', class: '' },
                 { id: 'Mon-period-5', num: '5', type: 'class', subject: '総合学習', class: '1年A組' },
                 { id: 'Mon-period-6', num: '6', type: 'class', subject: '学活', class: '1年A組' },
+                { id: 'Mon-period-7', num: '7', type: 'empty', subject: '空きコマ', class: '' },
                 { id: 'Mon-period-after', num: '放', type: 'afterschool', subject: '部活動・校務', class: '野球部' }
             ],
             'Tue': [
@@ -371,6 +372,7 @@
                 { id: 'Tue-period-lunch', num: '昼', type: 'empty', subject: '昼休み', class: '' },
                 { id: 'Tue-period-5', num: '5', type: 'empty', subject: '空きコマ', class: '' },
                 { id: 'Tue-period-6', num: '6', type: 'class', subject: '数学演習', class: '3年C組' },
+                { id: 'Tue-period-7', num: '7', type: 'empty', subject: '空きコマ', class: '' },
                 { id: 'Tue-period-after', num: '放', type: 'afterschool', subject: '学年会議', class: '職員室' }
             ],
             'Wed': [
@@ -381,6 +383,7 @@
                 { id: 'Wed-period-lunch', num: '昼', type: 'empty', subject: '昼休み', class: '' },
                 { id: 'Wed-period-5', num: '5', type: 'class', subject: '数学演習', class: '3年C組' },
                 { id: 'Wed-period-6', num: '6', type: 'empty', subject: '空きコマ', class: '' },
+                { id: 'Wed-period-7', num: '7', type: 'empty', subject: '空きコマ', class: '' },
                 { id: 'Wed-period-after', num: '放', type: 'afterschool', subject: '出張（研究会）', class: '外部' }
             ],
             'Thu': [
@@ -391,6 +394,7 @@
                 { id: 'Thu-period-lunch', num: '昼', type: 'empty', subject: '昼休み', class: '' },
                 { id: 'Thu-period-5', num: '5', type: 'class', subject: '数学演習', class: '3年C組' },
                 { id: 'Thu-period-6', num: '6', type: 'empty', subject: '空きコマ', class: '' },
+                { id: 'Thu-period-7', num: '7', type: 'empty', subject: '空きコマ', class: '' },
                 { id: 'Thu-period-after', num: '放', type: 'afterschool', subject: '部活動指導', class: '野球部' }
             ],
             'Fri': [
@@ -401,6 +405,7 @@
                 { id: 'Fri-period-lunch', num: '昼', type: 'empty', subject: '昼休み', class: '' },
                 { id: 'Fri-period-5', num: '5', type: 'empty', subject: '空きコマ', class: '' },
                 { id: 'Fri-period-6', num: '6', type: 'class', subject: '数学演習', class: '3年C組' },
+                { id: 'Fri-period-7', num: '7', type: 'empty', subject: '空きコマ', class: '' },
                 { id: 'Fri-period-after', num: '放', type: 'afterschool', subject: '部活動・校務', class: '野球部' }
             ]
         };
@@ -446,6 +451,17 @@
                 weeklyDetails = sW ? JSON.parse(sW) : {};
                 temporaryChanges = sC ? JSON.parse(sC) : {};
                 if (sTD) timetableData = JSON.parse(sTD);
+                
+                // 先生のブラウザに過去のデータ（6限までのデータ）が保存されている場合、
+                // 自動的に全曜日に「7限目」の枠を追加する安全機能
+                ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].forEach(day => {
+                    if (timetableData[day] && !timetableData[day].find(p => p.num === '7')) {
+                        const afterIndex = timetableData[day].findIndex(p => p.num === '放');
+                        if (afterIndex > -1) {
+                            timetableData[day].splice(afterIndex, 0, { id: day + '-period-7', num: '7', type: 'empty', subject: '空きコマ', class: '' });
+                        }
+                    }
+                });
             } catch (e) { console.warn("Local storage error:", e); }
         }
 
