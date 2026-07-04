@@ -90,32 +90,19 @@
             </div>
         </div>
 
-        <!-- アクション & Googleアカウント連携 -->
+        <!-- 統合コントロールメニューボタンのみを配置 -->
         <div class="flex items-center gap-1.5 flex-wrap">
-            <button onclick="exportToCSV()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded text-[10px] font-bold flex items-center gap-0.5 transition-all">
-                <i class="fa-solid fa-file-excel text-[9px]"></i> CSV
-            </button>
-            
-            <button onclick="toggleViewState('basic-settings')" class="bg-slate-900 hover:bg-slate-800 text-white px-2 py-0.5 rounded text-[10px] font-bold flex items-center gap-0.5 shadow-sm transition-all">
-                <i class="fa-solid fa-gears text-[9px]"></i> 基本設定
-            </button>
-
-            <button onclick="resetToDefault()" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-1.5 py-0.5 rounded text-[10px] font-bold transition-all" title="デモデータを初期化">
-                <i class="fa-solid fa-trash-arrow-up"></i>
-            </button>
-
-            <div class="flex items-center gap-1 bg-slate-50 border border-slate-200 px-1.5 py-0.5 rounded-md">
+            <div class="flex items-center gap-1 bg-slate-50 border border-slate-200 px-1.5 py-0.5 rounded-md text-[10px] font-bold">
                 <div class="relative flex h-1.5 w-1.5">
                     <span id="sync-ping" class="absolute inline-flex h-full w-full rounded-full bg-slate-400 opacity-75"></span>
                     <span id="sync-dot" class="relative inline-flex rounded-full h-1.5 w-1.5 bg-slate-400"></span>
                 </div>
-                <div class="text-left cursor-pointer leading-none" onclick="openSyncSettings()">
-                    <p class="text-[9px] font-extrabold text-slate-700" id="google-account-text">アカウント未接続</p>
-                </div>
-                <button onclick="openSyncSettings()" class="text-slate-400 hover:text-slate-600 p-0.5">
-                    <i class="fa-solid fa-gear text-[9px]"></i>
-                </button>
+                <p class="text-[9px] font-extrabold text-slate-700" id="google-account-text">ローカル保存中</p>
             </div>
+
+            <button onclick="openSyncSettings()" class="bg-slate-900 hover:bg-slate-800 text-white px-2.5 py-1 rounded-lg text-[10px] font-black flex items-center gap-1 shadow-sm transition-all">
+                <i class="fa-solid fa-sliders text-[9px]"></i> メニュー設定
+            </button>
         </div>
     </header>
 
@@ -135,7 +122,7 @@
                 
                 <!-- デモ＆接続ガイド -->
                 <div id="demo-guide-box" class="mb-1 p-1.5 bg-gradient-to-r from-emerald-50 to-blue-50 border border-emerald-100 rounded-lg text-[9px] leading-snug">
-                    <button onclick="openSyncSettings()" class="w-full bg-blue-650 hover:bg-blue-700 text-white text-[9px] font-black py-0.5 rounded transition-all">
+                    <button onclick="openSyncSettings()" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-[9px] font-black py-0.5 rounded transition-all">
                         Googleアカウントと接続
                     </button>
                 </div>
@@ -198,9 +185,9 @@
                 </div>
                 
                 <div class="flex items-center gap-2 text-[9px] text-slate-400 font-bold">
-                    <span class="flex items-center gap-0.5"><span class="w-2 h-2 bg-emerald-100 rounded-sm"></span> 授業</span>
-                    <span class="flex items-center gap-0.5"><span class="w-2 h-2 bg-amber-50 rounded-sm border border-dashed border-amber-300"></span> 空き</span>
-                    <span class="flex items-center gap-0.5"><span class="w-2 h-2 bg-indigo-50 rounded-sm"></span> 放課後</span>
+                    <span class="flex items-center gap-0.5"><span class="w-2 h-2 bg-slate-100 rounded-sm"></span> 授業（科目別カラー）</span>
+                    <span class="flex items-center gap-0.5"><span class="w-2 h-2 bg-amber-50/25 rounded-sm border border-dashed border-amber-300"></span> 空きコマ</span>
+                    <span class="flex items-center gap-0.5"><span class="w-2 h-2 bg-indigo-50/20 rounded-sm"></span> 放課後</span>
                 </div>
             </div>
 
@@ -337,73 +324,79 @@
         </div>
     </div>
 
-    <!-- モーダル：Google API接続 & ログイン設定 -->
+    <!-- モーダル：統合コントロールメニュー＆同期設定 -->
     <div id="settings-modal" class="hidden fixed inset-0 bg-slate-950/45 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-        <div class="bg-white w-full max-w-sm rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
-            <div class="px-4 py-2 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                <h3 class="font-bold text-slate-900 text-xs flex items-center gap-1.5">
-                    <i class="fa-brands fa-google text-blue-600"></i> Google ToDo 連携設定
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
+                <h3 class="font-black text-slate-900 text-sm flex items-center gap-1.5">
+                    <i class="fa-solid fa-sliders text-blue-600"></i> コントロールメニュー ＆ 同期設定
                 </h3>
                 <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
                     <i class="fa-solid fa-xmark text-sm"></i>
                 </button>
             </div>
             
-            <div class="p-4 space-y-3">
-                <div class="p-2 bg-blue-50 border border-blue-100 rounded-lg text-[9px] text-blue-800 leading-snug">
-                    <p class="font-bold"><i class="fa-solid fa-circle-info"></i> 個人アカウント同期</p>
-                    <p class="mt-0.5">クライアントIDを設定することで、Google ToDoの実データをセキュアに双方向同期できます。</p>
+            <div class="p-4 space-y-4 overflow-y-auto flex-1">
+                <!-- クイックメニュー（アクション関係） -->
+                <div class="space-y-2">
+                    <h4 class="text-[11px] font-black text-slate-400 uppercase tracking-wider"><i class="fa-solid fa-bolt mr-1"></i> クイックメニュー</h4>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="exportToCSVFromMenu()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 p-2.5 rounded-xl text-xs font-bold flex flex-col items-center justify-center gap-1.5 transition-all shadow-sm">
+                            <i class="fa-solid fa-file-excel text-lg"></i>
+                            <span>CSVエクスポート</span>
+                        </button>
+                        <button onclick="goToBasicSettings()" class="bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 p-2.5 rounded-xl text-xs font-bold flex flex-col items-center justify-center gap-1.5 transition-all shadow-sm">
+                            <i class="fa-solid fa-gears text-lg text-emerald-600"></i>
+                            <span>基本時間割を設定</span>
+                        </button>
+                    </div>
                 </div>
 
+                <hr class="border-slate-150">
+
+                <!-- Google ToDo連携セクション -->
                 <div class="space-y-2">
-                    <div>
-                        <label class="block text-[9px] font-bold text-slate-700 mb-0.5">Google OAuth2 クライアントID</label>
-                        <input type="text" id="settings-client-id" placeholder="例: 12345678-abcde.apps.googleusercontent.com" 
-                               class="w-full bg-white border border-slate-300 rounded px-2 py-1 text-xs">
+                    <h4 class="text-[11px] font-black text-slate-400 uppercase tracking-wider"><i class="fa-brands fa-google mr-1 text-blue-600"></i> Google ToDo リスト連携</h4>
+                    
+                    <div class="p-2.5 bg-blue-50/50 border border-blue-100 rounded-lg text-[10px] text-blue-800 leading-snug">
+                        <p class="font-bold"><i class="fa-solid fa-circle-info"></i> 個人アカウント連携</p>
+                        <p class="mt-0.5">OAuthクライアントIDを入力・保存しサインインすることで、Google ToDoの実データとセキュアに双方向連携同期できます。</p>
                     </div>
 
-                    <!-- 同期するToDoリストの選択 -->
-                    <div id="settings-list-select-container" class="hidden">
-                        <label class="block text-[9px] font-bold text-slate-700 mb-0.5">同期するToDoリスト</label>
-                        <select id="settings-target-list" class="w-full bg-white border border-slate-300 rounded px-2 py-1 text-xs">
-                            <option value="all">すべてのリストを統合</option>
-                        </select>
-                    </div>
+                    <div class="space-y-2.5">
+                        <div>
+                            <label class="block text-[9px] font-bold text-slate-700 mb-0.5">Google OAuth2 クライアントID</label>
+                            <input type="text" id="settings-client-id" placeholder="例: 12345678-abcde.apps.googleusercontent.com" 
+                                   class="w-full bg-white border border-slate-350 rounded px-2.5 py-1.5 text-xs font-bold shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-550">
+                        </div>
 
-                    <!-- 接続・同期ボタングループ -->
-                    <div class="flex gap-1.5 pt-1">
-                        <button onclick="startGoogleAuth()" id="btn-google-login" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold py-1 rounded transition-all">
-                            サインイン
-                        </button>
-                        <button onclick="disconnectGoogle()" id="btn-google-logout" class="hidden flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-bold py-1 rounded transition-all">
-                            接続解除
-                        </button>
+                        <!-- 同期するToDoリストの選択 -->
+                        <div id="settings-list-select-container" class="hidden">
+                            <label class="block text-[9px] font-bold text-slate-700 mb-0.5">同期するToDoリスト</label>
+                            <select id="settings-target-list" class="w-full bg-white border border-slate-350 rounded px-2.5 py-1.5 text-xs font-bold shadow-sm focus:outline-none">
+                                <option value="all">すべてのリストを統合</option>
+                            </select>
+                        </div>
+
+                        <!-- 接続・同期ボタングループ -->
+                        <div class="flex gap-2 pt-1">
+                            <button onclick="startGoogleAuth()" id="btn-google-login" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2 rounded-xl shadow-md transition-all active:scale-98">
+                                <i class="fa-brands fa-google mr-1"></i> サインイン
+                            </button>
+                            <button onclick="disconnectGoogle()" id="btn-google-logout" class="hidden flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded-xl border border-slate-300 transition-all active:scale-98">
+                                <i class="fa-solid fa-unlink mr-1"></i> 接続解除
+                            </button>
+                            <button onclick="manualSyncTriggerFromMenu()" class="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1 transition-all">
+                                <i class="fa-solid fa-arrows-rotate"></i> 同期
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <div class="px-4 py-2 bg-slate-50 border-t border-slate-100 flex justify-end gap-1 shrink-0">
-                <button onclick="closeSettingsModal()" class="text-[10px] font-semibold px-2 py-1 hover:bg-slate-100 rounded">閉じる</button>
-                <button onclick="saveSettings()" class="bg-slate-900 hover:bg-slate-800 text-white px-3 py-1 rounded text-[10px] font-bold">保存</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- モーダル：リセット確認 -->
-    <div id="reset-confirm-modal" class="hidden fixed inset-0 bg-slate-950/45 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-2xl p-4 max-w-xs w-full shadow-xl border border-slate-200">
-            <div class="text-center">
-                <div class="mx-auto flex items-center justify-center h-8 w-8 rounded-full bg-red-100 text-red-600 mb-2">
-                    <i class="fa-solid fa-triangle-exclamation text-base"></i>
-                </div>
-                <h3 class="text-xs font-black text-slate-900 mb-1">デモデータの初期化</h3>
-                <p class="text-[10px] text-slate-500 mb-3 leading-snug">
-                    カレンダー内の全ての変更、登録された連絡事項、割り当てられたタスクをすべて初期状態に戻します。
-                </p>
-            </div>
-            <div class="flex justify-end gap-1.5">
-                <button onclick="closeResetModal()" class="text-[10px] font-semibold px-2 py-1 hover:bg-slate-100 rounded">キャンセル</button>
-                <button onclick="executeReset()" class="bg-red-600 hover:bg-red-700 text-white font-bold text-[10px] px-2.5 py-1 rounded">初期化実行</button>
+            <div class="px-4 py-2.5 bg-slate-50 border-t border-slate-100 flex justify-end gap-1 shrink-0">
+                <button onclick="closeSettingsModal()" class="text-[11px] font-black px-3 py-1.5 hover:bg-slate-200 rounded-lg transition-all text-slate-700">閉じる</button>
+                <button onclick="saveSettings()" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-1.5 rounded-lg text-[11px] font-black shadow-sm transition-all">変更を保存</button>
             </div>
         </div>
     </div>
@@ -482,7 +475,7 @@
                 { id: 'Mon-period-1', num: '1', type: 'class', subject: '数学I', class: '1-A' },
                 { id: 'Mon-period-2', num: '2', type: 'class', subject: '数学II', class: '2-B' },
                 { id: 'Mon-period-3', num: '3', type: 'empty', subject: '空きコマ', class: '' },
-                { id: 'Mon-period-4', num: '4', type: 'class', subject: '数学I', class: '1-B' },
+                { id: 'Mon-period-4', num: '4', type: 'class', subject: '国語総合', class: '1-B' },
                 { id: 'Mon-period-lunch', num: '昼', type: 'empty', subject: '昼休み', class: '' },
                 { id: 'Mon-period-5', num: '5', type: 'class', subject: '総合学習', class: '1-A' },
                 { id: 'Mon-period-6', num: '6', type: 'class', subject: '学活', class: '1-A' },
@@ -491,27 +484,27 @@
             'Tue': [
                 { id: 'Tue-period-1', num: '1', type: 'empty', subject: '空きコマ', class: '' },
                 { id: 'Tue-period-2', num: '2', type: 'class', subject: '数学I', class: '1-A' },
-                { id: 'Tue-period-3', num: '3', type: 'class', subject: '数学II', class: '2-B' },
-                { id: 'Tue-period-4', num: '4', type: 'class', subject: '数学I', class: '1-B' },
+                { id: 'Tue-period-3', num: '3', type: 'class', subject: '英語表現', class: '2-B' },
+                { id: 'Tue-period-4', num: '4', type: 'class', subject: '現代文', class: '1-B' },
                 { id: 'Tue-period-lunch', num: '昼', type: 'empty', subject: '昼休み', class: '' },
                 { id: 'Tue-period-5', num: '5', type: 'empty', subject: '空きコマ', class: '' },
                 { id: 'Tue-period-6', num: '6', type: 'class', subject: '数学演習', class: '3-C' },
                 { id: 'Tue-period-after', num: '放', type: 'afterschool', subject: '学年会議', class: '職員室' }
             ],
             'Wed': [
-                { id: 'Wed-period-1', num: '1', type: 'class', subject: '数学I', class: '1-B' },
+                { id: 'Wed-period-1', num: '1', type: 'class', subject: '国語総合', class: '1-B' },
                 { id: 'Wed-period-2', num: '2', type: 'class', subject: '数学I', class: '1-A' },
                 { id: 'Wed-period-3', num: '3', type: 'empty', subject: '空きコマ', class: '' },
-                { id: 'Wed-period-4', num: '4', type: 'class', subject: '数学II', class: '2-B' },
+                { id: 'Wed-period-4', num: '4', type: 'class', subject: '物理基礎', class: '2-B' },
                 { id: 'Wed-period-lunch', num: '昼', type: 'empty', subject: '昼休み', class: '' },
-                { id: 'Wed-period-5', num: '5', type: 'class', subject: '数学演習', class: '3-C' },
+                { id: 'Wed-period-5', num: '5', type: 'class', subject: '化学演習', class: '3-C' },
                 { id: 'Wed-period-6', num: '6', type: 'empty', subject: '空きコマ', class: '' },
                 { id: 'Wed-period-after', num: '放', type: 'afterschool', subject: '研究会出張', class: '外部' }
             ],
             'Thu': [
-                { id: 'Thu-period-1', num: '1', type: 'class', subject: '数学II', class: '2-B' },
+                { id: 'Thu-period-1', num: '1', type: 'class', subject: '英語表現', class: '2-B' },
                 { id: 'Thu-period-2', num: '2', type: 'class', subject: '数学I', class: '1-B' },
-                { id: 'Thu-period-3', num: '3', type: 'class', subject: '数学I', class: '1-A' },
+                { id: 'Thu-period-3', num: '3', type: 'class', subject: '物理基礎', class: '1-A' },
                 { id: 'Thu-period-4', num: '4', type: 'empty', subject: '空きコマ', class: '' },
                 { id: 'Thu-period-lunch', num: '昼', type: 'empty', subject: '昼休み', class: '' },
                 { id: 'Thu-period-5', num: '5', type: 'class', subject: '数学演習', class: '3-C' },
@@ -519,9 +512,9 @@
                 { id: 'Thu-period-after', num: '放', type: 'afterschool', subject: '部活動指導', class: '野球部' }
             ],
             'Fri': [
-                { id: 'Fri-period-1', num: '1', type: 'class', subject: '数学I', class: '1-A' },
+                { id: 'Fri-period-1', num: '1', type: 'class', subject: '体育', class: '1-A' },
                 { id: 'Fri-period-2', num: '2', type: 'empty', subject: '空きコマ', class: '' },
-                { id: 'Fri-period-3', num: '3', type: 'class', subject: '数学II', class: '2-B' },
+                { id: 'Fri-period-3', num: '3', type: 'class', subject: '世界史B', class: '2-B' },
                 { id: 'Fri-period-4', num: '4', type: 'class', subject: '数学I', class: '1-B' },
                 { id: 'Fri-period-lunch', num: '昼', type: 'empty', subject: '昼休み', class: '' },
                 { id: 'Fri-period-5', num: '5', type: 'empty', subject: '空きコマ', class: '' },
@@ -590,24 +583,103 @@
             }
         }
 
-        function resetToDefault() {
-            document.getElementById('reset-confirm-modal').classList.remove('hidden');
-        }
-
-        function closeResetModal() {
-            document.getElementById('reset-confirm-modal').classList.add('hidden');
-        }
-
-        function executeReset() {
-            try {
-                localStorage.clear();
-            } catch (e) {
-                console.warn(e);
+        // --- STREAMING_CHUNK: 科目名自動判別・動的パステルカラー適用システム ---
+        function getSubjectColorClasses(subject, type) {
+            if (type === 'empty') {
+                return {
+                    bg: "bg-amber-50/15 border-dashed border-amber-200 hover:bg-amber-50/25 hover:border-amber-300",
+                    badge: "bg-amber-100 text-amber-800 border border-amber-200/80",
+                    border: "border-l-4 border-l-amber-400"
+                };
             }
-            loadAllData();
-            renderDashboard();
-            closeResetModal();
-            showToast("データを初期デモ状態にリセットしました。");
+            if (type === 'afterschool') {
+                return {
+                    bg: "bg-indigo-50/20 border-indigo-100 hover:bg-indigo-50/35 hover:border-indigo-200",
+                    badge: "bg-indigo-600 text-white shadow-sm",
+                    border: "border-l-4 border-l-indigo-500"
+                };
+            }
+            
+            if (!subject) {
+                return {
+                    bg: "bg-slate-50 border-slate-200 hover:bg-slate-100",
+                    badge: "bg-slate-200 text-slate-700",
+                    border: "border-l-4 border-l-slate-400"
+                };
+            }
+
+            const sub = subject.toLowerCase();
+            
+            // 科目キーワード判定
+            if (sub.includes('数')) { // 数学
+                return {
+                    bg: "bg-blue-50/45 border-blue-150 hover:bg-blue-50/60 hover:border-blue-300",
+                    badge: "bg-blue-600 text-white shadow-xs",
+                    border: "border-l-4 border-l-blue-500"
+                };
+            }
+            if (sub.includes('国') || sub.includes('現') || sub.includes('古')) { // 国語・現代文・古典
+                return {
+                    bg: "bg-rose-50/45 border-rose-150 hover:bg-rose-50/60 hover:border-rose-300",
+                    badge: "bg-rose-600 text-white shadow-xs",
+                    border: "border-l-4 border-l-rose-500"
+                };
+            }
+            if (sub.includes('英') || sub.includes('l') || sub.includes('r') || sub.includes('eng')) { // 英語
+                return {
+                    bg: "bg-amber-50/45 border-amber-150 hover:bg-amber-50/60 hover:border-amber-300",
+                    badge: "bg-amber-550 text-slate-900 font-bold shadow-xs border border-amber-200",
+                    border: "border-l-4 border-l-amber-500"
+                };
+            }
+            if (sub.includes('理') || sub.includes('物') || sub.includes('化') || sub.includes('生') || sub.includes('地学')) { // 理科
+                return {
+                    bg: "bg-emerald-50/45 border-emerald-150 hover:bg-emerald-50/60 hover:border-emerald-300",
+                    badge: "bg-emerald-600 text-white shadow-xs",
+                    border: "border-l-4 border-l-emerald-500"
+                };
+            }
+            if (sub.includes('社') || sub.includes('歴') || sub.includes('地') || sub.includes('公') || sub.includes('倫')) { // 社会
+                return {
+                    bg: "bg-orange-50/45 border-orange-150 hover:bg-orange-50/60 hover:border-orange-300",
+                    badge: "bg-orange-600 text-white shadow-xs",
+                    border: "border-l-4 border-l-orange-500"
+                };
+            }
+            if (sub.includes('総') || sub.includes('探')) { // 総合・探究
+                return {
+                    bg: "bg-purple-50/45 border-purple-150 hover:bg-purple-50/60 hover:border-purple-300",
+                    badge: "bg-purple-600 text-white shadow-xs",
+                    border: "border-l-4 border-l-purple-500"
+                };
+            }
+            if (sub.includes('学') || sub.includes('活') || sub.includes('hr')) { // 学活・ホームルーム
+                return {
+                    bg: "bg-pink-50/45 border-pink-150 hover:bg-pink-50/60 hover:border-pink-300",
+                    badge: "bg-pink-600 text-white shadow-xs",
+                    border: "border-l-4 border-l-pink-500"
+                };
+            }
+            if (sub.includes('体') || sub.includes('保')) { // 体育・保健
+                return {
+                    bg: "bg-sky-50/45 border-sky-150 hover:bg-sky-50/60 hover:border-sky-300",
+                    badge: "bg-sky-600 text-white shadow-xs",
+                    border: "border-l-4 border-l-sky-500"
+                };
+            }
+
+            // その他（未知の科目）はハッシュ値から動的決定
+            let hash = 0;
+            for (let i = 0; i < subject.length; i++) {
+                hash = subject.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const colors = [
+                { bg: "bg-teal-50/45 border-teal-150 hover:bg-teal-50/60 hover:border-teal-300", badge: "bg-teal-600 text-white shadow-xs", border: "border-l-4 border-l-teal-500" },
+                { bg: "bg-cyan-50/45 border-cyan-150 hover:bg-cyan-50/60 hover:border-cyan-300", badge: "bg-cyan-600 text-white shadow-xs", border: "border-l-4 border-l-cyan-500" },
+                { bg: "bg-violet-50/45 border-violet-150 hover:bg-violet-50/60 hover:border-violet-300", badge: "bg-violet-600 text-white shadow-xs", border: "border-l-4 border-l-violet-500" },
+                { bg: "bg-yellow-50/45 border-yellow-150 hover:bg-yellow-50/60 hover:border-yellow-300", badge: "bg-yellow-550 text-slate-900 shadow-xs", border: "border-l-4 border-l-yellow-550" }
+            ];
+            return colors[Math.abs(hash) % colors.length];
         }
 
         // --- STREAMING_CHUNK: CSV形式でのエクスポート処理 ---
@@ -666,6 +738,18 @@
                 document.body.removeChild(link);
                 showToast("📊 45週間分の全CSVデータを保存しました。");
             }
+        }
+
+        // メニューからのエクスポート用中継
+        function exportToCSVFromMenu() {
+            closeSettingsModal();
+            exportToCSV();
+        }
+
+        // メニューから基本時間割設定画面への移行
+        function goToBasicSettings() {
+            closeSettingsModal();
+            toggleViewState('basic-settings');
         }
 
         // --- STREAMING_CHUNK: Google 連携 API / 認証の処理 ---
@@ -813,7 +897,7 @@
                 if (ping) ping.className = "absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping";
                 if (dot) dot.className = "relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500";
             } else {
-                if (statusText) statusText.innerText = "アカウント未接続";
+                if (statusText) statusText.innerText = "ローカル保存中";
                 if (syncStatus) syncStatus.innerHTML = '<i class="fa-solid fa-circle-play mr-1"></i> ローカル保存';
                 if (loginBtn) loginBtn.classList.remove('hidden');
                 if (logoutBtn) logoutBtn.classList.add('hidden');
@@ -1000,6 +1084,11 @@
             } else {
                 simulateSync();
             }
+        }
+
+        function manualSyncTriggerFromMenu() {
+            closeSettingsModal();
+            manualSyncTrigger();
         }
 
         // --- STREAMING_CHUNK: カレンダー及び時間割グリッドコントロール ---
@@ -1255,6 +1344,7 @@
         }
 
         // iPad Pro 11インチ用に「授業時間非表示」＆「超高密度コンパクト化（通常88px、昼32px、放65px）」を実現
+        // 科目名（subject）および学級（class）のテキストサイズを大きくし、コマの高さは維持するロジック
         function renderPeriodsList(dayPeriods, targetContainer, isCompact, dayCode) {
             dayPeriods.forEach(period => {
                 const currentPeriodKey = 'w' + currentWeek + '-' + period.id;
@@ -1267,23 +1357,12 @@
                 const isEmpty = displayedPeriod.type === 'empty';
                 const isAfter = displayedPeriod.type === 'afterschool';
 
-                let bgClass = "bg-white border-slate-200 hover:border-slate-350";
-                let badgeClass = "bg-slate-100 text-slate-600";
-                let mainAccent = "border-l-4 border-l-slate-400";
-
-                if (isClass) {
-                    bgClass = "bg-emerald-50/20 border-emerald-100 hover:bg-emerald-50/40 hover:border-emerald-200";
-                    badgeClass = "bg-emerald-600 text-white shadow-sm";
-                    mainAccent = "border-l-4 border-l-emerald-500";
-                } else if (isEmpty) {
-                    bgClass = "bg-amber-50/10 border-dashed border-amber-200 hover:bg-amber-50/20 hover:border-amber-300";
-                    badgeClass = "bg-amber-100 text-amber-850 border border-amber-200";
-                    mainAccent = "border-l-4 border-l-amber-400";
-                } else if (isAfter) {
-                    bgClass = "bg-indigo-50/10 border-indigo-100 hover:bg-indigo-50/20 hover:border-indigo-200";
-                    badgeClass = "bg-indigo-600 text-white shadow-sm";
-                    mainAccent = "border-l-4 border-l-indigo-500";
-                }
+                // 動的なカラー設定を読み込み
+                const colors = getSubjectColorClasses(displayedPeriod.subject, displayedPeriod.type);
+                
+                const bgClass = colors.bg;
+                const badgeClass = colors.badge;
+                const mainAccent = colors.border;
 
                 const assignedTasks = tasks.filter(t => t.assignedPeriodId === currentPeriodKey && !t.completed);
                 const details = weeklyDetails[currentPeriodKey] || { announcements: [] };
@@ -1354,19 +1433,20 @@
                         // 昼休みは文字のみの超ショートカット
                         item.innerHTML = [
                             '<div class="flex-1 flex items-center justify-between cursor-pointer w-full" onclick="openClassDetail(\'' + period.id + '\')">',
-                            '    <span class="text-[8px] font-black text-slate-500">昼休み</span>',
+                            '    <span class="text-[9px] font-black text-slate-500">昼休み</span>',
                             '    <span class="text-[8px] font-bold text-slate-400">12:20〜</span>',
                             '</div>'
                         ].join('\n');
                     } else {
+                        // 3日表示・週表示（isCompact = true）での「科目」と「学級」を大幅に大きく、コマの高さは維持
                         item.innerHTML = [
                             '<div class="flex-1 flex flex-col min-w-0 h-full cursor-pointer justify-between overflow-hidden" onclick="openClassDetail(\'' + period.id + '\')">',
                             '    <div class="flex items-start gap-1 shrink-0 leading-none">',
-                            '        <span class="text-[9px] font-black w-4 h-4 flex items-center justify-center shrink-0 rounded ' + badgeClass + '">' + displayedPeriod.num + '</span>',
+                            '        <span class="text-[10px] font-black w-4.5 h-4.5 flex items-center justify-center shrink-0 rounded ' + badgeClass + '">' + displayedPeriod.num + '</span>',
                             '        <div class="min-w-0 flex-1">',
                             '            <div class="flex flex-col gap-0.5">',
-                            '                <h4 class="font-black text-slate-900 text-[11px] md:text-xs leading-none truncate" title="' + escapeHTML(displayedPeriod.subject) + '">' + escapeHTML(displayedPeriod.subject) + '</h4>',
-                                             displayedPeriod.class ? '            <span class="text-[8px] font-black text-emerald-900 bg-emerald-100 px-1 rounded shrink-0 w-max">' + escapeHTML(displayedPeriod.class) + '</span>' : '',
+                            '                <h4 class="font-extrabold text-slate-950 text-[13px] md:text-[14px] leading-tight truncate" title="' + escapeHTML(displayedPeriod.subject) + '">' + escapeHTML(displayedPeriod.subject) + '</h4>',
+                                             displayedPeriod.class ? '            <span class="text-[10px] font-black text-emerald-950 bg-emerald-100/90 px-1.5 py-0.2 rounded shrink-0 w-max leading-none mt-0.5">' + escapeHTML(displayedPeriod.class) + '</span>' : '',
                             '            </div>',
                             '        </div>',
                             '    </div>',
@@ -1385,11 +1465,11 @@
                         '        <span class="text-xs font-black w-6 text-center py-0.5 rounded ' + badgeClass + '">' + displayedPeriod.num + '</span>',
                         '        <div>',
                         '            <div class="flex items-center gap-1.5">',
-                        '                <h3 class="font-black text-slate-900 text-xs md:text-sm flex items-center gap-1">',
+                        '                <h3 class="font-black text-slate-900 text-sm md:text-base flex items-center gap-1">',
                                              escapeHTML(displayedPeriod.subject),
                                              isChanged ? '            <span class="bg-amber-100 text-amber-850 border border-amber-200 text-[8px] font-bold px-1 rounded-full"><i class="fa-solid fa-triangle-exclamation"></i> 変更</span>' : '',
                         '                </h3>',
-                                         displayedPeriod.class ? '            <span class="text-[10px] font-black text-emerald-950 bg-emerald-100 px-1.5 rounded shrink-0 w-max">' + escapeHTML(displayedPeriod.class) + '</span>' : '',
+                                         displayedPeriod.class ? '            <span class="text-[11px] font-black text-emerald-950 bg-emerald-100 px-1.5 rounded shrink-0 w-max">' + escapeHTML(displayedPeriod.class) + '</span>' : '',
                         '            </div>',
                         '        </div>',
                         '    </div>',
@@ -1704,6 +1784,7 @@
             }
         }
 
+        // --- STREAMING_CHUNK: 各種週またぎコピー・タスク移動設定 ---
         function unassignTaskInModal(taskId) {
             unassignTask(null, taskId);
             if (activeModalPeriodId) {
