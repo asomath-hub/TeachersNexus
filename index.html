@@ -28,10 +28,10 @@
 </head>
 <body class="bg-slate-50 h-screen flex flex-col overflow-hidden text-slate-800">
 
-    <!-- ヘッダー（中央寄りに調整） -->
-    <header class="bg-white border-b border-slate-200 px-3 py-2 flex flex-col items-center shrink-0 w-full">
+    <!-- ヘッダー（中央寄りに完全に集約） -->
+    <header class="bg-white border-b border-slate-200 px-3 py-2 flex flex-col items-center justify-center shrink-0 w-full">
         <!-- 上段：ロゴとコントロール -->
-        <div class="flex items-center justify-between h-[40px] w-full max-w-4xl">
+        <div class="flex items-center justify-center gap-4 h-[40px] w-full">
             <div class="flex items-center gap-2">
                 <div class="bg-blue-600 text-white w-8 h-8 rounded-lg flex items-center justify-center shadow-sm">
                     <i class="fa-solid fa-chalkboard-user text-sm"></i>
@@ -54,10 +54,14 @@
         </div>
         
         <!-- 下段：日付と曜日ナビ -->
-        <div class="flex items-center justify-between h-[36px] mt-1 w-full max-w-4xl">
-            <div class="flex items-center gap-2">
-                <h2 class="text-xl md:text-2xl font-black text-slate-900" id="current-day-label">月曜日</h2>
-                <span class="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded-md" id="day-date-label"></span>
+        <div class="flex items-center justify-center gap-4 md:gap-8 h-[36px] mt-1 w-full">
+            <div class="flex items-center gap-1">
+                <button onclick="changeWeek(-1)" class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-full transition-colors"><i class="fa-solid fa-chevron-left"></i></button>
+                <div class="flex flex-col items-center min-w-[80px]">
+                    <h2 class="text-base md:text-lg font-black text-slate-900 leading-none" id="current-day-label">月曜日</h2>
+                    <span class="text-[10px] font-bold text-slate-500 mt-0.5" id="day-date-label"></span>
+                </div>
+                <button onclick="changeWeek(1)" class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-full transition-colors"><i class="fa-solid fa-chevron-right"></i></button>
             </div>
             <div id="day-nav-buttons" class="flex gap-1">
                 <button onclick="changeDay('Mon')" id="btn-day-Mon" class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold bg-blue-600 text-white shadow-sm">月</button>
@@ -464,6 +468,12 @@
                     btn.className = "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-slate-500 hover:bg-slate-100";
                 }
             });
+            renderDashboard();
+        }
+
+        function changeWeek(delta) {
+            currentWeek += delta;
+            if (currentWeek < 1) currentWeek = 1;
             renderDashboard();
         }
 
