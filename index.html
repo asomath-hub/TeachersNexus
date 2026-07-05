@@ -74,7 +74,7 @@
         <!-- 左カラム：ToDoリスト -->
         <section class="w-64 md:w-72 border-r border-slate-200 bg-white flex flex-col shrink-0">
             <div class="p-3 border-b border-slate-100 bg-slate-50/50">
-               <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center justify-between mb-2">
                     <h2 class="font-bold text-slate-800 text-sm md:text-base"><i class="fa-solid fa-list-check text-blue-600 mr-1"></i> 未計画タスク</h2>
                     <div class="flex items-center gap-2">
                         <button onclick="syncTasks()" class="text-blue-500 hover:bg-blue-100 w-6 h-6 rounded flex items-center justify-center transition-colors" title="手動同期">
@@ -150,7 +150,7 @@
                     </div>
                 </div>
 
-               <div>
+                <div>
                     <h4 class="text-sm font-bold text-slate-800 mb-2 border-b pb-1">Google ToDo 連携</h4>
                     <div class="bg-blue-50 p-3 rounded-lg border border-blue-100">
                         <div id="sync-status-display" class="text-xs font-bold text-blue-800 mb-2 flex items-center gap-1">
@@ -877,7 +877,7 @@
             reader.readAsText(file);
         }
 
-        function authenticateGoogle() {
+function authenticateGoogle() {
             const display = document.getElementById('sync-status-display');
             display.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i> 同期済み';
             
