@@ -74,9 +74,14 @@
         <!-- 左カラム：ToDoリスト -->
         <section class="w-64 md:w-72 border-r border-slate-200 bg-white flex flex-col shrink-0">
             <div class="p-3 border-b border-slate-100 bg-slate-50/50">
-                <div class="flex items-center justify-between mb-2">
+               <div class="flex items-center justify-between mb-2">
                     <h2 class="font-bold text-slate-800 text-sm md:text-base"><i class="fa-solid fa-list-check text-blue-600 mr-1"></i> 未計画タスク</h2>
-                    <span id="unplanned-count" class="bg-blue-50 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-100">0件</span>
+                    <div class="flex items-center gap-2">
+                        <button onclick="syncTasks()" class="text-blue-500 hover:bg-blue-100 w-6 h-6 rounded flex items-center justify-center transition-colors" title="手動同期">
+                            <i class="fa-solid fa-rotate"></i>
+                        </button>
+                        <span id="unplanned-count" class="bg-blue-50 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-100">0件</span>
+                    </div>
                 </div>
                 <form id="new-task-form" onsubmit="handleAddTask(event)" class="flex gap-1.5">
                     <input type="text" id="new-task-title" required placeholder="タスクを追加..." class="flex-1 bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500">
@@ -145,7 +150,7 @@
                     </div>
                 </div>
 
-                <div>
+               <div>
                     <h4 class="text-sm font-bold text-slate-800 mb-2 border-b pb-1">Google ToDo 連携</h4>
                     <div class="bg-blue-50 p-3 rounded-lg border border-blue-100">
                         <div id="sync-status-display" class="text-xs font-bold text-blue-800 mb-2 flex items-center gap-1">
@@ -155,9 +160,14 @@
                         <button onclick="authenticateGoogle()" class="w-full bg-blue-600 text-white px-3 py-2 rounded-lg font-bold text-xs shadow-sm">
                             <i class="fa-brands fa-google mr-1"></i>サインインして接続
                         </button>
-                        <button onclick="syncTasks()" class="w-full bg-white border border-slate-300 text-slate-700 px-3 py-2 rounded-lg font-bold text-xs mt-2 hidden" id="btn-sync">
-                            <i class="fa-solid fa-rotate mr-1"></i>手動同期を実行
-                        </button>
+                        
+                        <!-- 追加：リスト選択エリア（初期状態は非表示） -->
+                        <div id="google-lists-container" class="hidden mt-3 p-2 bg-white border border-blue-200 rounded text-xs space-y-1">
+                            <p class="font-bold text-slate-700 mb-1">同期するリストを選択:</p>
+                            <label class="flex items-center gap-1"><input type="checkbox" value="教務" class="sync-list-cb" checked> 教務</label>
+                            <label class="flex items-center gap-1"><input type="checkbox" value="学年" class="sync-list-cb" checked> 学年</label>
+                            <label class="flex items-center gap-1"><input type="checkbox" value="部活" class="sync-list-cb"> 部活</label>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -870,12 +880,47 @@
         function authenticateGoogle() {
             const display = document.getElementById('sync-status-display');
             display.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i> 同期済み';
-            document.getElementById('btn-sync').classList.remove('hidden');
-            document.getElementById('btn-google-signin').classList.add('hidden');
-            document.getElementById('google-lists-selection').classList.remove('hidden');
+            
+            // リスト選択エリアを表示する
+            const listContainer = document.getElementById('google-lists-container');
+            if(listContainer) listContainer.classList.remove('hidden');
+            
             showToast('Google ToDoと接続しました');
         }
+
         function syncTasks() {
+            // チェックされたリストを取得
+            const checkboxes = document.querySelectorAll('.sync-list-cb:checked');
+            let addedCount = 0;
+            
+            checkboxes.forEach(cb => {
+                const listName = cb.value;
+                // タブ（リスト）に存在しなければ追加
+                if (!lists.includes(listName)) {
+                    lists.push(listName);
+                }
+                
+                // ダミーのタスクを生成して追加
+                const dummyTaskName = `【同期】${listName}のタスク ` + Math.floor(Math.random() * 100);
+                tasks.unshift({ 
+                    id: 't_g_' + Date.now() + Math.random(), 
+                    title: dummyTaskName, 
+                    list: listName, 
+                    completed: false, 
+                    assignedPeriodId: null 
+                });
+                addedCount++;
+            });
+
+            if (addedCount > 0) {
+                saveAllData();
+                renderLists();
+                renderDashboard();
+                showToast(`${addedCount}件のタスクを同期しました`);
+            } else {
+                showToast('同期するリストが選択されていません');
+            }
+        }
             const checkboxes = document.querySelectorAll('#google-lists-selection input[type="checkbox"]:checked');
             checkboxes.forEach(cb => {
                 if (!lists.includes(cb.value)) {
