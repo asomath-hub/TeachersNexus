@@ -30,7 +30,7 @@
 
     <header class="bg-white border-b border-slate-200 px-3 py-2 flex flex-col items-center shrink-0 w-full">
         <!-- 上段：ロゴとコントロール -->
-        <div class="flex items-center justify-between h-[40px] w-full max-w-4xl">
+        <div class="flex items-center justify-center gap-6 md:gap-16 h-[40px] w-full max-w-4xl">
             <div class="flex items-center gap-2">
                 <div class="bg-blue-600 text-white w-8 h-8 rounded-lg flex items-center justify-center shadow-sm">
                     <i class="fa-solid fa-chalkboard-user text-sm"></i>
@@ -52,11 +52,12 @@
         </div>
         
         <!-- 下段：日付と曜日ナビ -->
-        <div class="flex items-center justify-between h-[36px] mt-1 w-full max-w-4xl">
+        <div class="flex items-center justify-center gap-6 md:gap-16 h-[36px] mt-1 w-full max-w-4xl">
             <div class="flex items-center gap-1">
-                <!-- 今回はそのままの配置を使用 -->
+                <button onclick="prevWeek()" class="px-2 py-1 text-slate-400 hover:bg-slate-100 rounded-md"><i class="fa-solid fa-chevron-left"></i></button>
                 <h2 class="text-xl md:text-2xl font-black text-slate-900" id="current-day-label">月曜日</h2>
                 <span class="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded-md ml-1" id="day-date-label"></span>
+                <button onclick="nextWeek()" class="px-2 py-1 text-slate-400 hover:bg-slate-100 rounded-md"><i class="fa-solid fa-chevron-right"></i></button>
             </div>
             <div id="day-nav-buttons" class="flex gap-1">
                 <button onclick="changeDay('Mon')" id="btn-day-Mon" class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold bg-blue-600 text-white shadow-sm">月</button>
@@ -216,7 +217,9 @@
                         <option value="empty">空き</option>
                         <option value="afterschool">放課後等</option>
                     </select>
-                    <input type="text" id="tc-subject" list="registered-subjects" placeholder="科目名" class="flex-1 text-xs border border-amber-200 rounded p-1.5 bg-white">
+                    <select id="tc-subject" class="flex-1 text-xs border border-amber-200 rounded p-1.5 bg-white">
+                        <!-- JSで生成 -->
+                    </select>
                     <input type="text" id="tc-class" placeholder="クラス" class="w-20 text-xs border border-amber-200 rounded p-1.5 bg-white">
                 </div>
                 <div class="flex gap-2 justify-end pt-1">
@@ -455,6 +458,20 @@
             renderDashboard();
         }
 
+        function prevWeek() {
+            if (currentWeek > 1) {
+                currentWeek--;
+                renderDashboard();
+            }
+        }
+
+        function nextWeek() {
+            if (currentWeek < 52) {
+                currentWeek++;
+                renderDashboard();
+            }
+        }
+
         function get3Days() {
             const days = ['Mon','Tue','Wed','Thu','Fri'];
             let idx = days.indexOf(currentDay);
@@ -661,7 +678,14 @@
             document.getElementById('modal-title').innerText = d.subject + (d.class ? ' ('+d.class+')' : '');
             
             document.getElementById('tc-type').value = d.type;
-            document.getElementById('tc-subject').value = d.subject;
+            
+            const subjSelect = document.getElementById('tc-subject');
+            subjSelect.innerHTML = subjectsList.map(s => `<option value="${escapeHTML(s.name)}">${escapeHTML(s.name)}</option>`).join('');
+            if (d.subject && !subjectsList.find(s => s.name === d.subject) && d.subject !== '空き' && d.subject !== '昼休み' && d.subject !== '放課後') {
+                 subjSelect.innerHTML += `<option value="${escapeHTML(d.subject)}">${escapeHTML(d.subject)}</option>`;
+            }
+            subjSelect.value = d.subject;
+            
             document.getElementById('tc-class').value = d.class || '';
 
             renderAnnouncements();
@@ -799,11 +823,20 @@
             closeSettingsModal();
             const g = document.getElementById('base-settings-grid');
             g.innerHTML = '';
+            
+            const subjectOptionsHtml = subjectsList.map(s => `<option value="${escapeHTML(s.name)}">${escapeHTML(s.name)}</option>`).join('');
+
             ['Mon','Tue','Wed','Thu','Fri'].forEach(d => {
                 const col = document.createElement('div');
                 col.className = 'border border-slate-200 rounded-lg p-2 bg-white';
                 col.innerHTML = `<h4 class="font-bold text-center text-sm mb-2">${dayNames[d]}</h4>`;
                 timetableData[d].forEach(p => {
+                    let opts = subjectOptionsHtml;
+                    if (p.subject && !subjectsList.find(s => s.name === p.subject) && p.subject !== '空き' && p.subject !== '昼休み' && p.subject !== '放課後') {
+                        opts += `<option value="${escapeHTML(p.subject)}">${escapeHTML(p.subject)}</option>`;
+                    }
+                    opts = opts.replace(`value="${escapeHTML(p.subject)}"`, `value="${escapeHTML(p.subject)}" selected`);
+
                     col.innerHTML += `
                         <div class="mb-2 p-1 border border-slate-100 rounded bg-slate-50" data-id="${p.id}" data-day="${d}">
                             <div class="text-[10px] font-bold text-slate-500 mb-1">${p.num}限</div>
@@ -812,7 +845,9 @@
                                 <option value="empty" ${p.type==='empty'?'selected':''}>空き</option>
                                 <option value="afterschool" ${p.type==='afterschool'?'selected':''}>放課後</option>
                             </select>
-                            <input type="text" class="w-full text-xs border rounded p-1 mb-1 bs-subject bg-white" list="registered-subjects" placeholder="科目" value="${escapeHTML(p.subject)}">
+                            <select class="w-full text-xs border rounded p-1 mb-1 bs-subject bg-white">
+                                ${opts}
+                            </select>
                             <input type="text" class="w-full text-xs border rounded p-1 bs-class bg-white" placeholder="クラス" value="${escapeHTML(p.class||'')}">
                         </div>
                     `;
@@ -834,6 +869,26 @@
                 });
             });
             saveAllData(); closeBaseSettingsModal(); renderDashboard(); showToast('基本時間割を保存しました');
+        }
+
+        function exportCSV() {
+            let csv = "曜日,時限,種類,科目,クラス\n";
+            ['Mon','Tue','Wed','Thu','Fri'].forEach(d => {
+                timetableData[d].forEach(p => {
+                    csv += `${dayNames[d]},${p.num},${p.type},${p.subject},${p.class||''}\n`;
+                });
+            });
+            const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+            const blob = new Blob([bom, csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", "timetable.csv");
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            closeSettingsModal();
         }
 
         function exportSettingsFile() {
