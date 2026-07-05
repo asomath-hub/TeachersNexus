@@ -870,9 +870,22 @@
         function authenticateGoogle() {
             const display = document.getElementById('sync-status-display');
             display.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i> 同期済み';
-            document.getElementById('btn-sync').classList.remove('hidden'); showToast('Google ToDoと接続しました');
+            document.getElementById('btn-sync').classList.remove('hidden');
+            document.getElementById('btn-google-signin').classList.add('hidden');
+            document.getElementById('google-lists-selection').classList.remove('hidden');
+            showToast('Google ToDoと接続しました');
         }
-        function syncTasks() { showToast('タスクを同期しました'); }
+        function syncTasks() {
+            const checkboxes = document.querySelectorAll('#google-lists-selection input[type="checkbox"]:checked');
+            checkboxes.forEach(cb => {
+                if (!lists.includes(cb.value)) {
+                    lists.push(cb.value);
+                }
+            });
+            saveAllData();
+            renderLists();
+            showToast('タスクとリストを同期しました');
+        }
         function escapeHTML(str) { return str.replace(/[&<>'"]/g, tag => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[tag])); }
         
         function showToast(msg) {
