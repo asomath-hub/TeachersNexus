@@ -392,7 +392,6 @@
                 subjectsList = [...defaultSubjectsList];
             }
             
-            // Google設定の読み込み
             const cid = localStorage.getItem('tn_google_client_id');
             if(cid) document.getElementById('client-id-input').value = cid;
             
@@ -619,7 +618,7 @@
                 lc.appendChild(d);
             });
         }
-        
+
         function startMoveTask(id) { activeMovingTaskId = id; renderDashboard(); showToast('配置したいコマをタップしてください'); }
         function cancelMoveTask() { activeMovingTaskId = null; renderDashboard(); }
         
@@ -688,7 +687,6 @@
             
             document.getElementById('tc-class').value = d.class || '';
 
-            renderAnnouncements();
             renderModalTasks();
         }
         
@@ -758,7 +756,6 @@
             if(st) st.innerText = isDarkMode ? 'オン' : 'オフ';
         }
 
-        /* --- 科目と色の設定関連 --- */
         function openSubjectSettingsModal() {
             closeSettingsModal();
             renderSubjectSettingsList();
@@ -818,7 +815,6 @@
             showToast('科目設定を保存しました');
         }
 
-        /* --- 基本時間割設定 --- */
         function openBaseSettingsModal() {
             closeSettingsModal();
             const g = document.getElementById('base-settings-grid');
@@ -913,7 +909,6 @@
                 try {
                     const parsed = JSON.parse(e.target.result);
                     if(parsed.timetableData) {
-                        // 【完全同期】欠けているプロパティも確実に保存する
                         const newData = {
                             timetableData: parsed.timetableData,
                             tasks: parsed.tasks || [],
@@ -926,16 +921,15 @@
                         showToast('設定と科目を読み込みました。リロードします...');
                         setTimeout(() => location.reload(), 1500);
                     } else {
-                        alert('無効なファイル形式です');
+                        showToast('無効なファイル形式です');
                     }
                 } catch(err) {
-                    alert('ファイルの読み込みに失敗しました');
+                    showToast('ファイルの読み込みに失敗しました');
                 }
             };
             reader.readAsText(file);
         }
 
-        /* --- 本物の Google ToDo 連携ロジック --- */
         function authenticateGoogle() {
             const clientId = document.getElementById('client-id-input').value.trim();
             if (!clientId) {
@@ -954,11 +948,9 @@
                             showToast('Googleにログインしました！');
                             document.getElementById('sync-status-display').innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i> 同期済み (連携中)';
                             
-                            // ヘッダーの同期ボタンを表示
                             const syncBtn = document.getElementById('btn-sync-header');
                             if(syncBtn) syncBtn.classList.remove('hidden');
                             
-                            // Googleからリスト一覧を取得
                             fetchGoogleTaskLists();
                         }
                     },
@@ -1032,7 +1024,6 @@
                     
                     if (data.items) {
                         data.items.forEach(gTask => {
-                            // 既に同じGoogle IDのタスクがあれば追加しない
                             if (!tasks.find(t => t.googleId === gTask.id)) {
                                 tasks.unshift({
                                     id: 't_' + Date.now() + Math.floor(Math.random() * 1000),
@@ -1042,7 +1033,6 @@
                                     assignedPeriodId: null,
                                     googleId: gTask.id
                                 });
-                                // リスト（タブ）が存在しなければ追加
                                 if (!lists.includes(listName)) {
                                     lists.push(listName);
                                 }
