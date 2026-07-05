@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
     <style>
         body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         ::-webkit-scrollbar { width: 4px; height: 4px; }
@@ -27,9 +28,9 @@
 <body class="bg-slate-50 h-screen flex flex-col overflow-hidden text-slate-800">
 
     <header class="bg-white border-b border-slate-200 px-3 py-2 flex flex-col items-center justify-center shrink-0 w-full">
-        <div class="flex flex-col items-center w-full max-w-4xl">
+        <div class="flex flex-col items-center w-full max-w-2xl">
             <!-- 上段：ロゴとコントロール -->
-            <div class="flex items-center justify-center gap-4 h-[40px] w-full">
+            <div class="flex items-center justify-between h-[40px] w-full">
                 <div class="flex items-center gap-2">
                     <div class="bg-blue-600 text-white w-8 h-8 rounded-lg flex items-center justify-center shadow-sm">
                         <i class="fa-solid fa-chalkboard-user text-sm"></i>
@@ -50,7 +51,7 @@
             </div>
             
             <!-- 下段：日付と曜日ナビ -->
-            <div class="flex items-center justify-center gap-4 md:gap-8 h-[36px] mt-1 w-full">
+            <div class="flex items-center justify-between h-[36px] mt-1 w-full">
                 <div class="flex items-center gap-1">
                     <button onclick="changeWeek(-1)" class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-full transition-colors"><i class="fa-solid fa-chevron-left"></i></button>
                     <div class="flex flex-col items-center min-w-[80px]">
@@ -86,7 +87,7 @@
             
             <div id="moving-task-message" class="px-3 pt-2 empty:hidden"></div>
             
-            <!-- タスクリストのカテゴリ（折り返し表示） -->
+            <!-- タスクリストのカテゴリ（折り返し表示で1タップで選べるように） -->
             <div class="px-3 py-2 border-b border-slate-100 flex flex-wrap gap-1 shrink-0" id="list-tabs-container">
                 <!-- タブがここに生成されます -->
             </div>
@@ -151,12 +152,8 @@
                         <div id="sync-status-display" class="text-xs font-bold text-blue-800 mb-2 flex items-center gap-1">
                             <i class="fa-solid fa-circle-xmark text-slate-400"></i> 未接続
                         </div>
-                        <input type="text" id="client-id-input" placeholder="Google Client ID" class="w-full border border-blue-200 rounded px-2 py-1.5 text-xs mb-2 bg-white">
                         <button onclick="authenticateGoogle()" class="w-full bg-blue-600 text-white px-3 py-2 rounded-lg font-bold text-xs shadow-sm">
                             <i class="fa-brands fa-google mr-1"></i>サインインして接続
-                        </button>
-                        <button onclick="syncTasks()" class="w-full bg-white border border-slate-300 text-slate-700 px-3 py-2 rounded-lg font-bold text-xs mt-2 hidden" id="btn-sync">
-                            <i class="fa-solid fa-rotate mr-1"></i>手動同期を実行
                         </button>
                     </div>
                 </div>
@@ -208,7 +205,7 @@
                         <option value="empty">空き</option>
                         <option value="afterschool">放課後等</option>
                     </select>
-                    <!-- プルダウンで科目を選択 -->
+                    <!-- プルダウンで科目を選択できるように修正 -->
                     <select id="tc-subject" class="flex-1 text-xs border border-amber-200 rounded p-1.5 bg-white">
                         <!-- 動的生成 -->
                     </select>
@@ -275,7 +272,7 @@
         let tasks = [];
         let temporaryChanges = {};
         let announcements = {};
-        let lists = ['その他'];
+        let lists = ['その他', '教務', '生徒指導', '学年', '部活'];
         
         const colorPalettes = [
             { id: 0, name: '赤系', bg: 'bg-red-50', borderL: 'border-red-400 border-l-4', badge: 'bg-red-200 text-red-800' },
@@ -365,7 +362,7 @@
                     });
                     
                     tasks = parsed.tasks || [];
-                    lists = parsed.lists || ['その他'];
+                    lists = parsed.lists || ['その他', '教務', '生徒指導', '学年', '部活'];
                     temporaryChanges = parsed.temporaryChanges || {};
                     announcements = parsed.announcements || {};
                     subjectsList = parsed.subjectsList || [...defaultSubjectsList];
@@ -870,7 +867,7 @@
         function authenticateGoogle() {
             const display = document.getElementById('sync-status-display');
             display.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i> 同期済み';
-            document.getElementById('btn-sync').classList.remove('hidden'); showToast('Google ToDoと接続しました');
+            showToast('Google ToDoと接続しました');
         }
         function syncTasks() { showToast('タスクを同期しました'); }
         function escapeHTML(str) { return str.replace(/[&<>'"]/g, tag => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[tag])); }
