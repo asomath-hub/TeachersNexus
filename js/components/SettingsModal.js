@@ -38,7 +38,7 @@ export function initSettingsModal(callbacks = {}) {
 
 function setupEventListeners() {
     // ヘッダーなどに存在する開くボタン
-    const openBtn = document.querySelector('button[onclick="openSettingsModal()"]');
+    const openBtn = document.querySelector('[data-action="open-settings"]');
     if (openBtn) {
         openBtn.removeAttribute('onclick');
         openBtn.addEventListener('click', openSettingsModal);
@@ -48,21 +48,21 @@ function setupEventListeners() {
     if (!modal) return;
 
     // 閉じるボタン
-    const closeBtn = modal.querySelector('button[onclick="closeSettingsModal()"]');
+    const closeBtn = modal.querySelector('[data-action="close-settings"]');
     if (closeBtn) {
         closeBtn.removeAttribute('onclick');
         closeBtn.addEventListener('click', closeSettingsModal);
     }
 
     // ダークモード切替ボタン
-    const darkModeBtn = modal.querySelector('button[onclick="toggleDarkMode()"]');
+    const darkModeBtn = modal.querySelector('[data-action="toggle-darkmode"]');
     if (darkModeBtn) {
         darkModeBtn.removeAttribute('onclick');
         darkModeBtn.addEventListener('click', toggleDarkMode);
     }
 
     // 科目と色の設定モーダルを開くボタン
-    const subjectBtn = modal.querySelector('button[onclick="openSubjectSettingsModal()"]');
+    const subjectBtn = modal.querySelector('[data-action="open-subject-settings"]');
     if (subjectBtn) {
         subjectBtn.removeAttribute('onclick');
         subjectBtn.addEventListener('click', () => {
@@ -71,7 +71,7 @@ function setupEventListeners() {
     }
 
     // 基本時間割設定モーダルを開くボタン
-    const baseBtn = modal.querySelector('button[onclick="openBaseSettingsModal()"]');
+    const baseBtn = modal.querySelector('[data-action="open-base-settings"]');
     if (baseBtn) {
         baseBtn.removeAttribute('onclick');
         baseBtn.addEventListener('click', () => {
@@ -80,7 +80,7 @@ function setupEventListeners() {
     }
 
     // CSVエクスポートボタン
-    const csvBtn = modal.querySelector('button[onclick="exportCSV()"]');
+    const csvBtn = modal.querySelector('[data-action="export-csv"]');
     if (csvBtn) {
         csvBtn.removeAttribute('onclick');
         csvBtn.addEventListener('click', () => {
@@ -89,7 +89,7 @@ function setupEventListeners() {
     }
 
     // バックアップエクスポートボタン
-    const exportBtn = modal.querySelector('button[onclick="exportSettingsFile()"]');
+    const exportBtn = modal.querySelector('[data-action="export-backup"]');
     if (exportBtn) {
         exportBtn.removeAttribute('onclick');
         exportBtn.addEventListener('click', () => {
@@ -98,7 +98,7 @@ function setupEventListeners() {
     }
 
     // バックアップインポート（onchange）
-    const importInput = modal.querySelector('input[onchange="importSettingsFile(event)"]');
+    const importInput = modal.querySelector('[data-action="import-backup"]');
     if (importInput) {
         importInput.removeAttribute('onchange');
         importInput.addEventListener('change', (e) => {
@@ -107,7 +107,7 @@ function setupEventListeners() {
     }
 
     // Google認証ボタン
-    const authBtn = modal.querySelector('button[onclick="authenticateGoogle()"]');
+    const authBtn = modal.querySelector('[data-action="auth-google"]');
     if (authBtn) {
         authBtn.removeAttribute('onclick');
         authBtn.addEventListener('click', () => {
@@ -116,7 +116,7 @@ function setupEventListeners() {
     }
 
     // 同期ボタン
-    const syncBtn = modal.querySelector('button[onclick="syncTasks()"]');
+    const syncBtn = modal.querySelector('[data-action="sync-tasks"]');
     if (syncBtn) {
         syncBtn.removeAttribute('onclick');
         syncBtn.addEventListener('click', () => {
