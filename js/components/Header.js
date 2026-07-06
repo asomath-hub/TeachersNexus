@@ -28,33 +28,34 @@ export function initHeader(onChangeCallback) {
 
 function setupEventListeners() {
     // 1. ビュー切替ボタン (日 / 3日 / 週)
-    document.getElementById('btn-view-daily')?.addEventListener('click', () => handleViewChange('daily'));
-    document.getElementById('btn-view-three-day')?.addEventListener('click', () => handleViewChange('three-day'));
-    document.getElementById('btn-view-weekly')?.addEventListener('click', () => handleViewChange('weekly'));
+    ['daily', 'three-day', 'weekly'].forEach(v => {
+        const btn = document.querySelector(`[data-action="change-view-${v}"]`);
+        if (btn) {
+            btn.removeAttribute('onclick'); // HTML側に残っているインラインハンドラを安全に剥がす
+            btn.addEventListener('click', () => handleViewChange(v));
+        }
+    });
 
     // 2. 曜日切替ボタン (月 〜 金)
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
     days.forEach(d => {
-        const btn = document.getElementById(`btn-day-${d}`);
+        const btn = document.querySelector(`[data-action="change-day-${d}"]`);
         if (btn) {
-            btn.removeAttribute('onclick'); // HTMLのonclickを安全に剥がす
+            btn.removeAttribute('onclick');
             btn.addEventListener('click', () => handleDayChange(d));
         }
     });
 
     // 3. 週移動ボタン (＜ ＞)
-    // ※HTML側にIDがないため、既存のonclick属性を手がかりにDOMを取得し、EventListenerに置き換える
-    const prevWeekBtn = document.querySelector('button[onclick="changeWeek(-1)"]');
+    const prevWeekBtn = document.querySelector('[data-action="prev-week"]');
     if (prevWeekBtn) {
         prevWeekBtn.removeAttribute('onclick');
-        prevWeekBtn.id = 'btn-prev-week'; // 今後のアクセスのためにIDを付与
         prevWeekBtn.addEventListener('click', () => handleWeekChange(-1));
     }
 
-    const nextWeekBtn = document.querySelector('button[onclick="changeWeek(1)"]');
+    const nextWeekBtn = document.querySelector('[data-action="next-week"]');
     if (nextWeekBtn) {
         nextWeekBtn.removeAttribute('onclick');
-        nextWeekBtn.id = 'btn-next-week'; // 今後のアクセスのためにIDを付与
         nextWeekBtn.addEventListener('click', () => handleWeekChange(1));
     }
 }
@@ -96,10 +97,8 @@ function handleWeekChange(delta) {
 export function updateHeaderUI() {
     // 1. ビュー切替ボタンのアクティブ状態更新
     ['daily', 'three-day', 'weekly'].forEach(id => {
-        const btn = document.getElementById('btn-view-' + id);
+        const btn = document.querySelector(`[data-action="change-view-${id}"]`);
         if (btn) {
-            // HTMLのonclickは初期化時に剥がす設定をしているが、念のためここでも属性操作はUI更新のみに留める
-            btn.removeAttribute('onclick'); 
             btn.className = (state.viewMode === id) 
                 ? "px-3 py-1.5 rounded-md bg-white shadow-sm text-blue-600" 
                 : "px-3 py-1.5 rounded-md text-slate-500 hover:text-slate-700";
@@ -113,7 +112,7 @@ export function updateHeaderUI() {
     }
 
     ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].forEach(x => {
-        const btn = document.getElementById('btn-day-' + x);
+        const btn = document.querySelector(`[data-action="change-day-${x}"]`);
         if (btn) {
             btn.className = (x === state.currentDay) 
                 ? "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold bg-blue-600 text-white shadow-sm" 
