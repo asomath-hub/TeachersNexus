@@ -1,151 +1,129 @@
 /**
- * js/components/SettingsModal.js
- * システム設定モーダル（ダークモード切替など）のUIとイベントを管理するコンポーネント。
+ * js/components/SubjectSettingsModal.js
+ * 科目と色の設定モーダルのUIとイベントを管理するコンポーネント。
  */
 
-import { state, setIsDarkMode } from '../state/appState.js';
+import { state, setSubjectsList } from '../state/appState.js';
+import { saveAllData } from '../services/storage.js';
+import { showToast } from './Toast.js';
+import { escapeHTML } from '../utils/escape.js';
+import { colorPalettes } from '../utils/colors.js';
 
-let onExportCSV = null;
-let onExportSettingsFile = null;
-let onImportSettingsFile = null;
-let onAuthenticateGoogle = null;
-let onSyncTasks = null;
-let onOpenSubjectSettingsModal = null;
-let onOpenBaseSettingsModal = null;
-
+let onStateChange = null;
 let initialized = false;
 
 /**
- * SettingsModalコンポーネントの初期化
+ * SubjectSettingsModalコンポーネントの初期化
  * @param {Object} callbacks - 外部との連携用コールバック関数群
  */
-export function initSettingsModal(callbacks = {}) {
-    onExportCSV = callbacks.onExportCSV || null;
-    onExportSettingsFile = callbacks.onExportSettingsFile || null;
-    onImportSettingsFile = callbacks.onImportSettingsFile || null;
-    onAuthenticateGoogle = callbacks.onAuthenticateGoogle || null;
-    onSyncTasks = callbacks.onSyncTasks || null;
-    onOpenSubjectSettingsModal = callbacks.onOpenSubjectSettingsModal || null;
-    onOpenBaseSettingsModal = callbacks.onOpenBaseSettingsModal || null;
+export function initSubjectSettingsModal(callbacks = {}) {
+    onStateChange = callbacks.onStateChange || null;
 
     if (!initialized) {
         setupEventListeners();
         initialized = true;
     }
-
-    updateDarkModeUI();
 }
 
 function setupEventListeners() {
-    // ヘッダーなどに存在する開くボタン
-    const openBtn = document.querySelector('[data-action="open-settings"]');
-    if (openBtn) {
-        openBtn.removeAttribute('onclick');
-        openBtn.addEventListener('click', openSettingsModal);
-    }
-
-    const modal = document.getElementById('settings-modal');
+    const modal = document.getElementById('subject-settings-modal');
     if (!modal) return;
 
-    // 閉じるボタン
-    const closeBtn = modal.querySelector('[data-action="close-settings"]');
-    if (closeBtn) {
-        closeBtn.removeAttribute('onclick');
-        closeBtn.addEventListener('click', closeSettingsModal);
+    // 閉じるボタン (複数存在するため querySelectorAll で取得)
+    const closeBtns = modal.querySelectorAll('[data-action="close-subject-settings"]');
+    closeBtns.forEach(btn => {
+        btn.removeAttribute('onclick');
+        btn.addEventListener('click', closeSubjectSettingsModal);
+    });
+
+    // 追加ボタン
+    const addBtn = modal.querySelector('[data-action="add-subject"]');
+    if (addBtn) {
+        addBtn.removeAttribute('onclick');
+        addBtn.addEventListener('click', addNewSubject);
     }
 
-    // ダークモード切替ボタン
-    const darkModeBtn = modal.querySelector('[data-action="toggle-darkmode"]');
-    if (darkModeBtn) {
-        darkModeBtn.removeAttribute('onclick');
-        darkModeBtn.addEventListener('click', toggleDarkMode);
-    }
-
-    // 科目と色の設定モーダルを開くボタン
-    const subjectBtn = modal.querySelector('[data-action="open-subject-settings"]');
-    if (subjectBtn) {
-        subjectBtn.removeAttribute('onclick');
-        subjectBtn.addEventListener('click', () => {
-            if (onOpenSubjectSettingsModal) onOpenSubjectSettingsModal();
-        });
-    }
-
-    // 基本時間割設定モーダルを開くボタン
-    const baseBtn = modal.querySelector('[data-action="open-base-settings"]');
-    if (baseBtn) {
-        baseBtn.removeAttribute('onclick');
-        baseBtn.addEventListener('click', () => {
-            if (onOpenBaseSettingsModal) onOpenBaseSettingsModal();
-        });
-    }
-
-    // CSVエクスポートボタン
-    const csvBtn = modal.querySelector('[data-action="export-csv"]');
-    if (csvBtn) {
-        csvBtn.removeAttribute('onclick');
-        csvBtn.addEventListener('click', () => {
-            if (onExportCSV) onExportCSV();
-        });
-    }
-
-    // バックアップエクスポートボタン
-    const exportBtn = modal.querySelector('[data-action="export-backup"]');
-    if (exportBtn) {
-        exportBtn.removeAttribute('onclick');
-        exportBtn.addEventListener('click', () => {
-            if (onExportSettingsFile) onExportSettingsFile();
-        });
-    }
-
-    // バックアップインポート（onchange）
-    const importInput = modal.querySelector('[data-action="import-backup"]');
-    if (importInput) {
-        importInput.removeAttribute('onchange');
-        importInput.addEventListener('change', (e) => {
-            if (onImportSettingsFile) onImportSettingsFile(e);
-        });
-    }
-
-    // Google認証ボタン
-    const authBtn = modal.querySelector('[data-action="auth-google"]');
-    if (authBtn) {
-        authBtn.removeAttribute('onclick');
-        authBtn.addEventListener('click', () => {
-            if (onAuthenticateGoogle) onAuthenticateGoogle();
-        });
-    }
-
-    // 同期ボタン
-    const syncBtn = modal.querySelector('[data-action="sync-tasks"]');
-    if (syncBtn) {
-        syncBtn.removeAttribute('onclick');
-        syncBtn.addEventListener('click', () => {
-            if (onSyncTasks) onSyncTasks();
-        });
+    // 保存ボタン
+    const saveBtn = modal.querySelector('[data-action="save-subject-settings"]');
+    if (saveBtn) {
+        saveBtn.removeAttribute('onclick');
+        saveBtn.addEventListener('click', saveSubjectSettings);
     }
 }
 
-export function openSettingsModal() { 
-    document.getElementById('settings-modal').classList.remove('hidden'); 
+export function openSubjectSettingsModal() {
+    renderSubjectSettingsList();
+    document.getElementById('subject-settings-modal').classList.remove('hidden');
 }
 
-export function closeSettingsModal() { 
-    document.getElementById('settings-modal').classList.add('hidden'); 
+export function closeSubjectSettingsModal() { 
+    document.getElementById('subject-settings-modal').classList.add('hidden'); 
 }
 
-function toggleDarkMode() {
-    setIsDarkMode(!state.isDarkMode);
-    if(state.isDarkMode) {
-        document.documentElement.classList.add('dark');
-        localStorage.setItem('tn_dark_mode', 'true');
-    } else {
-        document.documentElement.classList.remove('dark');
-        localStorage.setItem('tn_dark_mode', 'false');
-    }
-    updateDarkModeUI();
+function renderSubjectSettingsList() {
+    const container = document.getElementById('subject-settings-list');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    state.subjectsList.forEach((sub) => {
+        container.appendChild(createSubjectRow(sub.name, sub.colorIndex));
+    });
 }
 
-export function updateDarkModeUI() {
-    const st = document.getElementById('dark-mode-status');
-    if(st) st.innerText = state.isDarkMode ? 'オン' : 'オフ';
+function createSubjectRow(name, colorIndex) {
+    const row = document.createElement('div');
+    row.className = "flex gap-2 items-center bg-white p-2 rounded-lg border border-slate-200 shadow-sm subject-row";
+    
+    // カラーパレットから option 要素の文字列を生成
+    let colorOptions = colorPalettes.map(c => 
+        `<option value="${c.id}" ${c.id === colorIndex ? 'selected' : ''}>${c.name}</option>`
+    ).join('');
+    
+    const inputHtml = `<input type="text" class="flex-1 text-xs border border-slate-200 rounded p-1.5 font-bold ss-name focus:ring-1 focus:ring-blue-500" value="${escapeHTML(name)}" placeholder="科目名">`;
+    const selectHtml = `<select class="w-24 text-xs border border-slate-200 rounded p-1.5 ss-color bg-slate-50 focus:ring-1 focus:ring-blue-500">${colorOptions}</select>`;
+    
+    row.innerHTML = inputHtml + selectHtml;
+    
+    // 削除ボタン (旧 onclick="this.parentElement.remove()" を排除して安全な形に修正)
+    const delBtn = document.createElement('button');
+    delBtn.className = "text-red-500 hover:bg-red-50 p-1.5 rounded";
+    delBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+    delBtn.addEventListener('click', () => {
+        row.remove();
+    });
+    
+    row.appendChild(delBtn);
+    return row;
+}
+
+function addNewSubject() {
+    const container = document.getElementById('subject-settings-list');
+    if (!container) return;
+    
+    const newRow = createSubjectRow('', 0);
+    container.appendChild(newRow);
+    container.scrollTop = container.scrollHeight; // スクロールを最下部へ
+}
+
+function saveSubjectSettings() {
+    const rows = document.querySelectorAll('#subject-settings-list .subject-row');
+    const newList = [];
+    
+    rows.forEach(row => {
+        const name = row.querySelector('.ss-name').value.trim();
+        const colorIndex = parseInt(row.querySelector('.ss-color').value, 10);
+        if (name) {
+            newList.push({ name, colorIndex });
+        }
+    });
+    
+    // ImmutableにStateを更新
+    setSubjectsList(newList);
+    saveAllData(); 
+    closeSubjectSettingsModal(); 
+    
+    // メイン画面の再描画などを依頼
+    if (onStateChange) onStateChange(); 
+    
+    showToast('科目設定を保存しました');
 }
