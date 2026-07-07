@@ -39,11 +39,11 @@
                 
                 <div class="flex items-center gap-2">
                     <div class="bg-slate-100 p-0.5 rounded-lg flex text-xs font-bold shadow-inner">
-                        <button onclick="changeView('daily')" data-action="change-view-daily" id="btn-view-daily" class="px-3 py-1.5 rounded-md bg-white shadow-sm text-blue-600">日</button>
-                        <button onclick="changeView('three-day')" data-action="change-view-three-day" id="btn-view-three-day" class="px-3 py-1.5 rounded-md text-slate-500 hover:text-slate-700">3日</button>
-                        <button onclick="changeView('weekly')" data-action="change-view-weekly" id="btn-view-weekly" class="px-3 py-1.5 rounded-md text-slate-500 hover:text-slate-700">週</button>
+                        <button data-action="change-view-daily" id="btn-view-daily" class="px-3 py-1.5 rounded-md bg-white shadow-sm text-blue-600">日</button>
+                        <button data-action="change-view-three-day" id="btn-view-three-day" class="px-3 py-1.5 rounded-md text-slate-500 hover:text-slate-700">3日</button>
+                        <button data-action="change-view-weekly" id="btn-view-weekly" class="px-3 py-1.5 rounded-md text-slate-500 hover:text-slate-700">週</button>
                     </div>
-                    <button onclick="openSettingsModal()" data-action="open-settings" class="bg-slate-800 text-white px-3 py-1.5 rounded-lg font-bold text-xs shadow-sm hover:bg-slate-700">
+                    <button data-action="open-settings" class="bg-slate-800 text-white px-3 py-1.5 rounded-lg font-bold text-xs shadow-sm hover:bg-slate-700">
                         <i class="fa-solid fa-sliders"></i>
                     </button>
                 </div>
@@ -52,19 +52,19 @@
             <!-- 下段：日付と曜日ナビ -->
             <div class="flex items-center justify-center gap-4 md:gap-8 h-[36px] mt-1 w-full">
                 <div class="flex items-center gap-1">
-                    <button onclick="changeWeek(-1)" data-action="prev-week" class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-full transition-colors"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button data-action="prev-week" class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-full transition-colors"><i class="fa-solid fa-chevron-left"></i></button>
                     <div class="flex flex-col items-center min-w-[80px]">
                         <h2 class="text-base md:text-lg font-black text-slate-900 leading-none" id="current-day-label">月曜日</h2>
                         <span class="text-[10px] font-bold text-slate-500 mt-0.5" id="day-date-label"></span>
                     </div>
-                    <button onclick="changeWeek(1)" data-action="next-week" class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-full transition-colors"><i class="fa-solid fa-chevron-right"></i></button>
+                    <button data-action="next-week" class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-full transition-colors"><i class="fa-solid fa-chevron-right"></i></button>
                 </div>
                 <div id="day-nav-buttons" class="flex gap-1">
-                    <button onclick="changeDay('Mon')" data-action="change-day-Mon" id="btn-day-Mon" class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold bg-blue-600 text-white shadow-sm">月</button>
-                    <button onclick="changeDay('Tue')" data-action="change-day-Tue" id="btn-day-Tue" class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-slate-500 hover:bg-slate-100">火</button>
-                    <button onclick="changeDay('Wed')" data-action="change-day-Wed" id="btn-day-Wed" class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-slate-500 hover:bg-slate-100">水</button>
-                    <button onclick="changeDay('Thu')" data-action="change-day-Thu" id="btn-day-Thu" class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-slate-500 hover:bg-slate-100">木</button>
-                    <button onclick="changeDay('Fri')" data-action="change-day-Fri" id="btn-day-Fri" class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-slate-500 hover:bg-slate-100">金</button>
+                    <button data-action="change-day-Mon" id="btn-day-Mon" class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold bg-blue-600 text-white shadow-sm">月</button>
+                    <button data-action="change-day-Tue" id="btn-day-Tue" class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-slate-500 hover:bg-slate-100">火</button>
+                    <button data-action="change-day-Wed" id="btn-day-Wed" class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-slate-500 hover:bg-slate-100">水</button>
+                    <button data-action="change-day-Thu" id="btn-day-Thu" class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-slate-500 hover:bg-slate-100">木</button>
+                    <button data-action="change-day-Fri" id="btn-day-Fri" class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-slate-500 hover:bg-slate-100">金</button>
                 </div>
             </div>
         </div>
@@ -78,7 +78,7 @@
                     <h2 class="font-bold text-slate-800 text-sm md:text-base"><i class="fa-solid fa-list-check text-blue-600 mr-1"></i> 未計画タスク</h2>
                     <span id="unplanned-count" class="bg-blue-50 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-100">0件</span>
                 </div>
-                <form id="new-task-form" onsubmit="handleAddTask(event)" data-action="add-task" class="flex gap-1.5">
+                <form id="new-task-form" data-action="add-task" class="flex gap-1.5">
                     <input type="text" id="new-task-title" required placeholder="タスクを追加..." class="flex-1 bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500">
                     <button type="submit" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg font-bold text-xs"><i class="fa-solid fa-plus"></i></button>
                 </form>
@@ -108,24 +108,24 @@
         <div class="bg-white w-full max-w-md rounded-2xl shadow-xl flex flex-col max-h-[90vh]">
             <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center">
                 <h3 class="font-black text-slate-800 text-lg"><i class="fa-solid fa-sliders text-slate-500 mr-2"></i>メニュー設定</h3>
-                <button onclick="closeSettingsModal()" data-action="close-settings" class="text-slate-400 hover:bg-slate-100 p-2 rounded-lg"><i class="fa-solid fa-xmark"></i></button>
+                <button data-action="close-settings" class="text-slate-400 hover:bg-slate-100 p-2 rounded-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
             <div class="p-5 overflow-y-auto space-y-6">
                 <div>
                     <h4 class="text-sm font-bold text-slate-800 mb-2 border-b pb-1">システム設定</h4>
                     <div class="space-y-2">
-                        <button onclick="toggleDarkMode()" data-action="toggle-darkmode" class="w-full text-left px-3 py-2 text-sm bg-slate-50 hover:bg-slate-100 rounded-lg font-bold text-slate-700 flex justify-between items-center">
+                        <button data-action="toggle-darkmode" class="w-full text-left px-3 py-2 text-sm bg-slate-50 hover:bg-slate-100 rounded-lg font-bold text-slate-700 flex justify-between items-center">
                             <span><i class="fa-solid fa-moon mr-2 text-indigo-500"></i>ダークモード切替</span>
                             <span id="dark-mode-status" class="text-xs text-slate-500">オフ</span>
                         </button>
-                        <button onclick="openSubjectSettingsModal()" data-action="open-subject-settings" class="w-full text-left px-3 py-2 text-sm bg-slate-50 hover:bg-slate-100 rounded-lg font-bold text-slate-700">
+                        <button data-action="open-subject-settings" class="w-full text-left px-3 py-2 text-sm bg-slate-50 hover:bg-slate-100 rounded-lg font-bold text-slate-700">
                             <i class="fa-solid fa-palette mr-2 text-pink-500"></i>科目と色の設定
                         </button>
-                        <button onclick="openBaseSettingsModal()" data-action="open-base-settings" class="w-full text-left px-3 py-2 text-sm bg-slate-50 hover:bg-slate-100 rounded-lg font-bold text-slate-700">
+                        <button data-action="open-base-settings" class="w-full text-left px-3 py-2 text-sm bg-slate-50 hover:bg-slate-100 rounded-lg font-bold text-slate-700">
                             <i class="fa-solid fa-calendar-days mr-2 text-blue-500"></i>基本時間割の設定
                         </button>
-                        <button onclick="exportCSV()" data-action="export-csv" class="w-full text-left px-3 py-2 text-sm bg-slate-50 hover:bg-slate-100 rounded-lg font-bold text-slate-700">
+                        <button data-action="export-csv" class="w-full text-left px-3 py-2 text-sm bg-slate-50 hover:bg-slate-100 rounded-lg font-bold text-slate-700">
                             <i class="fa-solid fa-file-csv mr-2 text-green-500"></i>CSVエクスポート
                         </button>
                     </div>
@@ -135,12 +135,12 @@
                     <h4 class="text-sm font-bold text-slate-800 mb-2 border-b pb-1">端末間同期（バックアップ）</h4>
                     <p class="text-[10px] text-slate-500 mb-2">設定をファイルに書き出して、別の端末で読み込むことができます。</p>
                     <div class="flex gap-2">
-                        <button onclick="exportSettingsFile()" data-action="export-backup" class="flex-1 bg-slate-800 text-white text-xs font-bold py-2 rounded-lg hover:bg-slate-700">
+                        <button data-action="export-backup" class="flex-1 bg-slate-800 text-white text-xs font-bold py-2 rounded-lg hover:bg-slate-700">
                             <i class="fa-solid fa-download mr-1"></i>設定を書き出し
                         </button>
                         <label class="flex-1 bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded-lg hover:bg-slate-300 text-center cursor-pointer">
                             <i class="fa-solid fa-upload mr-1"></i>設定を読み込み
-                            <input type="file" accept=".json" class="hidden" onchange="importSettingsFile(event)" data-action="import-backup">
+                            <input type="file" accept=".json" class="hidden" data-action="import-backup">
                         </label>
                     </div>
                 </div>
@@ -152,10 +152,10 @@
                             <i class="fa-solid fa-circle-xmark text-slate-400"></i> 未接続
                         </div>
                         <input type="text" id="client-id-input" placeholder="Google Client ID" class="w-full border border-blue-200 rounded px-2 py-1.5 text-xs mb-2 bg-white">
-                        <button onclick="authenticateGoogle()" data-action="auth-google" class="w-full bg-blue-600 text-white px-3 py-2 rounded-lg font-bold text-xs shadow-sm">
+                        <button data-action="auth-google" class="w-full bg-blue-600 text-white px-3 py-2 rounded-lg font-bold text-xs shadow-sm">
                             <i class="fa-brands fa-google mr-1"></i>サインインして接続
                         </button>
-                        <button onclick="syncTasks()" data-action="sync-tasks" class="w-full bg-white border border-slate-300 text-slate-700 px-3 py-2 rounded-lg font-bold text-xs mt-2 hidden" id="btn-sync">
+                        <button data-action="sync-tasks" class="w-full bg-white border border-slate-300 text-slate-700 px-3 py-2 rounded-lg font-bold text-xs mt-2 hidden" id="btn-sync">
                             <i class="fa-solid fa-rotate mr-1"></i>手動同期を実行
                         </button>
                     </div>
@@ -169,7 +169,7 @@
         <div class="bg-white w-full max-w-md rounded-2xl shadow-xl flex flex-col max-h-[80vh]">
             <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center">
                 <h3 class="font-black text-slate-800 text-lg"><i class="fa-solid fa-palette text-pink-500 mr-2"></i>科目と色の設定</h3>
-                <button onclick="closeSubjectSettingsModal()" data-action="close-subject-settings" class="text-slate-400 hover:bg-slate-100 p-2 rounded-lg"><i class="fa-solid fa-xmark"></i></button>
+                <button data-action="close-subject-settings" class="text-slate-400 hover:bg-slate-100 p-2 rounded-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="px-5 py-2 bg-slate-50 text-[10px] text-slate-500 border-b border-slate-200">
                 ここで設定した科目は、授業変更時にプルダウンで簡単に選択できるようになります。
@@ -177,10 +177,10 @@
             <div class="p-5 overflow-y-auto flex-1 bg-slate-50 space-y-2" id="subject-settings-list">
             </div>
             <div class="px-5 py-3 border-t border-slate-100 bg-white flex justify-between gap-2">
-                <button onclick="addNewSubject()" data-action="add-subject" class="px-4 py-2 text-sm font-bold text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100"><i class="fa-solid fa-plus mr-1"></i>追加</button>
+                <button data-action="add-subject" class="px-4 py-2 text-sm font-bold text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100"><i class="fa-solid fa-plus mr-1"></i>追加</button>
                 <div class="flex gap-2">
-                    <button onclick="closeSubjectSettingsModal()" data-action="close-subject-settings" class="px-4 py-2 text-sm font-bold text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200">キャンセル</button>
-                    <button onclick="saveSubjectSettings()" data-action="save-subject-settings" class="px-4 py-2 text-sm font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 shadow-sm">保存</button>
+                    <button data-action="close-subject-settings" class="px-4 py-2 text-sm font-bold text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200">キャンセル</button>
+                    <button data-action="save-subject-settings" class="px-4 py-2 text-sm font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 shadow-sm">保存</button>
                 </div>
             </div>
         </div>
@@ -193,11 +193,11 @@
                 <div class="flex-1">
                     <div class="flex items-center gap-2 mb-1">
                         <span class="text-[10px] font-black text-center w-6 py-0.5 rounded-sm bg-slate-200 text-slate-700" id="modal-period"></span>
-                        <button onclick="toggleTempChangeMode()" data-action="toggle-temp-change" class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded hover:bg-slate-200"><i class="fa-solid fa-pen-to-square"></i> 今週だけ変更</button>
+                        <button data-action="toggle-temp-change" class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded hover:bg-slate-200"><i class="fa-solid fa-pen-to-square"></i> 今週だけ変更</button>
                     </div>
                     <h3 class="font-black text-slate-900 text-xl leading-tight mt-1" id="modal-title"></h3>
                 </div>
-                <button onclick="closeModal()" data-action="close-class-detail" class="p-1 -mt-1 -mr-1 text-slate-400 hover:bg-slate-100 rounded-lg"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <button data-action="close-class-detail" class="p-1 -mt-1 -mr-1 text-slate-400 hover:bg-slate-100 rounded-lg"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             
             <div id="temp-change-form" class="hidden px-5 py-3 bg-amber-50 border-b border-amber-100 space-y-2">
@@ -215,8 +215,8 @@
                     <input type="text" id="tc-class" placeholder="クラス" class="w-20 text-xs border border-amber-200 rounded p-1.5 bg-white">
                 </div>
                 <div class="flex gap-2 justify-end pt-1">
-                    <button onclick="resetTempChange()" data-action="reset-temp-change" class="text-[10px] font-bold px-2 py-1 text-slate-600 bg-slate-200 rounded hover:bg-slate-300">基本に戻す</button>
-                    <button onclick="saveTempChange()" data-action="save-temp-change" class="text-[10px] font-bold px-3 py-1 text-white bg-amber-600 rounded shadow-sm hover:bg-amber-700">変更を保存</button>
+                    <button data-action="reset-temp-change" class="text-[10px] font-bold px-2 py-1 text-slate-600 bg-slate-200 rounded hover:bg-slate-300">基本に戻す</button>
+                    <button data-action="save-temp-change" class="text-[10px] font-bold px-3 py-1 text-white bg-amber-600 rounded shadow-sm hover:bg-amber-700">変更を保存</button>
                 </div>
             </div>
 
@@ -225,7 +225,7 @@
                     <label class="text-xs font-bold text-slate-800 mb-1 block">連絡事項</label>
                     <div class="flex gap-1 mb-2">
                         <input type="text" id="new-announcement-input" class="flex-1 border rounded px-2 py-1.5 text-xs focus:ring-1 focus:ring-emerald-500">
-                        <button onclick="addAnnouncement()" data-action="add-announcement" class="bg-emerald-600 text-white px-3 py-1.5 rounded text-xs font-bold"><i class="fa-solid fa-plus"></i></button>
+                        <button data-action="add-announcement" class="bg-emerald-600 text-white px-3 py-1.5 rounded text-xs font-bold"><i class="fa-solid fa-plus"></i></button>
                     </div>
                     <ul id="modal-announcements" class="space-y-1"></ul>
                 </div>
@@ -243,15 +243,15 @@
         <div class="bg-white w-full max-w-4xl rounded-2xl shadow-xl flex flex-col max-h-[90vh]">
             <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center">
                 <h3 class="font-black text-slate-800 text-lg"><i class="fa-solid fa-calendar-days text-slate-500 mr-2"></i>基本時間割の設定</h3>
-                <button onclick="closeBaseSettingsModal()" data-action="close-base-settings" class="text-slate-400 hover:bg-slate-100 p-2 rounded-lg"><i class="fa-solid fa-xmark"></i></button>
+                <button data-action="close-base-settings" class="text-slate-400 hover:bg-slate-100 p-2 rounded-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="p-5 overflow-y-auto flex-1 bg-slate-50">
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-3" id="base-settings-grid">
                 </div>
             </div>
             <div class="px-5 py-3 border-t border-slate-100 bg-white flex justify-end gap-2">
-                <button onclick="closeBaseSettingsModal()" data-action="close-base-settings" class="px-4 py-2 text-sm font-bold text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200">キャンセル</button>
-                <button onclick="saveBaseSettings()" data-action="save-base-settings" class="px-4 py-2 text-sm font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 shadow-sm">設定を保存</button>
+                <button data-action="close-base-settings" class="px-4 py-2 text-sm font-bold text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200">キャンセル</button>
+                <button data-action="save-base-settings" class="px-4 py-2 text-sm font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 shadow-sm">設定を保存</button>
             </div>
         </div>
     </div>
