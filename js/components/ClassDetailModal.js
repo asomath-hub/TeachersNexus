@@ -35,31 +35,31 @@ function setupEventListeners() {
     if (!modal) return;
 
     // HTMLのonclick属性を安全に剥がし、addEventListenerに置き換える
-    const closeBtn = modal.querySelector('button[onclick="closeModal()"]');
+    const closeBtn = modal.querySelector('[data-action="close-class-detail"]')
     if (closeBtn) {
         closeBtn.removeAttribute('onclick');
         closeBtn.addEventListener('click', closeClassDetailModal);
     }
 
-    const toggleBtn = modal.querySelector('button[onclick="toggleTempChangeMode()"]');
+    const toggleBtn = modal.querySelector('[data-action="toggle-temp-change"]')
     if (toggleBtn) {
         toggleBtn.removeAttribute('onclick');
         toggleBtn.addEventListener('click', toggleTempChangeMode);
     }
 
-    const resetBtn = modal.querySelector('button[onclick="resetTempChange()"]');
+    const resetBtn = modal.querySelector('[data-action="reset-temp-change"]')
     if (resetBtn) {
         resetBtn.removeAttribute('onclick');
         resetBtn.addEventListener('click', resetTempChange);
     }
 
-    const saveBtn = modal.querySelector('button[onclick="saveTempChange()"]');
+    const saveBtn = modal.querySelector('[data-action="save-temp-change"]')
     if (saveBtn) {
         saveBtn.removeAttribute('onclick');
         saveBtn.addEventListener('click', saveTempChange);
     }
 
-    const addAnnounceBtn = modal.querySelector('button[onclick="addAnnouncement()"]');
+    const addAnnounceBtn = modal.querySelector('[data-action="add-announcement"]')
     if (addAnnounceBtn) {
         addAnnounceBtn.removeAttribute('onclick');
         addAnnounceBtn.addEventListener('click', addAnnouncement);
