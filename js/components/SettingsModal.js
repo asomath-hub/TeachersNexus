@@ -126,13 +126,11 @@ function setupEventListeners() {
 }
 
 export function openSettingsModal() { 
-    const modal = document.getElementById('settings-modal');
-    if (modal) modal.classList.remove('hidden'); 
+    document.getElementById('settings-modal').classList.remove('hidden'); 
 }
 
 export function closeSettingsModal() { 
-    const modal = document.getElementById('settings-modal');
-    if (modal) modal.classList.add('hidden'); 
+    document.getElementById('settings-modal').classList.add('hidden'); 
 }
 
 function toggleDarkMode() {
