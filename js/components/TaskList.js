@@ -28,7 +28,7 @@ export function initTaskList(onChangeCallback) {
 
 function setupEventListeners() {
     // フォームのonsubmitを安全に剥がし、addEventListenerに置き換える
-    const form = document.getElementById('new-task-form');
+    const form = document.querySelector('[data-action="add-task"]');
     if (form) {
         form.removeAttribute('onsubmit');
         form.addEventListener('submit', handleAddTask);
