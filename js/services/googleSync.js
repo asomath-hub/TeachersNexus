@@ -49,8 +49,30 @@ export async function authenticateGoogle() {
         return;
     }
 
+    // すでに tokenClient が初期化済みの場合（2回目以降のクリック）
+    if (tokenClient) {
+        if (typeof google === 'undefined' || !google.accounts) {
+            console.error('google.accounts is not available');
+            showToast('Google認証ライブラリがロードされていません');
+            return;
+        }
+        try {
+            // クリックイベントと直接同期して呼び出すことでポップアップブロックを回避
+            tokenClient.requestAccessToken({ prompt: 'consent' });
+        } catch (error) {
+            console.error('Google token request failed:', error);
+            showToast('Google認証のリクエストに失敗しました');
+        }
+        return;
+    }
+
+    // 初回クリック時：スクリプトの読み込みと tokenClient の初期化
     try {
         await loadGsiScript();
+        
+        if (typeof google === 'undefined' || !google.accounts) {
+            throw new Error('google.accounts is not available after script load');
+        }
         
         tokenClient = google.accounts.oauth2.initTokenClient({
             client_id: clientId,
@@ -71,17 +93,18 @@ export async function authenticateGoogle() {
 
                     showToast('Google ToDoに接続しました');
                 } else {
-                    console.error('Google authentication failed:', tokenResponse);
+                    console.error('Google authentication failed (token response):', tokenResponse);
                     showToast('Google認証に失敗しました');
                 }
             },
         });
         
-        tokenClient.requestAccessToken();
+        // 初回クリックでは requestAccessToken は呼ばず、ユーザーにもう一度押すよう促す
+        showToast('Google認証の準備ができました。もう一度ボタンを押してください');
 
     } catch (error) {
-        console.error('Google authentication failed:', error);
-        showToast('Google認証に失敗しました');
+        console.error('Google authentication setup failed:', error);
+        showToast('Google認証の準備に失敗しました');
     }
 }
 
