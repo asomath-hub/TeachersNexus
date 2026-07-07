@@ -44,3 +44,55 @@ export function calculateTodayInfo(now = new Date()) {
     
     return { currentDay: targetDayStr, currentWeek: targetWeek };
 }
+
+/**
+ * 指定した週と曜日から、実際の日付(Dateオブジェクト)を逆算する純粋関数
+ */
+export function getDateFromWeekAndDay(week, dayStr, now = new Date()) {
+    const startOfYear = new Date(now.getFullYear(), 3, 1);
+    // その週のベースとなる日付 (4月1日から (week-1)*7 日後)
+    const baseDate = new Date(startOfYear.getFullYear(), startOfYear.getMonth(), startOfYear.getDate() + (week - 1) * 7);
+    
+    // baseDate が属する週の月曜日を求める
+    const baseDayIndex = baseDate.getDay(); // 0: Sun, 1: Mon, ..., 6: Sat
+    const diffToMonday = baseDayIndex === 0 ? -6 : 1 - baseDayIndex;
+    const mondayOfThatWeek = new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate() + diffToMonday);
+    
+    // dayStr に応じて月曜日からのオフセットを加算
+    const daysOffset = { 'Mon': 0, 'Tue': 1, 'Wed': 2, 'Thu': 3, 'Fri': 4, 'Sat': 5, 'Sun': 6 };
+    const offset = daysOffset[dayStr] || 0;
+    
+    return new Date(mondayOfThatWeek.getFullYear(), mondayOfThatWeek.getMonth(), mondayOfThatWeek.getDate() + offset);
+}
+
+/**
+ * Dateオブジェクトを「M/D（曜）」形式にフォーマットする純粋関数
+ */
+export function formatDateWithDay(date) {
+    const days = ['日', '月', '火', '水', '木', '金', '土'];
+    return `${date.getMonth() + 1}/${date.getDate()}（${days[date.getDay()]}）`;
+}
+
+/**
+ * 3日表示用：開始日と終了日の範囲文字列を返す純粋関数
+ */
+export function getThreeDaysRangeString(week, dayStr) {
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+    let idx = days.indexOf(dayStr);
+    if(idx > 2) idx = 2; // 木・金が基準の場合は水木金とする
+    
+    const startDate = getDateFromWeekAndDay(week, days[idx]);
+    const endDate = getDateFromWeekAndDay(week, days[idx + 2]);
+    
+    return `${formatDateWithDay(startDate)}〜${formatDateWithDay(endDate)}`;
+}
+
+/**
+ * 週表示用：月曜日から金曜日の範囲文字列を返す純粋関数
+ */
+export function getWeeklyRangeString(week) {
+    const startDate = getDateFromWeekAndDay(week, 'Mon');
+    const endDate = getDateFromWeekAndDay(week, 'Fri');
+    
+    return `${formatDateWithDay(startDate)}〜${formatDateWithDay(endDate)}`;
+}
