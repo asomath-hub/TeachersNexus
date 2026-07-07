@@ -30,14 +30,14 @@ function setupEventListeners() {
     if (!modal) return;
 
     // 閉じるボタン (複数存在するため querySelectorAll で取得)
-    const closeBtns = modal.querySelectorAll('button[onclick="closeBaseSettingsModal()"]');
+    const closeBtns = modal.querySelectorAll('[data-action="close-base-settings"]');
     closeBtns.forEach(btn => {
         btn.removeAttribute('onclick');
         btn.addEventListener('click', closeBaseSettingsModal);
     });
 
     // 保存ボタン
-    const saveBtn = modal.querySelector('button[onclick="saveBaseSettings()"]');
+    const saveBtn = modal.querySelector('[data-action="save-base-settings"]');
     if (saveBtn) {
         saveBtn.removeAttribute('onclick');
         saveBtn.addEventListener('click', saveBaseSettings);
