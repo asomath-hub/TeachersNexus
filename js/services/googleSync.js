@@ -109,13 +109,43 @@ export async function authenticateGoogle() {
 }
 
 /**
- * タスクの同期処理（仮実装）
+ * タスクの同期処理（APIリスト取得の確認実装）
  */
-export function syncTasks() {
+export async function syncTasks() {
     if (!accessToken) {
         showToast('先にGoogleに接続してください');
         return;
     }
     
-    showToast('Google ToDo同期は次の段階で実装します');
+    try {
+        const response = await fetch('https://tasks.googleapis.com/tasks/v1/users/@me/lists', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+
+        if (!response.ok) {
+            const errorDetail = await response.text();
+            console.error('Google Tasks API Error:', response.status, response.statusText, errorDetail);
+            showToast('Google ToDoリストの取得に失敗しました');
+            return;
+        }
+
+        const data = await response.json();
+
+        if (data && data.items) {
+            console.log('--- 取得したGoogle ToDoリスト ---');
+            data.items.forEach(list => {
+                console.log(`・${list.title} (ID: ${list.id})`);
+            });
+            showToast(`Google ToDoリストを${data.items.length}件取得しました`);
+        } else {
+            console.log('Google ToDoリストが見つかりませんでした');
+            showToast('Google ToDoリストを0件取得しました');
+        }
+
+    } catch (error) {
+        console.error('Failed to fetch Google Tasks lists:', error);
+        showToast('Google ToDoリストの取得中にエラーが発生しました');
+    }
 }
