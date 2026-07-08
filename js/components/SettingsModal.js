@@ -44,6 +44,14 @@ function setupEventListeners() {
         openBtn.addEventListener('click', openSettingsModal);
     }
 
+    // トップ画面の同期ボタン
+    const topSyncBtn = document.querySelector('[data-action="sync-tasks-top"]');
+    if (topSyncBtn) {
+        topSyncBtn.addEventListener('click', () => {
+            if (onSyncTasks) onSyncTasks();
+        });
+    }
+
     const modal = document.getElementById('settings-modal');
     if (!modal) return;
 
@@ -115,7 +123,7 @@ function setupEventListeners() {
         });
     }
 
-    // 同期ボタン
+    // 同期ボタン (モーダル内)
     const syncBtn = modal.querySelector('[data-action="sync-tasks"]');
     if (syncBtn) {
         syncBtn.removeAttribute('onclick');
@@ -126,11 +134,13 @@ function setupEventListeners() {
 }
 
 export function openSettingsModal() { 
-    document.getElementById('settings-modal').classList.remove('hidden'); 
+    const modal = document.getElementById('settings-modal');
+    if (modal) modal.classList.remove('hidden'); 
 }
 
 export function closeSettingsModal() { 
-    document.getElementById('settings-modal').classList.add('hidden'); 
+    const modal = document.getElementById('settings-modal');
+    if (modal) modal.classList.add('hidden'); 
 }
 
 function toggleDarkMode() {
