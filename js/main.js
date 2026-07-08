@@ -7,7 +7,7 @@ import { initHeader, updateHeaderUI, handleJumpToToday } from './components/Head
 import { initTaskList, updateTaskListUI, assignTaskToPeriod, returnTaskToUnplanned, startMoveTask, toggleTask } from './components/TaskList.js';
 import { initTimetable, updateTimetableUI } from './components/Timetable.js';
 import { initClassDetailModal, openClassDetailModal } from './components/ClassDetailModal.js';
-import { initSettingsModal } from './components/SettingsModal.js';
+import { initSettingsModal, closeSettingsModal } from './components/SettingsModal.js';
 import { initSubjectSettingsModal, openSubjectSettingsModal } from './components/SubjectSettingsModal.js';
 import { initBaseSettingsModal, openBaseSettingsModal } from './components/BaseSettingsModal.js';
 
@@ -62,6 +62,34 @@ async function handleSyncTasks() {
     }
 }
 
+/**
+ * 設定ファイルのインポート処理とそれに伴う画面の再読み込みを管理するラッパー関数
+ */
+async function handleImportSettings(event) {
+    const file = event?.target?.files?.[0];
+
+    if (!file) {
+        showToast('読み込むファイルが選択されていません');
+        return;
+    }
+
+    try {
+        await importSettingsFile(file);
+
+        loadAllData();
+        handleStateChange();
+
+        closeSettingsModal();
+
+        event.target.value = '';
+
+        showToast('設定を読み込みました');
+    } catch (error) {
+        console.error('Failed to import settings:', error);
+        showToast('設定の読み込みに失敗しました');
+    }
+}
+
 function initApp() {
     loadAllData();
 
@@ -83,7 +111,7 @@ function initApp() {
     initSettingsModal({
         onExportCSV: exportCSV,
         onExportSettingsFile: exportSettingsFile,
-        onImportSettingsFile: importSettingsFile,
+        onImportSettingsFile: handleImportSettings,
         onAuthenticateGoogle: authenticateGoogle,
         onSyncTasks: handleSyncTasks,
         onOpenSubjectSettingsModal: openSubjectSettingsModal,
