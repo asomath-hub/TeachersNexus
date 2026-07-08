@@ -11,6 +11,31 @@ let tokenClient = null;
 let isGsiLoaded = false;
 
 /**
+ * 初期化：保存されたClient IDの復元とUIの更新を行う
+ */
+export function initGoogleSyncUI() {
+    const savedClientId = localStorage.getItem('tn_google_client_id');
+    const input = document.getElementById('client-id-input');
+    if (input && savedClientId) {
+        input.value = savedClientId;
+    }
+
+    const status = document.getElementById('sync-status-display');
+    if (status && savedClientId && !accessToken) {
+        status.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i> 未接続（Client ID保存済み）';
+    }
+}
+
+// 自己初期化 (DOMの読み込み完了時に実行)
+if (typeof document !== 'undefined') {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initGoogleSyncUI);
+    } else {
+        initGoogleSyncUI();
+    }
+}
+
+/**
  * Google Identity Services のスクリプトを動的に読み込む
  */
 function loadGsiScript() {
@@ -49,6 +74,9 @@ export async function authenticateGoogle() {
         showToast('Google Client IDを入力してください');
         return;
     }
+
+    // Client ID を localStorage に保存
+    localStorage.setItem('tn_google_client_id', clientId);
 
     // すでに tokenClient が初期化済みの場合（2回目以降のクリック）
     if (tokenClient) {
@@ -114,7 +142,12 @@ export async function authenticateGoogle() {
  */
 export async function syncTasks() {
     if (!accessToken) {
-        showToast('先にGoogleに接続してください');
+        const savedClientId = localStorage.getItem('tn_google_client_id');
+        if (savedClientId) {
+            showToast('Googleに再接続してください');
+        } else {
+            showToast('設定からGoogle Client IDを入力して接続してください');
+        }
         return { ok: false, error: 'Not authenticated' };
     }
     
@@ -203,6 +236,12 @@ export async function syncTasks() {
 export async function completeGoogleTask(googleListId, googleTaskId) {
     if (!accessToken) {
         console.error('completeGoogleTask: No access token');
+        const savedClientId = localStorage.getItem('tn_google_client_id');
+        if (savedClientId) {
+            showToast('Googleに再接続してください');
+        } else {
+            showToast('設定からGoogle Client IDを入力して接続してください');
+        }
         return { ok: false, error: 'Not authenticated' };
     }
     if (!googleListId || !googleTaskId) {
