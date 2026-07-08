@@ -1,6 +1,7 @@
 /**
  * js/services/googleSync.js
- * Google ToDo連携（認証およびタスク同期）を管理するサービス。
+ * Google ToDo連携（認証およびタスク取得）を管理するサービス。
+ * アプリのStateの直接更新は行わず、取得結果の整形までを担当する。
  */
 
 import { showToast } from '../components/Toast.js';
@@ -109,12 +110,12 @@ export async function authenticateGoogle() {
 }
 
 /**
- * タスクの同期処理（APIから各リストのタスク一覧を取得してコンソールに表示）
+ * タスクの同期処理（APIからタスクを取得し、ローカル用の形式に変換して返す）
  */
 export async function syncTasks() {
     if (!accessToken) {
         showToast('先にGoogleに接続してください');
-        return;
+        return { ok: false, error: 'Not authenticated' };
     }
     
     try {
@@ -129,23 +130,23 @@ export async function syncTasks() {
             const errorDetail = await response.text();
             console.error('Google Tasks API Error (Lists):', response.status, response.statusText, errorDetail);
             showToast('Google ToDoリストの取得に失敗しました');
-            return;
+            return { ok: false, error: 'Failed to fetch lists' };
         }
 
         const data = await response.json();
 
         if (!data || !data.items || data.items.length === 0) {
-            console.log('Google ToDoリストがありません');
             showToast('Google ToDoリストがありません');
-            return;
+            return { ok: true, tasks: [], lists: [], fetchedCount: 0 };
         }
 
-        console.log('--- Google ToDo取得結果 ---');
+        let formattedTasks = [];
+        let fetchedLists = [];
         let totalTaskCount = 0;
 
         // 2. 各リストのタスク一覧を取得
         for (const list of data.items) {
-            console.log(`【${list.title}】`);
+            fetchedLists.push(list.title);
             try {
                 const tasksUrl = `https://tasks.googleapis.com/tasks/v1/lists/${encodeURIComponent(list.id)}/tasks?showCompleted=false&showHidden=false`;
                 const tasksResponse = await fetch(tasksUrl, {
@@ -164,22 +165,34 @@ export async function syncTasks() {
 
                 if (tasksData && tasksData.items && tasksData.items.length > 0) {
                     tasksData.items.forEach(task => {
-                        console.log(`・${task.title}`);
+                        formattedTasks.push({
+                            id: 'g_' + list.id + '_' + task.id,
+                            title: task.title,
+                            list: list.title,
+                            completed: false,
+                            assignedPeriodId: null,
+                            googleTaskId: task.id,
+                            googleListId: list.id,
+                            source: 'google'
+                        });
                         totalTaskCount++;
                     });
-                } else {
-                    console.log('・(未完了のタスクなし)');
                 }
             } catch (taskError) {
                 console.error(`Failed to fetch tasks for list ${list.title}:`, taskError);
             }
-            console.log(''); // リストごとの区切り用の空行
         }
 
-        showToast(`Google ToDoタスクを${totalTaskCount}件取得しました`);
+        return {
+            ok: true,
+            tasks: formattedTasks,
+            lists: fetchedLists,
+            fetchedCount: totalTaskCount
+        };
 
     } catch (error) {
         console.error('Failed to fetch Google Tasks:', error);
-        showToast('Google ToDoリストの取得中にエラーが発生しました');
+        showToast('Google ToDoタスクの取得中にエラーが発生しました');
+        return { ok: false, error: error.message };
     }
 }
