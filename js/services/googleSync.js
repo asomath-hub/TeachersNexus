@@ -196,3 +196,44 @@ export async function syncTasks() {
         return { ok: false, error: error.message };
     }
 }
+
+/**
+ * Google由来のタスクを完了状態にする処理
+ */
+export async function completeGoogleTask(googleListId, googleTaskId) {
+    if (!accessToken) {
+        console.error('completeGoogleTask: No access token');
+        return { ok: false, error: 'Not authenticated' };
+    }
+    if (!googleListId || !googleTaskId) {
+        console.error('completeGoogleTask: Missing googleListId or googleTaskId');
+        return { ok: false, error: 'Missing parameters' };
+    }
+
+    try {
+        const url = `https://tasks.googleapis.com/tasks/v1/lists/${encodeURIComponent(googleListId)}/tasks/${encodeURIComponent(googleTaskId)}`;
+        const response = await fetch(url, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                status: 'completed',
+                completed: new Date().toISOString()
+            })
+        });
+
+        if (!response.ok) {
+            const errorDetail = await response.text();
+            console.error('Google Tasks complete API Error:', response.status, response.statusText, errorDetail);
+            return { ok: false, error: 'Failed to complete Google task' };
+        }
+
+        return { ok: true };
+
+    } catch (error) {
+        console.error('Failed to complete Google Task request:', error);
+        return { ok: false, error: error.message };
+    }
+}

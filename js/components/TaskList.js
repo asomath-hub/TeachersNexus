@@ -1,234 +1,229 @@
 /**
  * js/components/TaskList.js
- * 未計画タスク一覧、リストのタブ切り替え、タスク追加・完了・移動等の操作を担当するコンポーネント。
+ * タスクリスト（未計画タスク）のUIとイベントを管理するコンポーネント。
  */
 
-import { state, setSelectedFilter, setActiveMovingTaskId, setTasks } from '../state/appState.js';
+import { state, setTasks, setActiveMovingTaskId, setSelectedFilter } from '../state/appState.js';
 import { saveAllData } from '../services/storage.js';
 import { showToast } from './Toast.js';
 import { escapeHTML } from '../utils/escape.js';
+import { completeGoogleTask } from '../services/googleSync.js';
 
-let onStateChangeCallback = null;
+let onChangeCallback = null;
 let initialized = false;
 
 /**
  * TaskListコンポーネントの初期化
- * @param {Function} onChangeCallback - State変更時に外部（Timetable等）の再描画を促すコールバック
+ * @param {Function} callback - 状態変更時の再描画コールバック
  */
-export function initTaskList(onChangeCallback) {
-    onStateChangeCallback = onChangeCallback;
+export function initTaskList(callback) {
+    onChangeCallback = callback || null;
 
     if (!initialized) {
         setupEventListeners();
         initialized = true;
     }
-
-    updateTaskListUI();
 }
 
 function setupEventListeners() {
-    // フォームのonsubmitを安全に剥がし、addEventListenerに置き換える
+    // フォームの取得
     const form = document.querySelector('[data-action="add-task"]');
     if (form) {
-        form.removeAttribute('onsubmit');
+        form.removeAttribute('onsubmit'); // 移行途中の安全措置
         form.addEventListener('submit', handleAddTask);
+    }
+
+    // タブ切り替え（フィルタ）のイベントリスナー設定
+    const tabsContainer = document.getElementById('list-tabs-container');
+    if (tabsContainer) {
+        tabsContainer.addEventListener('click', (e) => {
+            const btn = e.target.closest('button');
+            if (!btn) return;
+            const filter = btn.getAttribute('data-filter');
+            if (filter) {
+                setSelectedFilter(filter);
+                updateTaskListUI();
+                if (onChangeCallback) onChangeCallback();
+            }
+        });
     }
 }
 
-/**
- * 自身のUI（リストタブと未計画タスク一覧）を再描画する
- */
 export function updateTaskListUI() {
     renderLists();
     renderUnplannedTasks();
 }
 
 function renderLists() {
-    const lc = document.getElementById('list-tabs-container');
-    if (!lc) return;
-    lc.innerHTML = '';
+    const container = document.getElementById('list-tabs-container');
+    if (!container) return;
     
-    // 「すべて」ボタンの生成
-    const btnAll = document.createElement('button');
-    btnAll.className = "px-3 py-1 rounded-full text-[10px] font-bold shrink-0 " + (state.selectedFilter === 'all' ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-600');
-    btnAll.innerText = "すべて";
-    btnAll.addEventListener('click', () => filterTasks('all'));
-    lc.appendChild(btnAll);
+    container.innerHTML = '';
+    
+    // "すべて" タブ
+    const allBtn = document.createElement('button');
+    allBtn.className = `px-3 py-1 text-sm rounded-full whitespace-nowrap ${state.selectedFilter === 'all' ? 'bg-slate-700 text-white' : 'bg-slate-200 text-slate-700 hover:bg-slate-300'}`;
+    allBtn.textContent = 'すべて';
+    allBtn.setAttribute('data-filter', 'all');
+    container.appendChild(allBtn);
 
-    // 各リストのボタンの生成
-    state.lists.forEach(l => {
+    // 各リストタブ
+    state.lists.forEach(listName => {
         const btn = document.createElement('button');
-        btn.className = "px-3 py-1 rounded-full text-[10px] font-bold shrink-0 " + (state.selectedFilter === l ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-600');
-        btn.innerText = l;
-        btn.addEventListener('click', () => filterTasks(l));
-        lc.appendChild(btn);
+        btn.className = `px-3 py-1 text-sm rounded-full whitespace-nowrap ${state.selectedFilter === listName ? 'bg-slate-700 text-white' : 'bg-slate-200 text-slate-700 hover:bg-slate-300'}`;
+        btn.textContent = escapeHTML(listName);
+        btn.setAttribute('data-filter', listName);
+        container.appendChild(btn);
     });
-}
-
-function filterTasks(cat) { 
-    setSelectedFilter(cat); 
-    updateTaskListUI(); 
 }
 
 function renderUnplannedTasks() {
-    const lc = document.getElementById('unplanned-task-list');
+    const container = document.getElementById('unplanned-task-list');
     const countEl = document.getElementById('unplanned-count');
-    if (!lc || !countEl) return;
-    
-    lc.innerHTML = '';
-    
-    // 件数の更新
-    const unplannedCount = state.tasks.filter(t => !t.assignedPeriodId && !t.completed).length;
-    countEl.innerText = unplannedCount + '件';
+    const msgEl = document.getElementById('moving-task-message');
 
-    const movingMsg = document.getElementById('moving-task-message');
-    if (movingMsg) {
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    const targetTasks = state.tasks.filter(t => !t.assignedPeriodId && !t.completed);
+    const filteredTasks = state.selectedFilter === 'all' ? targetTasks : targetTasks.filter(t => t.list === state.selectedFilter);
+    
+    // 件数バッジの更新
+    if (countEl) {
+        countEl.textContent = `${filteredTasks.length}件`;
+    }
+
+    // 移動中メッセージの更新
+    if (msgEl) {
         if (state.activeMovingTaskId) {
-            movingMsg.innerHTML = '';
-            const msgDiv = document.createElement('div');
-            msgDiv.className = "bg-blue-600 text-white p-2.5 rounded-xl text-xs font-bold shadow-md flex justify-between items-center animate-pulse cursor-pointer";
-            msgDiv.addEventListener('click', cancelMoveTask);
-            
-            const span = document.createElement('span');
-            span.className = "truncate pr-2";
-            span.innerText = "配置先コマをタップ...";
-            
-            const btn = document.createElement('button');
-            btn.className = "bg-blue-800 px-3 py-1 rounded-lg shrink-0 text-[10px]";
-            btn.innerText = "キャンセル";
-            
-            msgDiv.appendChild(span);
-            msgDiv.appendChild(btn);
-            movingMsg.appendChild(msgDiv);
+            msgEl.innerHTML = '<div class="text-xs text-blue-700 bg-blue-50 border border-blue-200 p-2 rounded mb-2"><i class="fa-solid fa-people-carry mr-1"></i>配置するコマをクリックしてください</div>';
         } else {
-            movingMsg.innerHTML = '';
+            msgEl.innerHTML = '';
         }
     }
 
-    const ft = state.tasks.filter(t => (!t.assignedPeriodId && !t.completed && (state.selectedFilter === 'all' || t.list === state.selectedFilter)));
+    if (filteredTasks.length === 0) {
+        container.innerHTML = '<div class="text-slate-500 text-sm p-4 text-center">未計画のタスクはありません</div>';
+        return;
+    }
     
-    ft.forEach(t => {
-        const isMoving = t.id === state.activeMovingTaskId;
-        const d = document.createElement('div');
-        d.className = isMoving 
-            ? "bg-blue-50 border-2 border-blue-400 p-2.5 rounded-lg shadow-sm text-xs flex gap-2 items-start" 
-            : "bg-white border border-slate-200 p-2.5 rounded-lg shadow-sm text-xs flex gap-2 items-start hover:border-blue-300 transition-colors cursor-pointer";
+    filteredTasks.forEach(task => {
+        const div = document.createElement('div');
+        const isMoving = state.activeMovingTaskId === task.id;
         
-        // 領域クリックでキャンセルする処理
-        d.addEventListener('click', (e) => {
-            if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON' && !e.target.closest('button')) {
-                if (state.activeMovingTaskId) cancelMoveTask();
-            }
-        });
-
-        // チェックボックス
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.className = 'mt-0.5';
-        checkbox.addEventListener('change', () => toggleTask(t.id));
-
-        // タイトル
-        const titleDiv = document.createElement('div');
-        titleDiv.className = 'font-bold flex-1 text-slate-700 leading-tight pt-0.5';
-        titleDiv.innerHTML = escapeHTML(t.title);
-
-        // 配置・移動ボタン
-        const btn = document.createElement('button');
-        btn.className = 'text-blue-500 hover:bg-blue-100 p-1.5 rounded-lg transition-colors shrink-0';
-        btn.title = '配置・移動';
-        btn.innerHTML = '<i class="fa-solid fa-arrow-right-to-bracket text-sm"></i>';
-        btn.addEventListener('click', () => startMoveTask(t.id));
-
-        d.appendChild(checkbox);
-        d.appendChild(titleDiv);
-        d.appendChild(btn);
+        div.className = `flex items-center gap-2 p-3 border-b border-slate-100 transition-colors ${isMoving ? 'bg-blue-50 border-blue-200' : 'hover:bg-slate-50'}`;
         
-        lc.appendChild(d);
+        div.innerHTML = `
+            <input type="checkbox" class="w-5 h-5 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
+            <div class="flex-1 min-w-0">
+                <div class="font-medium text-slate-800 truncate">${escapeHTML(task.title)}</div>
+                <div class="text-xs text-slate-500">${escapeHTML(task.list)}</div>
+            </div>
+            <button class="text-slate-400 hover:text-indigo-600 p-2 rounded-full hover:bg-indigo-50 transition-colors btn-move" title="時間割に配置">
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        `;
+        
+        const chk = div.querySelector('input[type="checkbox"]');
+        chk.addEventListener('change', () => toggleTask(task.id));
+        
+        const moveBtn = div.querySelector('.btn-move');
+        moveBtn.addEventListener('click', () => startMoveTask(task.id));
+        
+        container.appendChild(div);
     });
 }
 
-export function startMoveTask(id) { 
-    setActiveMovingTaskId(id); 
-    updateTaskListUI();
-    if (onStateChangeCallback) onStateChangeCallback();
-    showToast('配置したいコマをタップしてください'); 
-}
-
-export function cancelMoveTask() { 
-    setActiveMovingTaskId(null); 
-    updateTaskListUI();
-    if (onStateChangeCallback) onStateChangeCallback();
-}
-
-/**
- * タスクを時間割に配置する (Timetableから呼ばれる想定)
- */
-export function assignTaskToPeriod(periodKey) {
-    const targetExists = state.tasks.some(x => x.id === state.activeMovingTaskId);
-    if (targetExists) {
-        // immutable state update
-        setTasks(state.tasks.map(task => 
-            task.id === state.activeMovingTaskId ? { ...task, assignedPeriodId: periodKey } : task
-        ));
-        
-        setActiveMovingTaskId(null);
-        saveAllData(); 
-        updateTaskListUI();
-        if (onStateChangeCallback) onStateChangeCallback();
-        showToast('タスクを配置しました');
-    }
-}
-
-/**
- * タスクを未計画に戻す (Modalや他のコンポーネントからも呼ばれる想定)
- */
-export function returnTaskToUnplanned(id) {
-    const targetExists = state.tasks.some(x => x.id === id);
-    if (targetExists) { 
-        // immutable state update
-        setTasks(state.tasks.map(task => 
-            task.id === id ? { ...task, assignedPeriodId: null } : task
-        ));
-
-        if (state.activeMovingTaskId === id) setActiveMovingTaskId(null);
-        
-        saveAllData(); 
-        updateTaskListUI();
-        if (onStateChangeCallback) onStateChangeCallback(); 
-        showToast('未計画に戻しました'); 
-    }
-}
-
-export function handleAddTask(e) {
-    e.preventDefault();
+function handleAddTask(event) {
+    event.preventDefault();
     const input = document.getElementById('new-task-title');
+    
     if (!input) return;
     
-    const val = input.value.trim();
-    const list = state.selectedFilter === 'all' ? (state.lists[0] || 'その他') : state.selectedFilter;
-    if (val) { 
-        const newTask = { id: 't_' + Date.now(), title: val, list: list, completed: false, assignedPeriodId: null };
-        // immutable state update
-        setTasks([newTask, ...state.tasks]); 
+    const title = input.value.trim();
+    if (!title) return;
+    
+    // 現在選択中のタブ(フィルタ)をデフォルトのリスト名として使用
+    const list = state.selectedFilter !== 'all' ? state.selectedFilter : (state.lists[0] || 'その他');
+    
+    const newTask = {
+        id: 't' + Date.now(),
+        title: title,
+        list: list,
+        completed: false,
+        assignedPeriodId: null
+    };
+    
+    setTasks([newTask, ...state.tasks]);
+    saveAllData();
+    
+    input.value = '';
+    
+    if (onChangeCallback) onChangeCallback();
+    showToast('タスクを追加しました');
+}
 
-        saveAllData(); 
-        updateTaskListUI();
-        if (onStateChangeCallback) onStateChangeCallback();
-        input.value = ''; 
+export async function toggleTask(id) {
+    const targetTask = state.tasks.find(task => task.id === id);
+
+    // ローカルの完了処理を先に行う
+    setTasks(
+        state.tasks.map(task => 
+            task.id === id 
+                ? { ...task, completed: true } 
+                : task
+        )
+    );
+    saveAllData();
+    
+    if (onChangeCallback) onChangeCallback();
+
+    // Google由来のタスクの場合、Google側にも完了を反映する
+    if (targetTask && targetTask.source === 'google' && targetTask.googleTaskId && targetTask.googleListId) {
+        const result = await completeGoogleTask(targetTask.googleListId, targetTask.googleTaskId);
+        if (!result.ok) {
+            showToast('ローカルでは完了しましたが、Google ToDoへの反映に失敗しました');
+        }
     }
 }
 
-export function toggleTask(id) {
-    const targetExists = state.tasks.some(x => x.id === id);
-    if (targetExists) { 
-        // immutable state update
-        setTasks(state.tasks.map(task => 
-            task.id === id ? { ...task, completed: true } : task
-        ));
-        
-        saveAllData(); 
-        updateTaskListUI();
-        if (onStateChangeCallback) onStateChangeCallback();
-        showToast('タスク完了！'); 
+export function startMoveTask(id) {
+    if (state.activeMovingTaskId === id) {
+        setActiveMovingTaskId(null);
+    } else {
+        setActiveMovingTaskId(id);
+        showToast('配置するコマをクリックしてください');
     }
+    if (onChangeCallback) onChangeCallback();
+}
+
+export function assignTaskToPeriod(periodId) {
+    if (!state.activeMovingTaskId) return;
+    
+    setTasks(
+        state.tasks.map(task => 
+            task.id === state.activeMovingTaskId 
+                ? { ...task, assignedPeriodId: periodId } 
+                : task
+        )
+    );
+    setActiveMovingTaskId(null);
+    saveAllData();
+    
+    if (onChangeCallback) onChangeCallback();
+    showToast('タスクを配置しました');
+}
+
+export function returnTaskToUnplanned(id) {
+    setTasks(
+        state.tasks.map(task => 
+            task.id === id 
+                ? { ...task, assignedPeriodId: null } 
+                : task
+        )
+    );
+    saveAllData();
+    
+    if (onChangeCallback) onChangeCallback();
 }
