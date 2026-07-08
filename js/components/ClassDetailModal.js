@@ -1,12 +1,14 @@
 /**
  * js/components/ClassDetailModal.js
- * 授業詳細モーダル（一時変更、連絡事項、配置済みタスク表示）のUIとイベントを管理するコンポーネント。
+ * 授業詳細モーダルのUIとイベントを管理するコンポーネント。
  */
 
 import { state, setActiveModalPeriodId, setActiveModalDayStr, setTemporaryChanges, setAnnouncements } from '../state/appState.js';
 import { saveAllData } from '../services/storage.js';
 import { showToast } from './Toast.js';
 import { escapeHTML } from '../utils/escape.js';
+import { getSubjectColors } from '../utils/colors.js';
+import { dayNames } from '../utils/date.js';
 
 let onReturnTaskToUnplanned = null;
 let onStartMoveTask = null;
@@ -34,230 +36,359 @@ function setupEventListeners() {
     const modal = document.getElementById('class-detail-modal');
     if (!modal) return;
 
-    // HTMLのonclick属性を安全に剥がし、addEventListenerに置き換える
-    const closeBtn = modal.querySelector('[data-action="close-class-detail"]')
-    if (closeBtn) {
-        closeBtn.removeAttribute('onclick');
-        closeBtn.addEventListener('click', closeClassDetailModal);
+    // 閉じるボタン
+    const closeBtns = modal.querySelectorAll('[data-action="close-class-detail"]');
+    closeBtns.forEach(btn => {
+        btn.removeAttribute('onclick');
+        btn.addEventListener('click', closeClassDetailModal);
+    });
+
+    // 今週だけ変更切替ボタン
+    const toggleTempBtn = modal.querySelector('[data-action="toggle-temp-change"]');
+    if (toggleTempBtn) {
+        toggleTempBtn.removeAttribute('onclick');
+        toggleTempBtn.addEventListener('click', toggleTempChangeMode);
     }
 
-    const toggleBtn = modal.querySelector('[data-action="toggle-temp-change"]')
-    if (toggleBtn) {
-        toggleBtn.removeAttribute('onclick');
-        toggleBtn.addEventListener('click', toggleTempChangeMode);
+    // 基本に戻すボタン
+    const resetTempBtn = modal.querySelector('[data-action="reset-temp-change"]');
+    if (resetTempBtn) {
+        resetTempBtn.removeAttribute('onclick');
+        resetTempBtn.addEventListener('click', resetTempChange);
     }
 
-    const resetBtn = modal.querySelector('[data-action="reset-temp-change"]')
-    if (resetBtn) {
-        resetBtn.removeAttribute('onclick');
-        resetBtn.addEventListener('click', resetTempChange);
+    // 変更を保存ボタン
+    const saveTempBtn = modal.querySelector('[data-action="save-temp-change"]');
+    if (saveTempBtn) {
+        saveTempBtn.removeAttribute('onclick');
+        saveTempBtn.addEventListener('click', saveTempChange);
     }
 
-    const saveBtn = modal.querySelector('[data-action="save-temp-change"]')
-    if (saveBtn) {
-        saveBtn.removeAttribute('onclick');
-        saveBtn.addEventListener('click', saveTempChange);
+    // 連絡事項追加ボタン
+    const addAnnouncementBtn = modal.querySelector('[data-action="add-announcement"]');
+    if (addAnnouncementBtn) {
+        addAnnouncementBtn.removeAttribute('onclick');
+        addAnnouncementBtn.addEventListener('click', addAnnouncement);
     }
 
-    const addAnnounceBtn = modal.querySelector('[data-action="add-announcement"]')
-    if (addAnnounceBtn) {
-        addAnnounceBtn.removeAttribute('onclick');
-        addAnnounceBtn.addEventListener('click', addAnnouncement);
+    // 今週だけ変更の種別(tc-type)変更イベント
+    const typeSelect = modal.querySelector('#tc-type');
+    if (typeSelect) {
+        typeSelect.addEventListener('change', handleTempTypeChange);
     }
 }
 
-/**
- * 授業詳細モーダルを開く
- * @param {string} id - 時限のID (例: 'p1')
- * @param {string} dayStr - 曜日文字列 (例: 'Mon')
- */
-export function openClassDetailModal(id, dayStr) {
-    setActiveModalPeriodId(id);
+function handleTempTypeChange(e) {
+    if (e.target.value === 'empty') {
+        const subjectSelect = document.getElementById('tc-subject');
+        const classInput = document.getElementById('tc-class');
+        
+        if (subjectSelect) {
+            if (subjectSelect.tagName.toLowerCase() === 'select') {
+                let hasEmptyOption = false;
+                for (let i = 0; i < subjectSelect.options.length; i++) {
+                    if (subjectSelect.options[i].value === '空きコマ') {
+                        hasEmptyOption = true;
+                        break;
+                    }
+                }
+                if (!hasEmptyOption) {
+                    const option = document.createElement('option');
+                    option.value = '空きコマ';
+                    option.text = '空きコマ';
+                    subjectSelect.appendChild(option);
+                }
+            }
+            subjectSelect.value = '空きコマ';
+        }
+        
+        if (classInput) {
+            classInput.value = '';
+        }
+    }
+}
+
+export function openClassDetailModal(periodId, dayStr) {
+    setActiveModalPeriodId(periodId);
     setActiveModalDayStr(dayStr);
     
-    document.getElementById('class-detail-modal').classList.remove('hidden');
-    document.getElementById('temp-change-form').classList.add('hidden');
-    
-    const key = 'w' + state.currentWeek + '-' + dayStr + '-' + id;
-    const p = state.timetableData[dayStr].find(x => x.id === id);
-    if (!p) return;
+    renderModalContent();
 
-    // 一時変更がある場合はマージ
-    const d = state.temporaryChanges[key] ? { ...p, ...state.temporaryChanges[key] } : p;
+    const modal = document.getElementById('class-detail-modal');
+    if (modal) modal.classList.remove('hidden');
+}
+
+export function closeClassDetailModal() {
+    setActiveModalPeriodId(null);
+    setActiveModalDayStr(null);
+    const modal = document.getElementById('class-detail-modal');
+    if (modal) modal.classList.add('hidden');
+}
+
+function renderModalContent() {
+    const periodId = state.activeModalPeriodId;
+    const dayStr = state.activeModalDayStr;
+    if (!periodId || !dayStr) return;
+
+    const basePeriod = (state.timetableData[dayStr] || []).find(p => p.id === periodId);
+    if (!basePeriod) return;
+
+    const tempKey = 'w' + state.currentWeek + '-' + dayStr + '-' + periodId;
+    const temp = state.temporaryChanges[tempKey];
     
-    document.getElementById('modal-period').innerText = d.num;
-    document.getElementById('modal-title').innerText = d.subject + (d.class ? ' (' + d.class + ')' : '');
-    document.getElementById('tc-type').value = d.type;
+    const displaySubject = temp ? temp.subject : basePeriod.subject;
+    const displayClass = temp ? temp.class : basePeriod.class;
+    const displayType = temp ? temp.type : basePeriod.type;
     
-    const subjectSelect = document.getElementById('tc-subject');
-    let opts = '<option value="">(未設定)</option>';
-    state.subjectsList.forEach(s => {
-        opts += `<option value="${escapeHTML(s.name)}" ${s.name === d.subject ? 'selected' : ''}>${escapeHTML(s.name)}</option>`;
-    });
-    if (d.subject && !state.subjectsList.find(s => s.name === d.subject)) {
-        opts += `<option value="${escapeHTML(d.subject)}" selected>${escapeHTML(d.subject)}</option>`;
+    const periodEl = document.getElementById('modal-period');
+    if (periodEl) {
+        periodEl.textContent = `${dayNames[dayStr].replace('曜日', '')}${basePeriod.num}`;
     }
-    subjectSelect.innerHTML = opts;
 
-    document.getElementById('tc-class').value = d.class || '';
+    const titleEl = document.getElementById('modal-title');
+    if (titleEl) {
+        titleEl.textContent = displaySubject + (displayClass ? ` ${displayClass}` : '');
+    }
+
+    const typeSelect = document.getElementById('tc-type');
+    if (typeSelect) {
+        typeSelect.value = displayType;
+    }
+
+    const inputSubject = document.getElementById('tc-subject');
+    if (inputSubject) {
+        if (inputSubject.tagName.toLowerCase() === 'select') {
+            inputSubject.innerHTML = '';
+            state.subjectsList.forEach(sub => {
+                const opt = document.createElement('option');
+                opt.value = sub.name;
+                opt.textContent = sub.name;
+                inputSubject.appendChild(opt);
+            });
+            
+            let hasOption = false;
+            for (let i = 0; i < inputSubject.options.length; i++) {
+                if (inputSubject.options[i].value === displaySubject) {
+                    hasOption = true;
+                    break;
+                }
+            }
+            if (!hasOption && displaySubject) {
+                const opt = document.createElement('option');
+                opt.value = displaySubject;
+                opt.textContent = displaySubject;
+                inputSubject.appendChild(opt);
+            }
+        }
+        inputSubject.value = displaySubject;
+    }
+
+    const inputClass = document.getElementById('tc-class');
+    if (inputClass) inputClass.value = displayClass || '';
+
+    const editForm = document.getElementById('temp-change-form');
+    if (editForm) editForm.classList.add('hidden');
 
     renderAnnouncements();
     renderModalTasks();
 }
 
-function closeClassDetailModal() { 
-    document.getElementById('class-detail-modal').classList.add('hidden'); 
-    setActiveModalPeriodId(null); 
-    setActiveModalDayStr(null);
-}
-
-function toggleTempChangeMode() { 
-    document.getElementById('temp-change-form').classList.toggle('hidden'); 
-}
-
-function saveTempChange() {
-    const key = 'w' + state.currentWeek + '-' + state.activeModalDayStr + '-' + state.activeModalPeriodId;
-    
-    // ImmutableにStateを更新
-    const newChanges = { ...state.temporaryChanges };
-    newChanges[key] = {
-        type: document.getElementById('tc-type').value,
-        subject: document.getElementById('tc-subject').value,
-        class: document.getElementById('tc-class').value
-    };
-    
-    setTemporaryChanges(newChanges);
-    saveAllData(); 
-    toggleTempChangeMode(); 
-    openClassDetailModal(state.activeModalPeriodId, state.activeModalDayStr); 
-    if (onStateChange) onStateChange();
-    showToast('今週の変更を保存しました');
+function toggleTempChangeMode() {
+    const form = document.getElementById('temp-change-form');
+    if (form) {
+        form.classList.toggle('hidden');
+    }
 }
 
 function resetTempChange() {
-    const key = 'w' + state.currentWeek + '-' + state.activeModalDayStr + '-' + state.activeModalPeriodId;
+    const periodId = state.activeModalPeriodId;
+    const dayStr = state.activeModalDayStr;
+    if (!periodId || !dayStr) return;
+
+    const tempKey = 'w' + state.currentWeek + '-' + dayStr + '-' + periodId;
     
-    // ImmutableにStateを更新
+    if (state.temporaryChanges[tempKey]) {
+        const newChanges = { ...state.temporaryChanges };
+        delete newChanges[tempKey];
+        setTemporaryChanges(newChanges);
+        saveAllData();
+        
+        if (onStateChange) onStateChange();
+        showToast('基本の時間割に戻しました');
+        
+        renderModalContent();
+    }
+}
+
+function saveTempChange() {
+    const periodId = state.activeModalPeriodId;
+    const dayStr = state.activeModalDayStr;
+    if (!periodId || !dayStr) return;
+
+    const typeSelect = document.getElementById('tc-type');
+    const inputSubject = document.getElementById('tc-subject');
+    const inputClass = document.getElementById('tc-class');
+    
+    if (!typeSelect || !inputSubject || !inputClass) return;
+
+    let type = typeSelect.value;
+    let subject = inputSubject.value.trim();
+    let cls = inputClass.value.trim();
+
+    // 種別が empty の場合は自動的に補正する
+    if (type === 'empty') {
+        subject = '空きコマ';
+        cls = '';
+    }
+
+    if (!subject) {
+        showToast('科目名を入力してください');
+        return;
+    }
+
+    const tempKey = 'w' + state.currentWeek + '-' + dayStr + '-' + periodId;
     const newChanges = { ...state.temporaryChanges };
-    delete newChanges[key];
+    newChanges[tempKey] = {
+        subject: subject,
+        class: cls,
+        type: type 
+    };
     
     setTemporaryChanges(newChanges);
-    saveAllData(); 
-    toggleTempChangeMode(); 
-    openClassDetailModal(state.activeModalPeriodId, state.activeModalDayStr); 
+    saveAllData();
+    
     if (onStateChange) onStateChange();
-    showToast('基本の時間割に戻しました');
+    showToast('今週の変更を保存しました');
+    
+    renderModalContent();
 }
 
 function renderAnnouncements() {
-    const key = 'w' + state.currentWeek + '-' + state.activeModalDayStr + '-' + state.activeModalPeriodId;
-    const al = state.announcements[key] || [];
-    const ul = document.getElementById('modal-announcements');
-    ul.innerHTML = '';
+    const periodId = state.activeModalPeriodId;
+    const dayStr = state.activeModalDayStr;
+    if (!periodId || !dayStr) return;
+
+    const container = document.getElementById('modal-announcements');
+    if (!container) return;
     
-    al.forEach((a, i) => {
-        const li = document.createElement('li');
-        li.className = "text-xs bg-slate-50 border border-slate-200 rounded p-2 flex justify-between items-center group";
-        
-        const span = document.createElement('span');
-        span.className = "text-slate-700";
-        span.innerText = a; // escapeHTMLと同様の効果
-        
-        const delBtn = document.createElement('button');
-        delBtn.className = "text-red-500 opacity-0 group-hover:opacity-100 p-1";
-        delBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
-        delBtn.addEventListener('click', () => deleteAnnouncement(i));
-        
-        li.appendChild(span);
-        li.appendChild(delBtn);
-        ul.appendChild(li);
+    container.innerHTML = '';
+    const tempKey = 'w' + state.currentWeek + '-' + dayStr + '-' + periodId;
+    const list = state.announcements[tempKey] || [];
+    
+    list.forEach((ann, index) => {
+        const div = document.createElement('div');
+        div.className = 'flex justify-between items-center bg-yellow-50 p-2 rounded border border-yellow-200 text-sm mb-2';
+        div.innerHTML = `
+            <span>${escapeHTML(ann)}</span>
+            <button class="text-red-500 hover:bg-red-100 p-1 rounded" data-index="${index}"><i class="fas fa-trash"></i></button>
+        `;
+        const delBtn = div.querySelector('button');
+        delBtn.addEventListener('click', () => deleteAnnouncement(index));
+        container.appendChild(div);
     });
 }
 
 function addAnnouncement() {
-    const val = document.getElementById('new-announcement-input').value.trim();
-    if (!val) return;
-    const key = 'w' + state.currentWeek + '-' + state.activeModalDayStr + '-' + state.activeModalPeriodId;
+    const periodId = state.activeModalPeriodId;
+    const dayStr = state.activeModalDayStr;
+    if (!periodId || !dayStr) return;
+
+    const input = document.getElementById('new-announcement-input');
+    if (!input) return;
     
-    // ImmutableにStateを更新
+    const text = input.value.trim();
+    if (!text) return;
+
+    const tempKey = 'w' + state.currentWeek + '-' + dayStr + '-' + periodId;
     const newAnnouncements = { ...state.announcements };
-    if (!newAnnouncements[key]) newAnnouncements[key] = [];
-    newAnnouncements[key] = [...newAnnouncements[key], val];
+    if (!newAnnouncements[tempKey]) {
+        newAnnouncements[tempKey] = [];
+    }
     
+    newAnnouncements[tempKey] = [...newAnnouncements[tempKey], text];
     setAnnouncements(newAnnouncements);
-    saveAllData(); 
-    renderAnnouncements(); 
-    document.getElementById('new-announcement-input').value = '';
+    saveAllData();
+    
+    input.value = '';
+    renderAnnouncements();
+    if (onStateChange) onStateChange();
 }
 
-function deleteAnnouncement(idx) {
-    const key = 'w' + state.currentWeek + '-' + state.activeModalDayStr + '-' + state.activeModalPeriodId;
-    
-    // ImmutableにStateを更新
+function deleteAnnouncement(index) {
+    const periodId = state.activeModalPeriodId;
+    const dayStr = state.activeModalDayStr;
+    if (!periodId || !dayStr) return;
+
+    const tempKey = 'w' + state.currentWeek + '-' + dayStr + '-' + periodId;
+    if (!state.announcements[tempKey]) return;
+
     const newAnnouncements = { ...state.announcements };
-    if (newAnnouncements[key]) {
-        newAnnouncements[key] = newAnnouncements[key].filter((_, i) => i !== idx);
-        if (newAnnouncements[key].length === 0) {
-            delete newAnnouncements[key];
-        }
+    newAnnouncements[tempKey] = [...newAnnouncements[tempKey]];
+    newAnnouncements[tempKey].splice(index, 1);
+    
+    if (newAnnouncements[tempKey].length === 0) {
+        delete newAnnouncements[tempKey];
     }
     
     setAnnouncements(newAnnouncements);
-    saveAllData(); 
+    saveAllData();
+    
     renderAnnouncements();
+    if (onStateChange) onStateChange();
 }
+
+
 
 function renderModalTasks() {
-    const key = 'w' + state.currentWeek + '-' + state.activeModalDayStr + '-' + state.activeModalPeriodId;
-    const ts = state.tasks.filter(t => t.assignedPeriodId === key && !t.completed);
+    const periodId = state.activeModalPeriodId;
+    const dayStr = state.activeModalDayStr;
+    if (!periodId || !dayStr) return;
+
     const container = document.getElementById('modal-assigned-tasks');
-    container.innerHTML = '';
+    if (!container) return;
     
-    if (ts.length === 0) {
-        container.innerHTML = '<p class="text-[10px] text-slate-400 bg-slate-50 p-2 rounded border border-dashed border-slate-200">この時間のタスクはありません</p>';
+    container.innerHTML = '';
+
+    const periodKey = 'w' + state.currentWeek + '-' + dayStr + '-' + periodId;
+    const assignedTasks = state.tasks.filter(t => t.assignedPeriodId === periodKey && !t.completed);
+
+
+    if (assignedTasks.length === 0) {
+        container.innerHTML = '<div class="text-slate-400 text-sm py-2">配置されたタスクはありません</div>';
         return;
     }
-    
-    ts.forEach(t => {
-        const wrapper = document.createElement('div');
-        wrapper.className = "flex items-start gap-2 bg-slate-50 p-2.5 rounded-lg border border-slate-200 shadow-sm";
+
+    assignedTasks.forEach(task => {
+        const div = document.createElement('div');
+        div.className = 'flex items-center gap-2 p-2 bg-white border border-slate-200 rounded text-sm mb-2';
         
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.className = "mt-0.5 cursor-pointer";
-        checkbox.addEventListener('change', () => {
-            if (onToggleTask) onToggleTask(t.id);
+        div.innerHTML = `
+            <input type="checkbox" class="w-4 h-4 text-indigo-600 rounded border-slate-300">
+            <span class="flex-1">${escapeHTML(task.title)}</span>
+            <button class="text-slate-400 hover:text-indigo-600 p-1 btn-move" title="移動"><i class="fas fa-people-carry"></i></button>
+            <button class="text-slate-400 hover:text-red-500 p-1 btn-return" title="未計画に戻す"><i class="fas fa-undo"></i></button>
+        `;
+
+        const chk = div.querySelector('input');
+        chk.addEventListener('change', () => {
+            if (onToggleTask) onToggleTask(task.id);
+            if (onStateChange) onStateChange();
+            setTimeout(renderModalTasks, 300); 
         });
-        
-        const titleSpan = document.createElement('span');
-        titleSpan.className = "flex-1 text-xs font-bold text-slate-800 leading-tight";
-        titleSpan.innerText = t.title;
-        
-        const btnDiv = document.createElement('div');
-        btnDiv.className = "flex gap-1 shrink-0";
-        
-        const moveBtn = document.createElement('button');
-        moveBtn.className = "text-blue-600 bg-blue-100 p-1.5 rounded-lg hover:bg-blue-200";
-        moveBtn.title = "別のコマへ移動";
-        moveBtn.innerHTML = '<i class="fa-solid fa-arrow-right-to-bracket"></i>';
+
+        const moveBtn = div.querySelector('.btn-move');
         moveBtn.addEventListener('click', () => {
-            if (onStartMoveTask) onStartMoveTask(t.id);
+            if (onStartMoveTask) onStartMoveTask(task.id);
             closeClassDetailModal();
         });
-        
-        const returnBtn = document.createElement('button');
-        returnBtn.className = "text-slate-600 bg-slate-200 p-1.5 rounded-lg hover:bg-slate-300";
-        returnBtn.title = "未計画に戻す";
-        returnBtn.innerHTML = '<i class="fa-solid fa-rotate-left"></i>';
+
+        const returnBtn = div.querySelector('.btn-return');
         returnBtn.addEventListener('click', () => {
-            if (onReturnTaskToUnplanned) onReturnTaskToUnplanned(t.id);
+            if (onReturnTaskToUnplanned) onReturnTaskToUnplanned(task.id);
+            renderModalTasks(); 
+            if (onStateChange) onStateChange();
         });
-        
-        btnDiv.appendChild(moveBtn);
-        btnDiv.appendChild(returnBtn);
-        wrapper.appendChild(checkbox);
-        wrapper.appendChild(titleSpan);
-        wrapper.appendChild(btnDiv);
-        container.appendChild(wrapper);
+
+        container.appendChild(div);
     });
 }
