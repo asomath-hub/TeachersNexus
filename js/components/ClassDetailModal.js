@@ -183,8 +183,51 @@ function renderModalContent() {
         inputSubject.value = displaySubject;
     }
 
-    const inputClass = document.getElementById('tc-class');
-    if (inputClass) inputClass.value = displayClass || '';
+    let inputClass = document.getElementById('tc-class');
+    if (inputClass) {
+        // もしHTML側が input なら動的に select に置き換える
+        if (inputClass.tagName.toLowerCase() === 'input') {
+            const selectClass = document.createElement('select');
+            selectClass.id = inputClass.id;
+            selectClass.className = inputClass.className;
+            inputClass.parentNode.replaceChild(selectClass, inputClass);
+            inputClass = selectClass;
+        }
+
+        if (inputClass.tagName.toLowerCase() === 'select') {
+            inputClass.innerHTML = '';
+            
+            // 先頭に空欄用の選択肢を追加
+            const emptyOpt = document.createElement('option');
+            emptyOpt.value = '';
+            emptyOpt.textContent = 'なし';
+            inputClass.appendChild(emptyOpt);
+
+            // state の classList から option を生成
+            state.classList.forEach(cls => {
+                const opt = document.createElement('option');
+                opt.value = cls;
+                opt.textContent = cls;
+                inputClass.appendChild(opt);
+            });
+
+            // 現在の displayClass が選択肢に無い場合は一時的に追加する
+            let hasOption = false;
+            for (let i = 0; i < inputClass.options.length; i++) {
+                if (inputClass.options[i].value === displayClass) {
+                    hasOption = true;
+                    break;
+                }
+            }
+            if (!hasOption && displayClass) {
+                const opt = document.createElement('option');
+                opt.value = displayClass;
+                opt.textContent = displayClass;
+                inputClass.appendChild(opt);
+            }
+        }
+        inputClass.value = displayClass || '';
+    }
 
     const editForm = document.getElementById('temp-change-form');
     if (editForm) editForm.classList.add('hidden');
@@ -339,6 +382,7 @@ function deleteAnnouncement(index) {
 
 
 
+
 function renderModalTasks() {
     const periodId = state.activeModalPeriodId;
     const dayStr = state.activeModalDayStr;
@@ -351,8 +395,7 @@ function renderModalTasks() {
 
     const periodKey = 'w' + state.currentWeek + '-' + dayStr + '-' + periodId;
     const assignedTasks = state.tasks.filter(t => t.assignedPeriodId === periodKey && !t.completed);
-
-
+    
     if (assignedTasks.length === 0) {
         container.innerHTML = '<div class="text-slate-400 text-sm py-2">配置されたタスクはありません</div>';
         return;

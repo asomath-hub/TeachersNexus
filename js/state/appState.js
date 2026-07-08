@@ -21,7 +21,8 @@ export const state = {
     temporaryChanges: {},
     announcements: {},
     lists: ['その他'],
-    subjectsList: []
+    subjectsList: [],
+    classList: ['1A', '1B', '2A', '2B', '3A', '3B'] // クラス候補のデフォルト値
 };
 
 // --- UI表示状態の Setter ---
@@ -80,4 +81,8 @@ export function setLists(lists) {
 
 export function setSubjectsList(subjectsList) {
     state.subjectsList = subjectsList;
+}
+
+export function setClassList(list) {
+    state.classList = list;
 }

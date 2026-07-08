@@ -1,13 +1,12 @@
 /**
  * js/components/BaseSettingsModal.js
- * 基本時間割設定モーダルのUIとイベント、および保存処理を管理するコンポーネント。
+ * 基本時間割設定モーダルのUIとイベントを管理するコンポーネント。
  */
 
-import { state, setTimetableData } from '../state/appState.js';
+import { state, setTimetableData, setClassList } from '../state/appState.js';
 import { saveAllData } from '../services/storage.js';
 import { showToast } from './Toast.js';
 import { escapeHTML } from '../utils/escape.js';
-import { dayNames } from '../utils/date.js';
 
 let onStateChange = null;
 let initialized = false;
@@ -32,88 +31,138 @@ function setupEventListeners() {
     // 閉じるボタン (複数存在するため querySelectorAll で取得)
     const closeBtns = modal.querySelectorAll('[data-action="close-base-settings"]');
     closeBtns.forEach(btn => {
-        btn.removeAttribute('onclick');
+        btn.removeAttribute('onclick'); // 移行途中の安全措置
         btn.addEventListener('click', closeBaseSettingsModal);
     });
 
     // 保存ボタン
     const saveBtn = modal.querySelector('[data-action="save-base-settings"]');
     if (saveBtn) {
-        saveBtn.removeAttribute('onclick');
+        saveBtn.removeAttribute('onclick'); // 移行途中の安全措置
         saveBtn.addEventListener('click', saveBaseSettings);
     }
 }
 
 export function openBaseSettingsModal() {
     renderBaseSettingsGrid();
-    document.getElementById('base-settings-modal').classList.remove('hidden');
+    const modal = document.getElementById('base-settings-modal');
+    if (modal) modal.classList.remove('hidden');
 }
 
-export function closeBaseSettingsModal() { 
-    document.getElementById('base-settings-modal').classList.add('hidden'); 
+export function closeBaseSettingsModal() {
+    const modal = document.getElementById('base-settings-modal');
+    if (modal) modal.classList.add('hidden');
 }
 
 function renderBaseSettingsGrid() {
-    const g = document.getElementById('base-settings-grid');
-    if (!g) return;
+    const container = document.getElementById('base-settings-grid');
+    if (!container) return;
     
-    g.innerHTML = '';
-    
-    ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].forEach(d => {
-        const col = document.createElement('div');
-        col.className = 'border border-slate-200 rounded-lg p-2 bg-white';
-        col.innerHTML = `<h4 class="font-bold text-center text-sm mb-2">${escapeHTML(dayNames[d])}</h4>`;
+    container.innerHTML = '';
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+    const dayLabels = { 'Mon': '月', 'Tue': '火', 'Wed': '水', 'Thu': '木', 'Fri': '金' };
+
+    days.forEach(day => {
+        const dayCol = document.createElement('div');
+        dayCol.className = 'flex flex-col gap-2';
         
-        let subjectOptionsHTML = '<option value="">(未設定)</option>' + 
-            state.subjectsList.map(s => `<option value="${escapeHTML(s.name)}">${escapeHTML(s.name)}</option>`).join('');
-        
-        state.timetableData[d].forEach(p => {
-            let sOpts = subjectOptionsHTML;
-            if (p.subject && !state.subjectsList.find(s => s.name === p.subject)) {
-                sOpts += `<option value="${escapeHTML(p.subject)}">${escapeHTML(p.subject)}</option>`;
-            }
+        const dayHeader = document.createElement('div');
+        dayHeader.className = 'font-bold text-center text-slate-700 pb-2 border-b';
+        dayHeader.textContent = dayLabels[day];
+        dayCol.appendChild(dayHeader);
+
+        const periods = state.timetableData[day] || [];
+        periods.forEach(p => {
+            const pDiv = document.createElement('div');
+            pDiv.className = 'bg-slate-50 p-2 rounded border border-slate-200 text-xs flex flex-col gap-1';
             
-            col.innerHTML += `
-                <div class="mb-2 p-1 border border-slate-100 rounded bg-slate-50" data-id="${p.id}" data-day="${d}">
-                    <div class="text-[10px] font-bold text-slate-500 mb-1">${escapeHTML(p.num)}限</div>
-                    <select class="w-full text-xs border rounded p-1 mb-1 bs-type bg-white">
-                        <option value="class" ${p.type === 'class' ? 'selected' : ''}>授業</option>
-                        <option value="empty" ${p.type === 'empty' ? 'selected' : ''}>空き</option>
-                        <option value="afterschool" ${p.type === 'afterschool' ? 'selected' : ''}>放課後</option>
-                    </select>
-                    <select class="w-full text-xs border rounded p-1 mb-1 bs-subject bg-white">
-                        ${sOpts.replace(`value="${escapeHTML(p.subject)}"`, `value="${escapeHTML(p.subject)}" selected`)}
-                    </select>
-                    <input type="text" class="w-full text-xs border rounded p-1 bs-class bg-white" placeholder="クラス" value="${escapeHTML(p.class || '')}">
-                </div>
+            pDiv.innerHTML = `
+                <div class="font-bold text-slate-500">${escapeHTML(p.num)}</div>
+                <select class="border border-slate-200 rounded p-1 bs-type" data-day="${day}" data-id="${p.id}">
+                    <option value="empty" ${p.type === 'empty' ? 'selected' : ''}>空き</option>
+                    <option value="class" ${p.type === 'class' ? 'selected' : ''}>授業</option>
+                    <option value="task" ${p.type === 'task' ? 'selected' : ''}>校務</option>
+                    <option value="afterschool" ${p.type === 'afterschool' ? 'selected' : ''}>放課後</option>
+                </select>
+                <input type="text" class="border border-slate-200 rounded p-1 bs-subject" value="${escapeHTML(p.subject)}" placeholder="科目/タスク名">
+                <input type="text" class="border border-slate-200 rounded p-1 bs-class" value="${escapeHTML(p.class || '')}" placeholder="対象クラス">
             `;
+            dayCol.appendChild(pDiv);
         });
-        g.appendChild(col);
+        
+        container.appendChild(dayCol);
     });
+
+    // クラスリスト編集エリアの動的追加
+    let classListSection = document.getElementById('base-settings-class-list-section');
+    if (!classListSection) {
+        classListSection = document.createElement('div');
+        classListSection.id = 'base-settings-class-list-section';
+        classListSection.className = 'mt-6 pt-4 border-t border-slate-200';
+        container.parentElement.appendChild(classListSection);
+    }
+    
+    classListSection.innerHTML = `
+        <h4 class="font-bold text-slate-700 mb-2"><i class="fa-solid fa-users mr-2 text-slate-400"></i>クラス候補の設定</h4>
+        <p class="text-[10px] text-slate-500 mb-2">1行に1クラス入力してください。授業変更時のプルダウンに表示されます。</p>
+        <textarea id="class-list-textarea" class="w-full h-32 border border-slate-200 rounded p-2 text-xs focus:ring-1 focus:ring-blue-500 bg-white"></textarea>
+    `;
+    
+    const textarea = document.getElementById('class-list-textarea');
+    if (textarea) {
+        textarea.value = state.classList.join('\n');
+    }
 }
 
 function saveBaseSettings() {
-    // 既存の状態を深くコピー（イミュータブルな更新のため）
-    const newTimetableData = JSON.parse(JSON.stringify(state.timetableData));
+    const container = document.getElementById('base-settings-grid');
+    if (!container) return;
     
-    ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].forEach(d => {
-        const divs = document.querySelectorAll(`#base-settings-grid div[data-day="${d}"]`);
-        divs.forEach((div, i) => {
-            if (newTimetableData[d] && newTimetableData[d][i]) {
-                newTimetableData[d][i].type = div.querySelector('.bs-type').value;
-                newTimetableData[d][i].subject = div.querySelector('.bs-subject').value;
-                newTimetableData[d][i].class = div.querySelector('.bs-class').value;
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+    const newData = {};
+    
+    days.forEach(day => {
+        newData[day] = [];
+        const originalPeriods = state.timetableData[day] || [];
+        
+        originalPeriods.forEach((origP, index) => {
+            const selects = container.querySelectorAll(`select[data-day="${day}"]`);
+            if (selects[index]) {
+                const parent = selects[index].parentElement;
+                const type = selects[index].value;
+                const subject = parent.querySelector('.bs-subject').value.trim();
+                const cls = parent.querySelector('.bs-class').value.trim();
+                
+                newData[day].push({
+                    id: origP.id,
+                    num: origP.num,
+                    type: type,
+                    subject: subject,
+                    class: cls
+                });
+            } else {
+                newData[day].push({ ...origP });
             }
         });
     });
+
+    // クラスリストの保存処理
+    const classListTextarea = document.getElementById('class-list-textarea');
+    if (classListTextarea) {
+        const newClassList = classListTextarea.value
+            .split('\n')
+            .map(c => c.trim())
+            .filter(c => c !== '');
+        setClassList(newClassList);
+    }
     
-    // Setterを用いて状態を更新
-    setTimetableData(newTimetableData);
+    // ImmutableにStateを更新
+    setTimetableData(newData);
     saveAllData(); 
     closeBaseSettingsModal(); 
     
-    // 画面全体の再描画を上位に依頼
-    if (onStateChange) onStateChange();
+    // メイン画面の再描画などを依頼
+    if (onStateChange) onStateChange(); 
     
-    showToast('基本時間割を保存しました');
+    showToast('基本時間割とクラス候補を保存しました');
 }

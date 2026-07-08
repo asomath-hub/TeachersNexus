@@ -1,5 +1,7 @@
-import { state, setTimetableData, setTasks, setTemporaryChanges, setAnnouncements, setLists, setSubjectsList } from '../state/appState.js';
+import { state, setTimetableData, setTasks, setTemporaryChanges, setAnnouncements, setLists, setSubjectsList, setClassList } from '../state/appState.js';
 import { defaultSubjectsList } from '../utils/colors.js';
+
+const defaultClassList = ['1A', '1B', '2A', '2B', '3A', '3B'];
 
 export function generateDefaultTimetable() {
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
@@ -40,14 +42,17 @@ export function loadAllData() {
             setTemporaryChanges(parsed.temporaryChanges || {});
             setAnnouncements(parsed.announcements || {});
             setSubjectsList(parsed.subjectsList || [...defaultSubjectsList]);
+            setClassList(parsed.classList || [...defaultClassList]);
         } else {
             setTimetableData(generateDefaultTimetable());
             setTasks([{ id: 't1', title: '【例】数学小テスト印刷', list: 'その他', completed: false, assignedPeriodId: null }]);
             setSubjectsList([...defaultSubjectsList]);
+            setClassList([...defaultClassList]);
         }
     } catch(e) {
         setTimetableData(generateDefaultTimetable());
         setSubjectsList([...defaultSubjectsList]);
+        setClassList([...defaultClassList]);
     }
 }
 
@@ -58,6 +63,7 @@ export function saveAllData() {
         lists: state.lists,
         temporaryChanges: state.temporaryChanges,
         announcements: state.announcements,
-        subjectsList: state.subjectsList
+        subjectsList: state.subjectsList,
+        classList: state.classList
     }));
 }
