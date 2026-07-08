@@ -29,35 +29,46 @@ function setupEventListeners() {
     const modal = document.getElementById('subject-settings-modal');
     if (!modal) return;
 
-    // 閉じるボタン (複数存在するため querySelectorAll で取得)
-    const closeBtns = modal.querySelectorAll('button[onclick="closeSubjectSettingsModal()"]');
+    // 閉じるボタン (右上の×と、下部のキャンセルボタンの複数存在するため querySelectorAll で取得)
+    const closeBtns = modal.querySelectorAll('[data-action="close-subject-settings"]');
     closeBtns.forEach(btn => {
-        btn.removeAttribute('onclick');
-        btn.addEventListener('click', closeSubjectSettingsModal);
+        btn.removeAttribute('onclick'); // 古いインラインイベントの安全措置
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeSubjectSettingsModal();
+        });
     });
 
     // 追加ボタン
-    const addBtn = modal.querySelector('button[onclick="addNewSubject()"]');
+    const addBtn = modal.querySelector('[data-action="add-subject"]');
     if (addBtn) {
         addBtn.removeAttribute('onclick');
-        addBtn.addEventListener('click', addNewSubject);
+        addBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            addNewSubject();
+        });
     }
 
     // 保存ボタン
-    const saveBtn = modal.querySelector('button[onclick="saveSubjectSettings()"]');
+    const saveBtn = modal.querySelector('[data-action="save-subject-settings"]');
     if (saveBtn) {
         saveBtn.removeAttribute('onclick');
-        saveBtn.addEventListener('click', saveSubjectSettings);
+        saveBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            saveSubjectSettings();
+        });
     }
 }
 
 export function openSubjectSettingsModal() {
     renderSubjectSettingsList();
-    document.getElementById('subject-settings-modal').classList.remove('hidden');
+    const modal = document.getElementById('subject-settings-modal');
+    if (modal) modal.classList.remove('hidden');
 }
 
 export function closeSubjectSettingsModal() { 
-    document.getElementById('subject-settings-modal').classList.add('hidden'); 
+    const modal = document.getElementById('subject-settings-modal');
+    if (modal) modal.classList.add('hidden'); 
 }
 
 function renderSubjectSettingsList() {
@@ -84,11 +95,12 @@ function createSubjectRow(name, colorIndex) {
     
     row.innerHTML = inputHtml + selectHtml;
     
-    // 削除ボタン (旧 onclick="this.parentElement.remove()" を排除して安全な形に修正)
+    // 削除ボタン (安全な形に修正)
     const delBtn = document.createElement('button');
     delBtn.className = "text-red-500 hover:bg-red-50 p-1.5 rounded";
     delBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
-    delBtn.addEventListener('click', () => {
+    delBtn.addEventListener('click', (e) => {
+        e.preventDefault();
         row.remove();
     });
     
@@ -110,10 +122,15 @@ function saveSubjectSettings() {
     const newList = [];
     
     rows.forEach(row => {
-        const name = row.querySelector('.ss-name').value.trim();
-        const colorIndex = parseInt(row.querySelector('.ss-color').value, 10);
-        if (name) {
-            newList.push({ name, colorIndex });
+        const nameInput = row.querySelector('.ss-name');
+        const colorSelect = row.querySelector('.ss-color');
+        
+        if (nameInput && colorSelect) {
+            const name = nameInput.value.trim();
+            const colorIndex = parseInt(colorSelect.value, 10);
+            if (name) {
+                newList.push({ name, colorIndex });
+            }
         }
     });
     
